@@ -1,3 +1,23 @@
+2005-04-01  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
+
+	* AUTHORS: update contact info
+
+	* example/src/doxy.conf: update for new doxygen
+
+	* example/src/aclass.h: try new @param[in] etc.
+
+	* example/doc/html/*: regenerate
+
+	* lisp/doxymacs.el.in (doxymacs-doxygen-keywords): patch #1102042:
+	handle @param[in], etc.
+
+	* aclocal/libxml.m4: update from libxml source
+
+	* c/Makefile.am: fix link issues with newer libxml
+
+	* configure.ac: update libxml2 version requirements to match what
+	was used for libxml.m4
+
 2003-01-25  Ryan T. Sammartino  <ryants@shaw.ca> (1.5.0)
 
 	* NEWS: version 1.5.0 news.

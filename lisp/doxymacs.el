@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.46 2001/08/26 23:38:50 ryants Exp $
+;; $Id: doxymacs.el,v 1.47 2001/08/27 01:37:53 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -393,17 +393,17 @@ Key bindings:
    (list
     "\\([@\\\\]b\\)\\s-+\\([^ \t\n]+\\)"
     '(1 font-lock-keyword-face prepend)
-    '(2 bold prepend))
+    '(2 (quote bold) prepend))
    ;; code
    (list
     "\\([@\\\\][cp]\\)\\s-+\\([^ \t\n]+\\)"
     '(1 font-lock-keyword-face prepend)
-    '(2 underline prepend))
+    '(2 (quote underline) prepend))
    ;; italics/emphasised
    (list
     "\\([@\\\\]e\\(m\\)?\\)\\s-+\\([^ \t\n]+\\)"
     '(1 font-lock-keyword-face prepend)
-    '(3 italic prepend))
+    '(3 (quote italic) prepend))
    ;; keywords that take a list 
    (list
     "\\([@\\\\]ingroup\\)\\s-+\\(\\(\\sw+\\s-*\\)+\\)\\s-*$"

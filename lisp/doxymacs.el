@@ -27,7 +27,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.30 2001/05/12 22:44:20 ryants Exp $
+;; $Id: doxymacs.el,v 1.31 2001/05/22 06:04:13 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -117,6 +117,22 @@ of the two styles."
   :type '(radio (const :tag "JavaDoc" "JavaDoc") (const :tag "Qt" "Qt"))  
   :group 'doxymacs)
 
+
+(defcustom doxymacs-use-external-xml-parser
+  nil
+  "*Use the external (written in C) XML parser or the internal (LISP) parser.
+For smallish tag files, you are better off with the internal parser. 
+For larger tag files, you are better off with the external one.
+Set to non-nil to use the external XML parser."
+  :type '(choice (const :tag "Yes" t)
+		 (const :tag "No" nil))
+  :group 'doxymacs)
+
+(defcustom doxymacs-external-xml-parser-executable
+  "~/bin/doxymacs_parser"
+  "*Where the external XML parser executable is."
+  :type 'string
+  :group 'doxymacs)
 
 ;; here's a hack... a one-size-fits-all set user template func.
 ;; maybe there's a better way of doing this?
@@ -292,20 +308,43 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 	    (cons (cons symbol (list (cons desc url)))
 		  doxymacs-completion-list)))))
 
-
-(defun doxymacs-xml-progress-callback (amount-done)
-  (message (concat "Parsing " doxymacs-doxygen-tags "... " 
-		   (format "%0.1f" amount-done) "%%")))
-
-(defun doxymacs-fill-completion-list ()
-  "Load and parse the tags from the *doxytags* buffer, constructing our 
-doxymacs-completion-list from it"
+(defun doxymacs-fill-completion-list-with-external-parser ()
+  "Use external parser to parse XML file and get the completion list"
   (doxymacs-load-tags)
   (let ((currbuff (current-buffer)))
     (set-buffer doxymacs-tags-buffer)
     (goto-char (point-min))
     (setq doxymacs-completion-list nil)
-    (let ((xml (read-xml 'doxymacs-xml-progress-callback))) ;Parse the XML file
+    (message (concat 
+	      "Calling external process " 
+	      doxymacs-external-xml-parser-executable))
+    (let ((status (call-process-region 
+		   (point-min) (point-max) 
+		   doxymacs-external-xml-parser-executable
+		   t t)))
+      (if (eq status 0)
+	  (progn
+	    (goto-char (point-min))
+	    (message "Reading completion list")
+	    (setq doxymacs-completion-list (read (current-buffer)))
+	    (message "Done"))
+	(message "There were problems"))
+      (kill-buffer doxymacs-tags-buffer)
+      (set-buffer currbuff))))
+
+(defun doxymacs-xml-progress-callback (amount-done)
+  (message (concat "Parsing " doxymacs-doxygen-tags "... " 
+		   (format "%0.1f" amount-done) "%%")))
+
+(defun doxymacs-fill-completion-list-with-internal-parser ()
+  "Load and parse the tags from the *doxytags* buffer, constructing our 
+doxymacs-completion-list from it using the internal XML file parser"
+  (doxymacs-load-tags)
+  (let ((currbuff (current-buffer)))
+    (set-buffer doxymacs-tags-buffer)
+    (goto-char (point-min))
+    (setq doxymacs-completion-list nil)
+    (let ((xml (read-xml 'doxymacs-xml-progress-callback))) ;Parse the file
       (let* ((compound-list (xml-tag-children xml))
 	     (num-compounds (length compound-list))
 	     (curr-compound-num 0))
@@ -328,7 +367,7 @@ doxymacs-completion-list from it"
 	      (doxymacs-add-compound-members curr-compound
 					     compound-name
 					     compound-url)
-
+	      
 	      
 	      ;; On to the next compound
 	      (message (concat 
@@ -401,7 +440,9 @@ doxymacs-completion-list from it"
    (save-excursion
      (if (eq doxymacs-completion-list nil)
 	 ;;Build our completion list if not already done
-	 (doxymacs-fill-completion-list))
+	 (if doxymacs-use-external-xml-parser
+	     (doxymacs-fill-completion-list-with-external-parser)
+	   (doxymacs-fill-completion-list-with-internal-parser)))
      (let ((symbol (completing-read 
 		    "Look up: " 
 		    doxymacs-completion-list nil nil (symbol-near-point))))
@@ -464,7 +505,9 @@ the completion or nil if canceled by the user."
   (interactive)
   (if (buffer-live-p doxymacs-tags-buffer)
       (kill-buffer doxymacs-tags-buffer))
-  (doxymacs-fill-completion-list))
+  (if doxymacs-use-external-xml-parser
+      (doxymacs-fill-completion-list-with-external-parser)
+    (doxymacs-fill-completion-list-with-internal-parser)))
 
 
 ;; These functions have to do with inserting doxygen commands in code

@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at home dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.1.3
+;; Version: 1.1.4
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.43 2001/07/10 01:59:48 ryants Exp $
+;; $Id: doxymacs.el,v 1.44 2001/08/24 04:04:21 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -71,7 +71,11 @@
 
 ;; Change log:
 ;;
-;; 07/08/2001 - make external XML parser work with libxml2. Now requires
+;; 23/08/2001 - fix bug #454563... missing @endlink in fontification,
+;;              fix @b, @em, @c, @p and @link fontification.
+;;            - make fontification regexps easier to read.
+;;            - version 1.1.4
+;; 07/07/2001 - make external XML parser work with libxml2. Now requires
 ;;              version 2.3.4 or greater
 ;;            - version 1.1.3 
 ;; 04/07/2001 - GNU Emacs doesn't understand ?: in regexps, so take them out
@@ -307,41 +311,82 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 		minor-mode-map-alist)))
 
 ;; This stuff has to do with fontification
-;; Thanks to Alec Panovici
+;; Thanks to Alec Panovici for the idea.
 
 (defvar doxymacs-doxygen-keywords
-  '(("\\([@\\\\]\\(brief\\|li\\|\\(end\\)?code\\|sa\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn\\|hideinitializer\\|showinitializer\\|interface\\|internal\\|nosubgrouping\\|author\\|date\\|endif\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par\\|addindex\\|line\\|skip\\|skipline\\|until\\|see\\)\\)\\>"
-     0 font-lock-keyword-face prepend)
-    ("\\([@\\\\]\\(attention\\|warning\\|todo\\|bug\\)\\)\\>"
-     0 font-lock-warning-face prepend)
-    ("\\([@\\\\]\\(param\\|a\\|if\\|namespace\\|relates\\|def\\)\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face prepend)
-     (3 font-lock-variable-name-face prepend))
-    ("\\([@\\\\]\\(class\\|struct\\|union\\|exception\\|throw\\)\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face prepend)
-     (3 font-lock-type-face prepend))
-    ("\\([@\\\\]retval\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face prepend)
-     (2 font-lock-function-name-face prepend))
-    ("\\([@\\\\]b\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face prepend)
-     (2 'bold prepend))
-    ("\\([@\\\\][cp]\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face prepend)
-     (2 'underline prepend))
-    ("\\([@\\\\]e\\(m\\)?\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face prepend)
-     (3 'italic prepend))
-    ("\\([@\\\\]ingroup\\)\\s-+\\(\\(\\sw+\\s-*\\)+\\)\\s-*$"
-     (1 font-lock-keyword-face prepend)
-     (2 font-lock-string-face prepend))
-    ("\\([@\\\\]image\\)\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face prepend)
-     (2 font-lock-string-face prepend)
-     (3 font-lock-string-face prepend))
-    ("\\([@\\\\]\\(addtogroup\\|defgroup\\|weakgroup\\|example\\|page\\|anchor\\|link\\|ref\\|section\\|subsection\\|\\(dont\\)?include\\|verbinclude\\|htmlinclude\\)\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face prepend)
-     (4 font-lock-string-face prepend))))
+  (list
+   (list
+    ;; One shot keywords that take no arguments
+    (concat "\\([@\\\\]\\(brief\\|li\\|\\(end\\)?code\\|sa"
+	    "\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn"
+	    "\\|hideinitializer\\|showinitializer\\|interface"
+	    "\\|internal\\|nosubgrouping\\|author\\|date\\|endif"
+	    "\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version"
+	    "\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file"
+	    "\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par"
+	    "\\|addindex\\|line\\|skip\\|skipline\\|until\\|see"
+	    "\\|endlink\\)\\)\\>")
+    '(0 font-lock-keyword-face prepend))
+   ;; attention, warning, etc. given a different font
+   (list
+    "\\([@\\\\]\\(attention\\|warning\\|todo\\|bug\\)\\)\\>"
+    '(0 font-lock-warning-face prepend))
+   ;; keywords that take a variable name as an argument
+   (list
+    (concat "\\([@\\\\]\\(param\\|a\\|if\\|namespace\\|relates"
+	    "\\|def\\)\\)\\s-+\\(\\sw+\\)")
+    '(1 font-lock-keyword-face prepend)
+    '(3 font-lock-variable-name-face prepend))
+   ;; keywords that take a type name as an argument
+   (list 
+    (concat "\\([@\\\\]\\(class\\|struct\\|union\\|exception"
+	    "\\|throw\\)\\)\\s-+\\(\\sw+\\)")
+    '(1 font-lock-keyword-face prepend)
+    '(3 font-lock-type-face prepend))
+   ;; keywords that take a function name as an argument
+   (list
+    "\\([@\\\\]retval\\)\\s-+\\(\\sw+\\)"
+    '(1 font-lock-keyword-face prepend)
+    '(2 font-lock-function-name-face prepend))
+   ;; bold
+   (list
+    "\\([@\\\\]b\\)\\s-+\\([^ \t\n]+\\)"
+    '(1 font-lock-keyword-face prepend)
+    '(2 bold prepend))
+   ;; code
+   (list
+    "\\([@\\\\][cp]\\)\\s-+\\([^ \t\n]+\\)"
+    '(1 font-lock-keyword-face prepend)
+    '(2 underline prepend))
+   ;; italics/emphasised
+   (list
+    "\\([@\\\\]e\\(m\\)?\\)\\s-+\\([^ \t\n]+\\)"
+    '(1 font-lock-keyword-face prepend)
+    '(3 italic prepend))
+   ;; keywords that take a list 
+   (list
+    "\\([@\\\\]ingroup\\)\\s-+\\(\\(\\sw+\\s-*\\)+\\)\\s-*$"
+    '(1 font-lock-keyword-face prepend)
+    '(2 font-lock-string-face prepend))
+   ;; two arguments
+   (list
+    "\\([@\\\\]image\\)\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)"
+    '(1 font-lock-keyword-face prepend)
+    '(2 font-lock-string-face prepend)
+    '(3 font-lock-string-face prepend))
+   ;; one argument that can contain arbitrary non-whitespace stuff
+   (list
+    "\\([@\\\\]link\\)\\s-+\\([^ \t\n]+\\)"
+    '(1 font-lock-keyword-face prepend)
+    '(2 font-lock-string-face prepend))
+   ;; one argument that has to be a word
+   (list
+    (concat "\\([@\\\\]\\(addtogroup\\|defgroup\\|weakgroup"
+	    "\\|example\\|page\\|anchor\\|ref\\|section\\|subsection"
+	    "\\|\\(dont\\)?include\\|verbinclude"
+	    "\\|htmlinclude\\)\\)\\s-+\\(\\sw+\\)")
+    '(1 font-lock-keyword-face prepend)
+    '(4 font-lock-string-face prepend))))
 
 (defun doxymacs-font-lock ()
   "Turn on font-lock for Doxygen keywords"
@@ -358,7 +403,6 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 ;;These functions have to do with looking stuff up in doxygen generated
 ;;documentation
 
-;;doxymacs-load-tag
 ;;This loads the tags file generated by doxygen into the buffer *doxytags*.  
 (defun doxymacs-load-tags ()
   "Loads a tags file"
@@ -463,9 +507,7 @@ doxymacs-completion-list from it using the internal XML file parser"
 	      ;; Add its members
 	      (doxymacs-add-compound-members curr-compound
 					     compound-name
-					     compound-url)
-	      
-	      
+					     compound-url)	      	      
 	      ;; On to the next compound
 	      (message (concat 
 			"Building completion table... "
@@ -838,7 +880,7 @@ current point"
 ;; This gets confused by the following examples:
 ;; - void qsort(int (*comp)(void *, void *), int left, int right);
 ;; - int f(int (*daytab)[5], int x);
-;; Of course, these kinds of things can't be done by regexp's alone.
+;; Of course, these kinds of things can't be done by regexps alone.
 (defun doxymacs-find-next-func ()
   "Returns a list describing next function declaration, or nil if not found"
   (interactive)

@@ -1,19 +1,97 @@
-aclass.h	aclass_h.html	file aclass.h
-SOME_OBSCURE_DEFINE	aclass_h.html#a0	aclass.h::SOME_OBSCURE_DEFINE
-_blah	aclass_h.html#a3	aclass.h::_blah
-FOO_SNAZ	aclass_h.html#a3a1	aclass.h::FOO_SNAZ
-Foo	aclass_h.html#a3a2	aclass.h::Foo
-Foo	class_Foo.html	class Foo
-blah_blah	class_Foo.html#s2	Foo::blah_blah
-BAZ	class_Foo.html#s2s0	Foo::BAZ
-BAZ2	class_Foo.html#s2s1	Foo::BAZ2
-Foo	class_Foo.html#a0	Foo::Foo
-GetBlah	class_Foo.html#a1	Foo::GetBlah
-_blah	class_Foo.html#o0	Foo::_blah
-NameSpaceTest	namespace_NameSpaceTest.html	namespace NameSpaceTest
-foobazbar	namespace_NameSpaceTest.html#a0	NameSpaceTest::foobazbar
-baz	struct_baz.html	struct baz
-z	struct_baz.html#m0	baz::z
-blah	struct_blah.html	struct blah
-x	struct_blah.html#m0	blah::x
-y	struct_blah.html#m1	blah::y
+<tagfile>
+  <compound kind="file">
+    <name>aclass.h</name>
+    <path>/home/ryants/projects/doxymacs/example/src/</path>
+    <filename>aclass_h.html</filename>
+    <namespace>NameSpaceTest</namespace>
+    <class kind="struct">baz</class>
+    <class kind="struct">blah</class>
+    <class kind="class">Foo</class>
+    <member kind="define">
+      <name>SOME_OBSCURE_DEFINE</name>
+      <anchor>a0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <name>_blah</name>
+      <anchor>a3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FOO_SNAZ</name>
+      <anchor>a3a1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>Foo</name>
+      <anchor>a3a2</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>baz</name>
+    <filename>struct_baz.html</filename>
+    <member kind="variable">
+      <name>z</name>
+      <anchor>m0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>blah</name>
+    <filename>struct_blah.html</filename>
+    <member kind="variable">
+      <name>x</name>
+      <anchor>m0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <name>y</name>
+      <anchor>m1</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Foo</name>
+    <filename>class_Foo.html</filename>
+    <member kind="enumeration">
+      <name>blah_blah</name>
+      <anchor>s2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BAZ</name>
+      <anchor>s2s0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BAZ2</name>
+      <anchor>s2s1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <name>Foo</name>
+      <anchor>a0</anchor>
+      <arglist>(int blah)</arglist>
+    </member>
+    <member kind="function">
+      <name>GetBlah</name>
+      <anchor>a1</anchor>
+      <arglist>(void) const</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <name>_blah</name>
+      <anchor>o0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="namespace">
+    <name>NameSpaceTest</name>
+    <filename>namespace_NameSpaceTest.html</filename>
+    <member kind="variable">
+      <name>foobazbar</name>
+      <anchor>a0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+</tagfile>

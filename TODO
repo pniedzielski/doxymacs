@@ -1,4 +1,4 @@
-$Id: TODO,v 1.12 2002/11/28 21:36:32 ryants Exp $
+$Id: TODO,v 1.13 2002/12/01 04:34:18 ryants Exp $
 
 lisp/doxymacs.el:
  - fix all FIXMEs (of course)
@@ -9,7 +9,6 @@ lisp/doxymacs.el:
      the Doxygen documentation for foo, ~/project/bar with the Doxygen 
      documentation for bar, etc.
    - similarly for doxymacs-doxygen-tags
-   - incorporate patches posted to SF
    - automatic testing (DejaGnu)
  - other stuff?
 

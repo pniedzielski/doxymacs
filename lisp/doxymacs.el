@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.15 2001/04/22 08:11:35 ryants Exp $
+;; $Id: doxymacs.el,v 1.16 2001/04/22 08:19:53 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -415,7 +415,9 @@ current point"
     (widen)
     (let ((start (point))
 	  (next-func (doxymacs-find-next-func)))
-      (insert (doxymacs-func-comment next-func))
+      (if (not (equal next-func nil))
+	  (insert (doxymacs-func-comment next-func))
+	(beep))
       (let ((end (point)))
 	(indent-region start end nil))))
   (if (equal doxymacs-doxygen-style "JavaDoc")

@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.48 2001/09/16 02:00:34 ryants Exp $
+;; $Id: doxymacs.el,v 1.49 2001/09/16 20:13:34 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -153,7 +153,7 @@
 (require 'w3-cus)
 (require 'tempo)
 
-(defconst doxymacs-version "1.2.0"
+(defconst doxymacs-version "1.2.1"
   "Doxymacs version number")
 
 (defun doxymacs-version ()

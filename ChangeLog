@@ -1,4 +1,8 @@
-$Id: ChangeLog,v 1.19 2001/06/21 02:00:12 ryants Exp $
+$Id: ChangeLog,v 1.20 2001/07/05 01:40:55 uid49028 Exp $
+
+2001-07-04 Ryan T. Sammartino <ryants at home dot com> (1.1.2)
+	* lisp/doxymacs.el: GNU Emacs doesn't support ?: in regexps, so
+	take them out.
 
 2001-06-20 Ryan T. Sammartino <ryants at home dot com> (1.1.1)
 	* lisp/doxymacs.el: fix bug #432837 missing @see keyword and fix

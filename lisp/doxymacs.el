@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at home dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.1.1
+;; Version: 1.1.2
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.41 2001/06/21 02:00:12 ryants Exp $
+;; $Id: doxymacs.el,v 1.42 2001/07/05 01:40:56 uid49028 Exp $
 
 ;; Commentary:
 ;;
@@ -71,6 +71,8 @@
 
 ;; Change log:
 ;;
+;; 04/07/2001 - GNU Emacs doesn't understand ?: in regexps, so take them out
+;;            - version 1.1.2
 ;; 20/06/2001 - fix bug #432837  missing @see keyword
 ;;            - fix bug #432836  Font lock for @ingroup not correct
 ;;            - version 1.1.1
@@ -816,8 +818,8 @@ current point"
       (if (string-match 
 	   (concat
 	    "\\([a-zA-Z0-9_]+\\)[ \t\n]*" ; arg name
-	    "\\(?:\\[[ \t\n]*[a-zA-Z0-9_]*[ \t\n]*\\]\\)*" ; opt. array bounds
-	    "\\(?:=[ \t\n]*.+[ \t\n]*\\)?" ; optional assignment
+	    "\\(\\[[ \t\n]*[a-zA-Z0-9_]*[ \t\n]*\\]\\)*" ; opt. array bounds
+	    "\\(=[ \t\n]*.+[ \t\n]*\\)?" ; optional assignment
 	    "[ \t\n]*$" ; end
 	    )
 	   (car args-list))
@@ -841,18 +843,18 @@ current point"
     (if (re-search-forward
 	 (concat 
 	  ;; return type
-	  "\\(\\(?:const[ \t\n]+\\)?[a-zA-Z0-9_]+[ \t\n*&]+\\)?"
+	  "\\(\\(const[ \t\n]+\\)?[a-zA-Z0-9_]+[ \t\n*&]+\\)?"
 
 	  ;; name
-	  "\\(\\(?:[a-zA-Z0-9_~:<,>*&]\\|\\(?:[ \t\n]+::[ \t\n]+\\)\\)+"
-	  "\\(?:o?perator[ \t\n]*.[^(]*\\)?\\)[ \t\n]*(" 
+	  "\\(\\([a-zA-Z0-9_~:<,>*&]\\|\\([ \t\n]+::[ \t\n]+\\)\\)+"
+	  "\\(o?perator[ \t\n]*.[^(]*\\)?\\)[ \t\n]*(" 
 
 	  ;; arg list
 	  "\\([^)]*\\))"
 	  ) nil t)
 
-	(let* ((func (buffer-substring (match-beginning 2) (match-end 2)))
-	       (args (buffer-substring (match-beginning 3) (match-end 3)))
+	(let* ((func (buffer-substring (match-beginning 3) (match-end 3)))
+	       (args (buffer-substring (match-beginning 7) (match-end 7)))
 	       (ret (cond
 		     ;; Return type specified
 		     ((match-beginning 1)

@@ -2,12 +2,13 @@
   <compound kind="file">
     <name>aclass.h</name>
     <path>/home/ryants/projects/doxymacs/example/src/</path>
-    <filename>aclass_h.html</filename>
+    <filename>aclass_8h.html</filename>
     <namespace>NameSpaceTest</namespace>
     <class kind="struct">baz</class>
     <class kind="struct">blah</class>
     <class kind="class">Foo</class>
     <member kind="define">
+      <type>#define</type>
       <name>SOME_OBSCURE_DEFINE</name>
       <anchor>a0</anchor>
       <arglist></arglist>
@@ -30,8 +31,9 @@
   </compound>
   <compound kind="struct">
     <name>baz</name>
-    <filename>struct_baz.html</filename>
+    <filename>structbaz.html</filename>
     <member kind="variable">
+      <type>int</type>
       <name>z</name>
       <anchor>m0</anchor>
       <arglist></arglist>
@@ -39,13 +41,15 @@
   </compound>
   <compound kind="struct">
     <name>blah</name>
-    <filename>struct_blah.html</filename>
+    <filename>structblah.html</filename>
     <member kind="variable">
+      <type>int</type>
       <name>x</name>
       <anchor>m0</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
+      <type>int</type>
       <name>y</name>
       <anchor>m1</anchor>
       <arglist></arglist>
@@ -53,7 +57,7 @@
   </compound>
   <compound kind="class">
     <name>Foo</name>
-    <filename>class_Foo.html</filename>
+    <filename>classFoo.html</filename>
     <member kind="enumeration">
       <name>blah_blah</name>
       <anchor>s2</anchor>
@@ -70,16 +74,19 @@
       <arglist></arglist>
     </member>
     <member kind="function">
+      <type></type>
       <name>Foo</name>
       <anchor>a0</anchor>
       <arglist>(int blah)</arglist>
     </member>
     <member kind="function">
+      <type></type>
       <name>GetBlah</name>
       <anchor>a1</anchor>
       <arglist>(void) const</arglist>
     </member>
     <member kind="variable" protection="protected">
+      <type>int</type>
       <name>_blah</name>
       <anchor>o0</anchor>
       <arglist></arglist>
@@ -87,8 +94,9 @@
   </compound>
   <compound kind="namespace">
     <name>NameSpaceTest</name>
-    <filename>namespace_NameSpaceTest.html</filename>
+    <filename>namespaceNameSpaceTest.html</filename>
     <member kind="variable">
+      <type>int</type>
       <name>foobazbar</name>
       <anchor>a0</anchor>
       <arglist></arglist>

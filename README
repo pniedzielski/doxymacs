@@ -1,7 +1,6 @@
 doxymacs
-Copyright (C) 2001 Ryan T. Sammartino
-http://members.shaw.ca/ryants/
-ryants at shaw dot ca
+Copyright (C) 2001-2005 Ryan T. Sammartino
+ryan.sammartino at gmail dot com
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -41,7 +40,6 @@ Feel free to contact me about any issues you may have, or to volunteer
 to help out.
 
 Ryan T. Sammartino
-http://members.shaw.ca/ryants/
-ryants at shaw dot ca
+ryan.sammartino at gmail dot com
 
-$Id: README,v 1.10 2002/04/02 06:34:34 ryants Exp $
+$Id: README,v 1.11 2005/04/01 06:32:03 ryants Exp $

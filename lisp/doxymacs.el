@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.7 2001/04/01 04:39:10 ryants Exp $
+;; $Id: doxymacs.el,v 1.8 2001/04/12 02:44:41 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -27,6 +27,8 @@
 ;;
 ;; ChangeLog
 ;;
+;; 11/04/2001 - added ability to insert blank doxygen comments with either
+;;              Qt or JavaDoc style.
 ;; 31/03/2001 - added ability to choose which symbol to look up if more than
 ;;              one match
 ;;            - slightly changed the format of the list that 
@@ -46,11 +48,11 @@
 ;;   using (XEmacs 21.1.14)
 ;; - other stuff?
 
+;; Front matter and variables
 
 (provide 'doxymacs)
 
 (require 'custom)
-(require 'w3)
 
 (defgroup doxymacs nil
   "Find documentation for symbol at point"
@@ -68,10 +70,18 @@
   :type 'string
   :group 'doxymacs)
 
+(defcustom doxymacs-doxygen-style
+  "JavaDoc"
+  "*The style of comments to insert into code"
+  :type '(radio (const :tag "JavaDoc" "JavaDoc") (const :tag "Qt" "Qt"))  
+  :group 'doxymacs)
+
 (defvar doxymacs-tags-buffer nil
   "The buffer with our doxytags")
 
-
+
+;;These functions have to do with looking stuff up in doxygen generated
+;;documentation
 
 ;;doxymacs-load-tag
 ;;This loads the tags file into the buffer *doxytags*.  
@@ -152,3 +162,41 @@
 	  (if (eq choice nil)
 	      (beep) ;; This might be annoying, but seems to be a standard
 	    (doxymacs-display-match choice)))))))
+
+
+;; These functions have to do with inserting doxygen commands in code
+
+(defun doxymacs-blank-multiline-comment ()
+  (if (equal doxymacs-doxygen-style "JavaDoc")
+      "/**\n * \n * \n */\n"
+    "//! \n/*!\n \n*/\n"))
+
+(defun doxymacs-insert-multiline-comment ()
+  "Inserts a mult-line blank doxygen comment at the current point"
+  (interactive "*")
+  (save-excursion 
+    (beginning-of-line)
+    (let ((start (point)))
+      (insert (doxymacs-blank-multiline-comment))
+      (let ((end (point)))
+	(indent-region start end nil))))
+  (if (equal doxymacs-doxygen-style "JavaDoc")
+      (end-of-line 2))
+  (end-of-line))
+
+(defun doxymacs-blank-singleline-comment ()
+  (if (equal doxymacs-doxygen-style "JavaDoc")
+      "/// "
+    "//! "))
+
+(defun doxymacs-insert-singleline-comment ()
+  "Inserts a single-line blank doxygen comment at current point"
+  (interactive "*")
+  (save-excursion
+   (beginning-of-line)
+   (let ((start (point)))
+     (insert (doxymacs-blank-singleline-comment))
+     (let ((end (point)))
+       (indent-region start end nil))))
+  (end-of-line))
+

@@ -1,4 +1,7 @@
-$Id: ChangeLog,v 1.3 2001/04/01 00:57:30 ryants Exp $
+$Id: ChangeLog,v 1.4 2001/04/12 02:44:39 ryants Exp $
+
+2001-04-11 Ryan T. Sammartino <ryants@home.com>
+	* lisp/doxymacs.el: insert blank doxygen comments
 
 2001-03-31 Ryan T. Sammartino <ryants@home.com>
 	* lisp/doxymacs.el: if symbol matches more than one entry in the tags,

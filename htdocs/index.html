@@ -50,6 +50,31 @@
       SourceForge</a> page.
     </p>
 
+    <h2>Requirements</h2>
+
+    Doxymacs depends on the following packages:
+
+    <ul>
+
+      <li>
+	<a href="http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html">W3</a>
+      </li>
+
+      <li>
+	<a href="http://www.lysator.liu.se/~davidk/elisp/">tempo</a>
+      </li>
+
+      <li>
+	version 2.3.4 or greater of <a
+	href="http://www.libxml.org/">libxml2</a>.
+      </li>
+    </ul>
+
+    </ul>
+
+    Make sure these are properly configured and installed before
+    proceeding.
+
     <h2>Installation</h2>
 
     <ul>
@@ -73,12 +98,21 @@ $ make install
 	(or something similar) when you do <code>make</code>,
 	then set the variable <code>EMACSLOADPATH</code>:
 	<pre>
-$ EMACSLOADPATH=/path/to/url:/usr/share/emacs/... make
+$ EMACSLOADPATH=... make
         </pre>
+        where <code>...</code> is a colon separated list of directories
+	to seach for packages.
+	<br /><br />
         To byte compile with XEmacs, set the variable <code>EMACS</code>:
         <pre>
 $ EMACS=xemacs make
         </pre>
+
+	For a complete list of configuration options:
+	<pre>
+$ ./configure --help
+        </pre>
+
       </li>
 
       <li>
@@ -98,9 +132,7 @@ $ EMACS=xemacs make
       <li>
 	To use the external XML parser, set
 	<code>doxymacs-use-external-xml-parser</code> to non-nil (can
-	be done via the customisation menu). You will need version
-	2.3.4 or greater of <a
-	href="http://www.libxml.org/">libxml2</a>.
+	be done via the customisation menu).
       </li>
 
       <li>
@@ -161,12 +193,12 @@ $ EMACS=xemacs make
 	  </li>
 
 	  <li>
-	    <code>C-c d m</code> will insert a blank multiline Doxygen
+	    <code>C-c d m</code> will insert a blank multi-line Doxygen
 	    comment.
 	  </li>
 
 	  <li>
-	    <code>C-c d s</code> will insert a blank singleline Doxygen
+	    <code>C-c d s</code> will insert a blank single-line Doxygen
 	    comment.
 	  </li>
 
@@ -192,29 +224,6 @@ $ EMACS=xemacs make
     please let the authors know.
 
     <p>
-
-      Doxymacs elisp depends on the following packages:
-
-    <ul>
-
-      <li>
-	<a href="http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html">W3</a>
-      </li>
-
-      <li>
-	<a href="http://www.lysator.liu.se/~davidk/elisp/">tempo</a>
-      </li>
-
-    </ul>
-
-    External doxymacs XML parser depends on:
-
-    <ul>
-      <li>
-	version 2.3.4 or greater of <a
-	href="http://www.libxml.org/">libxml2</a>.
-      </li>
-    </ul>
 
     <h2>Links</h2>
 
@@ -252,10 +261,10 @@ $ EMACS=xemacs make
     <address><a href="mailto:ryants@shaw.ca">Ryan T. Sammartino</a></address>
     <!-- Created: Sun Jan  5 18:21:52 PST 2003 -->
     <!-- hhmts start -->
-Last modified: Mon Jan  6 22:15:35 PST 2003
+Last modified: Mon Jan  6 22:54:19 PST 2003
 <!-- hhmts end -->
     <p>
-      <code>$Id: index.html,v 1.7 2003/01/07 06:16:52 ryants Exp $</code>
+      <code>$Id: index.html,v 1.8 2003/01/07 06:55:37 ryants Exp $</code>
     </p>
   </body>
 </html>

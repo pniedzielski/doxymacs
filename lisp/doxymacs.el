@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.13 2001/04/19 04:06:00 ryants Exp $
+;; $Id: doxymacs.el,v 1.14 2001/04/22 08:08:27 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -27,6 +27,7 @@
 ;;
 ;; ChangeLog
 ;;
+;; 22/04/2001 - Function documentation.
 ;; 18/04/2001 - Going with Kris' "new style" look up code.  It's excellent.
 ;;            - Incorprated Andreas Fuchs' patch for loading tags from a
 ;;              URL.
@@ -314,4 +315,111 @@ the completion or nil if canceled by the user."
 	(indent-region start end nil))))
   (end-of-line 6))
 
+
+(defun doxymacs-extract-args-list (args-string)
+  "Extracts the arguments from the given list (given as a string)"
+  (save-excursion
+    (if (equal args-string "")
+	nil
+      (doxymacs-extract-args-list-helper (split-string args-string ",")))))
+
+(defun doxymacs-extract-args-list-helper (args-list)
+  "Recursively get names of arguments"
+  (save-excursion
+    (if (eq args-list nil)
+	nil
+      (if (string-match 
+	   (concat
+	    "\\([a-zA-Z0-9_]+\\)\\s-*" ; arg name
+	    "\\(\\[\\s-*[a-zA-Z0-9_]*\\s-*\\]\\)*" ; optional array bounds
+	    "\\(=\\s-*.+\\s-*\\)?" ;optional assignment
+	    "\\s-*$" ; end
+	    )
+	   (car args-list))
+	  (cons
+	   (substring (car args-list) (match-beginning 1) (match-end 1))
+	   (doxymacs-extract-args-list-helper (cdr args-list)))
+	(cons
+	 (car args-list)
+	 (doxymacs-extract-args-list-helper (cdr args-list)))))))
+
+
+;; FIXME
+;; This gets confused by the following examples:
+;; - void qsort(int (*comp)(void *, void *), int left, int right);
+;; - int f(int (*daytab)[5], int x);
+;; - Anything that doesn't declare its return value
+;; NOTE
+;; - It doesn't really matter if the function name is incorrect... the 
+;;   important bits are the arguments and the return value... those need
+;;   to be correct for sure.
+(defun doxymacs-find-next-func ()
+  "Returns a list describing next function devlaration, or nil if not found"
+  (interactive)
+  (save-excursion    
+    (if (re-search-forward
+	 (concat 
+	  ;;I stole the following from func-menu.el
+	  "\\(\\(template\\s-+<[^>]+>\\s-+\\)?"   ; template formals
+	  "\\([a-zA-Z0-9_*&<,>:]+\\s-+\\)?"       ; type specs
+	  "\\([a-zA-Z0-9_*&<,>\"]+\\s-+\\)?"
+	  "\\([a-zA-Z0-9_*&<,>]+\\)\\s-+\\)"      ; return val
+	  "\\(\\([a-zA-Z0-9_&~:<,>*]\\|\\(\\s +::\\s +\\)\\)+\\)"
+	  "\\(o?perator\\s *.[^(]*\\)?\\(\\s-\\|\n\\)*(" ; name
+	  "\\([^)]*\\))" ; arg list
+	  ) nil t)
+	(list (cons 'func (buffer-substring (match-beginning 6)
+					    (match-end 6)))
+	      (save-match-data 
+		(cons 'args (doxymacs-extract-args-list
+			     (buffer-substring (match-beginning 11)
+					       (match-end 11)))))
+	      (cons 'return (buffer-substring (match-beginning 5)
+					      (match-end 5))))
+      nil)))
+
+(defun doxymacs-parm-comment (parms)
+  "Inserts doxygen documentation for the given parms"
+  (if (equal parms nil)
+      ""
+    (if (equal doxymacs-doxygen-style "JavaDoc")
+	(concat " * @param " (car parms) "\t\n"
+		(doxymacs-parm-comment (cdr parms)))
+      (concat "  \\param " (car parms) "\t\n"
+	      (doxymacs-parm-comment (cdr parms))))))
+
+(defun doxymacs-func-comment (func)
+  "Inserts doxygen documentation for the given func"
+  (if (equal doxymacs-doxygen-style "JavaDoc")
+      (concat "/**\n"
+	      " * \n"
+	      " * \n"
+	      (when (cdr (assoc 'args func))
+		(doxymacs-parm-comment (cdr (assoc 'args func))))
+	      (unless (equal (cdr (assoc 'return func)) "void")
+		" * @return \n")
+	      " */")
+    (concat "//! \n"
+	    "/*!\n"
+	    " \n"
+	    (when (cdr (assoc 'args func))
+	      (doxymacs-parm-comment (cdr (assoc 'args func))))
+	    (unless (equal (cdr (assoc 'return func)) "void")
+	      "  \\return \n")
+	    " */")))
+
+(defun doxymacs-insert-function-comment ()
+  "Inserts doxygen documentation for the next function declaration at 
+current point"
+  (interactive "*")
+  (save-excursion
+    (widen)
+    (let ((start (point))
+	  (next-func (doxymacs-find-next-func)))
+      (insert (doxymacs-func-comment next-func))
+      (let ((end (point)))
+	(indent-region start end nil))))
+  (if (equal doxymacs-doxygen-style "JavaDoc")
+      (end-of-line 2))
+  (end-of-line))
 

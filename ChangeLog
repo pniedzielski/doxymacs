@@ -1,5 +1,8 @@
-$Id: ChangeLog,v 1.7 2001/04/19 03:39:05 ryants Exp $
+$Id: ChangeLog,v 1.8 2001/04/22 08:08:27 ryants Exp $
 
+2001-04-22 Ryan T. Sammartino <ryants@home.com>
+	* lisp/doxymacs.el: Function documentation
+	
 2001-04-18 Ryan T. Sammartino <ryants@home.com>
 	* lisp/doxymacs.el: Going with Kris' "new style" look up
 	code. It's excellent, and exactly what I wanted.  Thanks Kris.  Also

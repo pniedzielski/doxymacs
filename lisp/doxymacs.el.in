@@ -2,7 +2,7 @@
 ;;; doxymacs.el --- ELisp package for making doxygen related stuff easier.
 ;;
 ;;
-;; Copyright (C) 2001 Ryan T. Sammartino
+;; Copyright (C) 2001, 2002, 2003 Ryan T. Sammartino
 ;;
 ;; Author: Ryan T. Sammartino <ryants at shaw dot ca>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
@@ -28,18 +28,21 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.1 2003/01/06 00:28:22 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.2 2003/01/06 00:45:30 ryants Exp $
 
 ;; Commentary:
 ;;
-;; - Put this file and xml-parse somewhere in your {X}Emacs load-path.
+;; - Use the configure script to configure this file:
+;;    $ ./configure
+;;    $ make
+;;    $ make install
+;;   Use ./configure --help for help on customising your configuration.
 ;; - Customise the variable doxymacs-doxygen-dirs.
 ;; - If your tags file is quite large (say, > 1 MB), consider setting
 ;;   doxymacs-use-external-xml-parser to t and be sure to set
 ;;   doxymacs-external-xml-parser-executable to the right value (the
 ;;   default should usually be fine).  A suitable program is
 ;;   distributed along with this file in the directory doxymacs/c/.
-;;   Edit the Makefile, then type "make", followed by "make install".
 ;;   With an 11 MB XML tag file, the internal process takes 20 minutes
 ;;   on a PIII 800 with 1 GB of RAM, whereas the external process takes 12
 ;;   seconds.
@@ -86,6 +89,8 @@
 
 ;; Change log:
 ;;
+;; 05/01/2003 - autoconf-ise.
+;;            - version 1.4.0
 ;; 09/12/2002 - turn off buffer modified flag for doxytags to avoid
 ;;              prompting user for killing a modified buffer.
 ;; 08/12/2002 - move to association lists to support multiple Doxygen

@@ -1,26 +1,33 @@
-$Id: INSTALL,v 1.12 2002/12/09 02:12:27 ryants Exp $
+$Id: INSTALL,v 1.13 2003/01/06 00:45:30 ryants Exp $
 
-- Put lisp/doxymacs.el and lisp/xml-parse.el somewhere in your {X}Emacs 
-  load-path.
+- Use the configure script to configure this file:
+   $ ./configure
+   $ make
+   $ make install
+  Use ./configure --help for help on customising your configuration.
+
 - Customise the variable doxymacs-doxygen-dirs.
   Doxymacs customisation can be done from the Options | Customize menu,
   under Emacs | Programming | Tools | Doxymacs.
+
 - If your tags file is quite large (say, > 1 MB), consider setting
   doxymacs-use-external-xml-parser to t and be sure to set
   doxymacs-external-xml-parser-executable to the right value (the
   default should usually be fine).  A suitable program is
   distributed along with this file in the directory doxymacs/c/.
-  Edit the Makefile, then type "make", followed by "make install".
   With an 11 MB XML tag file, the internal process takes 20 minutes
   on a PIII 800 with 1 GB of RAM, whereas the external process takes 12
   seconds.
+
 - Put (require 'doxymacs) in your .emacs
+
 - Invoke doxymacs-mode with M-x doxymacs-mode. To have doxymacs-mode invoked
   automatically when in C/C++ mode, put 
 
   (add-hook 'c-mode-common-hook 'doxymacs-mode) 
 
   in your .emacs.
+
 - If you want Doxygen keywords fontified use M-x doxymacs-font-lock.
   To do it automatically, add the following to your .emacs:
 
@@ -30,6 +37,7 @@ $Id: INSTALL,v 1.12 2002/12/09 02:12:27 ryants Exp $
   (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 
   This will add the Doxygen keywords to c-mode and c++-mode only.
+
 - Default key bindings are:
   - C-c d ? will look up documentation for the symbol under the point.
   - C-c d r will rescan your Doxygen tags file.

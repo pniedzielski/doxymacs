@@ -1,11 +1,8 @@
-$Id: TODO,v 1.14 2002/12/09 02:12:27 ryants Exp $
+$Id: TODO,v 1.15 2003/01/06 00:45:30 ryants Exp $
 
-lisp/doxymacs.el:
+lisp/doxymacs.el.in:
  - fix all FIXMEs (of course)
- - For a 1.4.0 release:
-   - more testing of new assoc list stuff.
-   - proper autoconf support.
-   - automatic testing (DejaGnu).
+ - automatic testing (DejaGnu).
  - other stuff?
 
 README:

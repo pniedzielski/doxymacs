@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.16 2001/04/22 08:19:53 ryants Exp $
+;; $Id: doxymacs.el,v 1.17 2001/04/22 19:36:15 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -393,16 +393,14 @@ the completion or nil if canceled by the user."
       (concat "/**\n"
 	      " * \n"
 	      " * \n"
-	      (when (cdr (assoc 'args func))
-		(doxymacs-parm-comment (cdr (assoc 'args func))))
+	      (doxymacs-parm-comment (cdr (assoc 'args func)))
 	      (unless (equal (cdr (assoc 'return func)) "void")
 		" * @return \n")
 	      " */")
     (concat "//! \n"
 	    "/*!\n"
 	    " \n"
-	    (when (cdr (assoc 'args func))
-	      (doxymacs-parm-comment (cdr (assoc 'args func))))
+	    (doxymacs-parm-comment (cdr (assoc 'args func)))
 	    (unless (equal (cdr (assoc 'return func)) "void")
 	      "  \\return \n")
 	    " */")))

@@ -26,12 +26,12 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.57 2002/12/01 04:25:53 ryants Exp $
+;; $Id: doxymacs.el,v 1.58 2002/12/09 02:12:27 ryants Exp $
 
 ;; Commentary:
 ;;
 ;; - Put this file and xml-parse somewhere in your {X}Emacs load-path.
-;; - Customise the variables doxymacs-doxygen-root and doxymacs-doxygen-tags.
+;; - Customise the variable doxymacs-doxygen-dirs.
 ;; - If your tags file is quite large (say, > 1 MB), consider setting
 ;;   doxymacs-use-external-xml-parser to t and be sure to set
 ;;   doxymacs-external-xml-parser-executable to the right value (the
@@ -68,8 +68,8 @@
 ;;   - C-c d @ will insert grouping comments around the current region.
 ;;
 ;; Doxymacs has been tested on and works with:
-;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1
-;; - XEmacs 21.1 (patch 14), 21.4 (patch 4, 5, 6)
+;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.2.92.1
+;; - XEmacs 21.1 (patch 14), 21.4 (patches 4-10)
 ;;
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
@@ -84,6 +84,8 @@
 
 ;; Change log:
 ;;
+;; 08/12/2002 - move to association lists to support multiple Doxygen
+;;              generates.
 ;; 30/11/2002 - apply patch 636146:
 ;;              - several FIXMEs fixed
 ;;              - user-defined "void" types
@@ -178,7 +180,7 @@
 (require 'w3-cus)
 (require 'tempo)
 
-(defconst doxymacs-version "1.3.2"
+(defconst doxymacs-version "1.3.2-cvs"
   "Doxymacs version number")
 
 (defun doxymacs-version ()
@@ -191,21 +193,35 @@
   "Find documentation created by Doxygen, and create Doxygen comments."
   :group 'tools)
 
-(defcustom doxymacs-doxygen-root
-  ""
-  "*Root of Doxygen generated documentation (URL)."
-  :type 'string
-  :group 'doxymacs)
+(defcustom doxymacs-doxygen-dirs
+  nil
+  "List associating pathnames with Doxygen documentation.
+Each item on the list is a list of the form (DIR-REGEXP XML URL)
+where:
 
-(defcustom doxymacs-doxygen-tags
-  ""
-  "*File name or URL that contains Doxygen generated XML tags."
-  :type 'string
+ DIR-REGEXP is a regular expression that matches a directory;
+ XML is the file name or URL of the corresponding Doxygen XML tags; and
+ URL is the URL of the Doxygen documentation that matches that directory.
+
+For example, if all the files in /home/me/project/foo have their documentation
+at http://someplace.com/doc/foo/ and the XML tags file is at
+http://someplace.com/doc/foo/foo.xml, and all the files in
+/home/me/project/bar have their documentation at
+file:///home/me/project/bar/doc/ and the XML tags file is at
+/home/me/project/bar/doc/bar.xml, then you would set this list to
+
+    '((\"^/home/me/project/foo/\"
+       \"http://someplace.com/doc/foo/foo.xml\"
+       \"http://someplace.com/doc/foo/\")
+      (\"^/home/me/project/bar/\"
+       \"~/project/bar/doc/bar.xml\"
+       \"file:///home/me/project/bar/doc/\"))"
+  :type 'list
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-style
   "JavaDoc"
-  "*The style of comments to insert into code.
+  "The style of comments to insert into code.
 See http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks for examples
 of the two styles.
 
@@ -234,7 +250,7 @@ Set to non-nil to use the external XML parser."
 
 (defcustom doxymacs-blank-multiline-comment-template
   nil
-  "*A tempo template to insert for `doxymacs-insert-blank-multiline-comment'.
+  "A tempo template to insert for `doxymacs-insert-blank-multiline-comment'.
 If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
@@ -244,7 +260,7 @@ For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
 
 (defcustom doxymacs-blank-singleline-comment-template
   nil
-  "*A tempo template to insert for `doxymacs-insert-blank-singleline-comment'.
+  "A tempo template to insert for `doxymacs-insert-blank-singleline-comment'.
 If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
@@ -254,7 +270,7 @@ For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
 
 (defcustom doxymacs-file-comment-template
   nil
-  "*A tempo template to insert for `doxymacs-insert-file-comment'.
+  "A tempo template to insert for `doxymacs-insert-file-comment'.
 If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
@@ -264,7 +280,7 @@ For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
 
 (defcustom doxymacs-function-comment-template
   nil
-  "*A tempo template to insert for `doxymacs-insert-function-comment'.
+  "A tempo template to insert for `doxymacs-insert-function-comment'.
 If nil, then a default template based on the current style as
 indicated by `doxymacs-doxygen-style' will be used.  Note that the
 function `doxymacs-find-next-func' is available to you... it returns
@@ -284,14 +300,14 @@ For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
 
 (defcustom doxymacs-void-types
   "void"
-  "*String with void-kind variable types.  Extend this string if there
+  "String with void-kind variable types.  Extend this string if there
 are typedefs of void.  Example: \"void tVOID\"."
   :type 'string
   :group 'doxymacs)
 
 (defcustom doxymacs-member-comment-start
   nil
-  "*String to insert to start a new member comment.
+  "String to insert to start a new member comment.
 If nil, use a default one based on the current style as indicated by
 `doxymacs-doxygen-style'."
   :type '(choice (const :tag "None" nil)
@@ -300,7 +316,7 @@ If nil, use a default one based on the current style as indicated by
 
 (defcustom doxymacs-member-comment-end
   nil
-  "*String to insert to end a new member comment.
+  "String to insert to end a new member comment.
 If nil, use a default one based on the current style as indicated by
 `doxymacs-doxygen-style'.
 
@@ -311,7 +327,7 @@ Should be an empty string if comments are terminated by end-of-line."
 
 (defcustom doxymacs-group-begin-comment-template
   nil
-  "*A tempo template to begin `doxymacs-insert-grouping-comments'.
+  "A tempo template to begin `doxymacs-insert-grouping-comments'.
 If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
@@ -321,7 +337,7 @@ For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
 
 (defcustom doxymacs-group-end-comment-template
   nil
-  "*A tempo template to end `doxymacs-insert-grouping-comments'.
+  "A tempo template to end `doxymacs-insert-grouping-comments'.
 If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
@@ -329,16 +345,34 @@ For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
   :group 'doxymacs)
 
-(defvar doxymacs-tags-buffer nil
-  "The buffer with our doxytags.")
+;; End of customisable variables
+
+(defvar doxymacs-tags-buffers nil
+  "The buffers with our Doxygen tags; a list of the form
+'((DIR . BUFFER) (...)) where:
+
+ DIR is one of the directories from `doxymacs-doxygen-dirs'; and
+ BUFFER is the buffer holding the Doxygen tags for that DIR.")
 
 ;; The structure of this list has been chosen for ease of use in the
-;; completion functions.  The structure is as follows:
-;; ( (symbol-1 . ((description-1a . url-1a) (description-1b . url-1b)))
-;;   (symbol-2 . ((description-2a . url-2a)))
-;;   ... )
-(defvar doxymacs-completion-list nil
-  "The list with doxytags completions.")
+;; completion functions.
+(defvar doxymacs-completion-lists nil
+  "The lists with doxytags completions.
+The structure is as follows:
+
+ ( (dir1 . (symbol-1 . ((description-1a . url-1a) (description-1b . url-1b)))
+           (symbol-2 . ((description-2a . url-2a))))
+   ... )
+
+where
+
+  dir1 is one of the directories from `doxymacs-doxygen-dirs';
+  symbol-1 is one of the symbols in the associated Doxygen XML file;
+  description-1a is one of symbol-1's description from the XML file; and
+  url-1a is the associated URL.")
+
+(defvar doxymacs-current-completion-list nil
+  "The current list we are building")
 
 (defvar doxymacs-completion-buffer "*Completions*"
   "The buffer used for displaying multiple completions.")
@@ -362,7 +396,7 @@ To see what version of doxymacs you are running, enter
 `\\[doxymacs-version]'.
 
 In order for `doxymacs-lookup' to work you will need to customise the
-variables `doxymacs-doxygen-root' and `doxymacs-doxygen-tags'.
+variable `doxymacs-doxygen-dirs'.
 
 Key bindings:
 \\{doxymacs-mode-map}"
@@ -501,33 +535,117 @@ Key bindings:
 ;;These functions have to do with looking stuff up in doxygen generated
 ;;documentation
 
-(defun doxymacs-load-tags ()
+
+;; Utility functions to look up filenames in the various association lists
+;; we have
+
+(defun doxymacs-filename-to-element (f a)
+  "Lookup filename in one of our association lists and return associated
+element"
+  (catch 'done
+    (while a
+      (if (string-match (caar a) f)
+	  (throw 'done
+		 (cdar a))
+	(setq a (cdr a))))))
+
+(defun doxymacs-filename-to-xml (f)
+  "Lookup filename in `doxymacs-doxygen-dirs' and return associated XML tags
+file."
+  (let ((xml-url (doxymacs-filename-to-element f doxymacs-doxygen-dirs)))
+    (if xml-url
+	(car xml-url))))
+
+(defun doxymacs-filename-to-url (f)
+  "Lookup filename in `doxymacs-doxygen-dirs' and return associated Doxygen
+documentation URL root."
+  (let ((xml-url (doxymacs-filename-to-element f doxymacs-doxygen-dirs)))
+    (if xml-url
+	(cadr xml-url))))
+
+(defun doxymacs-filename-to-buffer (f)
+  "Lookup filename in `doxymacs-tags-buffers' and return associated buffer."
+  (doxymacs-filename-to-element f doxymacs-tags-buffers))
+
+(defun doxymacs-filename-to-completion-list (f)
+  "Lookup filename in `doxymacs-completion-lists' and return associated
+completion list."
+  (doxymacs-filename-to-element f doxymacs-completion-lists))
+
+(defun doxymacs-filename-to-dir (f)
+  "Lookup filename in `doxymacs-doxygen-dirs' and return associated dir."
+  (catch 'done
+    (let ((dirs doxymacs-doxygen-dirs))
+      (while dirs
+	(if (string-match (caar dirs) f)
+	    (throw 'done
+		   (caar dirs))
+	  (setq dirs (cdr dirs)))))))
+
+(defun doxymacs-set-dir-element (dir l e)
+  "Set the element associated with dir in l to e."
+  (catch 'done
+    (while l
+      (let ((pair (car l)))
+	(if (string= (car pair) dir)
+	    (throw 'done
+		   (setcdr pair e))
+	  (setq l (cdr l)))))))
+
+(defun doxymacs-set-tags-buffer (dir buffer)
+  "Set the buffer associated with dir in `doxymacs-tags-buffers' to the given
+buffer."
+  (doxymacs-set-dir-element dir doxymacs-tags-buffers buffer))
+
+(defun doxymacs-set-completion-list (dir comp-list)
+  "Set the completion list associated with dir in `doxymcas-completion-lists'
+to comp-list."
+  (doxymacs-set-dir-element dir doxymacs-completion-lists comp-list))
+
+(defun doxymacs-load-tags (f)
   "Loads a Doxygen generated XML tags file into the buffer *doxytags*."
-  (if (or (eq doxymacs-tags-buffer nil)
-	  (eq (buffer-live-p doxymacs-tags-buffer) nil))
-      (progn
-	(setq doxymacs-tags-buffer (generate-new-buffer "*doxytags*"))
-	(message (concat "Loading " doxymacs-doxygen-tags "..."))
-	(let ((currbuff (current-buffer)))
-	  (if (file-regular-p doxymacs-doxygen-tags)
-	      ;;It's a regular file, so just grab it.
-	      (progn
-		(set-buffer doxymacs-tags-buffer)
-		(insert-file-contents doxymacs-doxygen-tags))
-	    ;; Otherwise, try and grab it as a URL
-	    (progn
-	      (if (url-file-exists doxymacs-doxygen-tags)
+  (let* ((tags-buffer (doxymacs-filename-to-buffer f))
+	 (dir (doxymacs-filename-to-dir f))
+	 (xml (doxymacs-filename-to-xml f)))
+    (if (and xml dir)
+	(if (or (eq tags-buffer nil)
+		(eq (buffer-live-p tags-buffer) nil))
+	    (let ((new-buffer (generate-new-buffer "*doxytags")))
+	      (if tags-buffer
+		  ;; tags-buffer is non-nil, which means someone
+		  ;; killed the buffer... so reset it
+		  (doxymacs-set-tags-buffer dir new-buffer)
+		;; Otherwise add to list
+		(setq doxymacs-tags-buffers
+		      (cons (cons dir new-buffer) doxymacs-tags-buffers)))
+	      (message (concat "Loading " xml "..."))
+	      (let ((currbuff (current-buffer)))
+		(if (file-regular-p xml)
+		    ;;It's a regular file, so just grab it.
+		    (progn
+		      (set-buffer new-buffer)
+		      (insert-file-contents xml))
+		  ;; Otherwise, try and grab it as a URL
 		  (progn
-		    (set-buffer doxymacs-tags-buffer)
-		    (url-insert-file-contents doxymacs-doxygen-tags)
-		    (set-buffer-modified-p nil))
-		(error (concat
-			"Tag file " doxymacs-doxygen-tags " not found.")))))
-	  (set-buffer currbuff)))))
+		    (if (url-file-exists xml)
+			(progn
+			  (set-buffer new-buffer)
+			  (url-insert-file-contents xml)
+			  (set-buffer-modified-p nil))
+		      (progn
+			(kill-buffer new-buffer)
+			(set-buffer currbuff)
+			(error (concat
+				  "Tag file " xml " not found."))))))
+		  (set-buffer currbuff))))
+      ;; Couldn't find this file in doxymacs-doxygen-dirs
+      (error (concat "File " (buffer-file-name)
+		     " does not match any directories in"
+		     " doxymacs-doxygen-dirs.")))))
 
 (defun doxymacs-add-to-completion-list (symbol desc url)
   "Add a symbol to our completion list, along with its description and URL."
-  (let ((check (assoc symbol doxymacs-completion-list)))
+  (let ((check (assoc symbol doxymacs-current-completion-list)))
     (if check
 	;; There is already a symbol with the same name in the list
 	(if (not (assoc desc (cdr check)))
@@ -536,19 +654,21 @@ Key bindings:
 	    (setcdr check (cons (cons desc url)
 				(cdr check))))
       ;; There is not yet a symbol with this name in the list
-      (setq doxymacs-completion-list
+      (setq doxymacs-current-completion-list
 	    (cons (cons symbol (list (cons desc url)))
-		  doxymacs-completion-list)))))
+		  doxymacs-current-completion-list)))))
 
-(defun doxymacs-fill-completion-list-with-external-parser ()
+(defun doxymacs-fill-completion-list-with-external-parser (f)
   "Use external parser to parse Doxygen XML tags file and get the
 completion list."
-  (doxymacs-load-tags)
-  (let ((currbuff
-	 (current-buffer)))
-    (set-buffer doxymacs-tags-buffer)
+  (doxymacs-load-tags f)
+  (let ((currbuff (current-buffer))
+	(dir (doxymacs-filename-to-dir f))
+	(comp-list (doxymacs-filename-to-completion-list f))
+	(tags-buffer (doxymacs-filename-to-buffer f)))
+    (set-buffer tags-buffer)
     (goto-char (point-min))
-    (setq doxymacs-completion-list nil)
+    (doxymacs-set-completion-list dir nil)
     (message (concat
 	      "Executing external process "
 	      doxymacs-external-xml-parser-executable
@@ -561,36 +681,44 @@ completion list."
 	  (progn
 	    (goto-char (point-min))
 	    (message "Reading completion list...")
-	    (setq doxymacs-completion-list (read (current-buffer)))
+	    (let ((new-list (read (current-buffer))))
+	      (if comp-list
+		  ;; Replace
+		  (doxymacs-set-completion-list dir new-list)
+		;; Add
+		(setq doxymacs-completion-lists
+		      (cons (cons dir new-list)
+			    doxymacs-completion-lists))))
 	    (message "Done.")
-	    (kill-buffer doxymacs-tags-buffer)
+	    (kill-buffer tags-buffer)
 	    (set-buffer currbuff))
 	(progn
-	  (switch-to-buffer doxymacs-tags-buffer)
+	  (switch-to-buffer tags-buffer)
 	  (message (concat
 		    "There were problems parsing "
-		    doxymacs-doxygen-tags ".")))))))
+		    (doxymacs-filename-to-xml f) ".")))))))
 
 
 (defun doxymacs-xml-progress-callback (amount-done)
   "Let the user know how far along the XML parsing is."
-  (message (concat "Parsing " doxymacs-doxygen-tags "... "
-		   (format "%0.1f" amount-done) "%%")))
+  (message (concat "Parsing ... " (format "%0.1f" amount-done) "%%")))
 
-(defun doxymacs-fill-completion-list-with-internal-parser ()
+(defun doxymacs-fill-completion-list-with-internal-parser (f)
   "Load and parse the tags from the *doxytags* buffer, constructing our
 `doxymacs-completion-list' from it using the internal XML file parser."
-  (doxymacs-load-tags)
-  (let ((currbuff (current-buffer)))
-    (set-buffer doxymacs-tags-buffer)
+  (doxymacs-load-tags f)
+  (let ((currbuff (current-buffer))
+	(dir (doxymacs-filename-to-dir f))
+	(tags-buffer (doxymacs-filename-to-buffer f)))
+    (set-buffer tags-buffer)
     (goto-char (point-min))
-    (setq doxymacs-completion-list nil)
+    (setq doxymacs-current-completion-list nil)
     (let ((xml (read-xml 'doxymacs-xml-progress-callback))) ;Parse the file
       (let* ((compound-list (xml-tag-children xml))
 	     (num-compounds (length compound-list))
 	     (curr-compound-num 0))
 	(if (not (string= (xml-tag-name xml) "tagfile"))
-	    (error (concat "Invalid tag file: " doxymacs-doxygen-tags))
+	    (error (concat "Invalid tag file: " (doxymacs-filename-to-xml f)))
 	  ;; Go through the compounds, adding them and their members to the
 	  ;; completion list.
 	  (while compound-list
@@ -600,7 +728,7 @@ completion list."
 		   (compound-url (cadr
 				  (xml-tag-child curr-compound "filename")))
 		   (compound-desc (concat compound-kind " " compound-name)))
-	      ;; Add this compound to our completion list
+	      ;; Add this compound to our completion list for this directory
 	      (doxymacs-add-to-completion-list compound-name
 					       compound-desc
 					       compound-url)
@@ -619,9 +747,17 @@ completion list."
 			"%%"))
 	      (setq curr-compound-num (1+ curr-compound-num))
 	      (setq compound-list (cdr compound-list)))))))
-    ;; Don't need the doxytags buffer anymore
+    (if (doxymacs-filename-to-completion-list f)
+	;; Replace
+	(doxymacs-set-completion-list dir doxymacs-current-completion-list)
+      ;; Add
+      (setq doxymacs-completion-lists
+	    (cons (cons dir doxymacs-current-completion-list)
+		  doxymacs-completion-lists)))
+    (setq doxymacs-current-completion-list nil)
     (message "Done.")
-    (kill-buffer doxymacs-tags-buffer)
+    ;; Don't need the doxytags buffer anymore
+    (kill-buffer tags-buffer)
     (set-buffer currbuff)))
 
 (defun doxymacs-add-compound-members (compound compound-name compound-url)
@@ -645,9 +781,9 @@ completion list."
 					       member-url)))
 	(setq children (cdr children))))))
 
-(defun doxymacs-display-url (url)
+(defun doxymacs-display-url (root url)
   "Displays the given match."
-  (browse-url (concat doxymacs-doxygen-root "/" url)))
+  (browse-url (concat root "/" url)))
 
 ;; GNU Emacs doesn't have symbol-near-point apparently
 ;; stolen from browse-cltl2.el, and in turn:
@@ -673,22 +809,31 @@ completion list."
 					     (point)))))
 	  nil))))
 
-(defun doxymacs-lookup (symbol)
+(defun doxymacs-lookup (symbol &optional filename)
   "Look up the symbol under the cursor in Doxygen generated documentation."
   (interactive
-   (save-excursion
-     (if (eq doxymacs-completion-list nil)
-	 ;;Build our completion list if not already done
-	 (if doxymacs-use-external-xml-parser
-	     (doxymacs-fill-completion-list-with-external-parser)
-	   (doxymacs-fill-completion-list-with-internal-parser)))
-     (let ((symbol (completing-read
-		    "Look up: "
-		    doxymacs-completion-list nil nil (symbol-near-point))))
-	 (list symbol))))
-  (let ((url (doxymacs-symbol-completion symbol doxymacs-completion-list)))
+   (let* ((f (buffer-file-name))
+	  (completion-list (doxymacs-filename-to-completion-list f)))
+     (if (eq f nil)
+	 (error "Current buffer has no file name associated with it.")
+       (progn
+	 (save-excursion
+	   (if (eq completion-list nil)
+	       ;;Build our completion list if not already done
+	       (if doxymacs-use-external-xml-parser
+		   (doxymacs-fill-completion-list-with-external-parser f)
+		 (doxymacs-fill-completion-list-with-internal-parser f)))
+	   (let ((symbol (completing-read
+			  "Look up: "
+			  completion-list nil nil
+			  (symbol-near-point)))
+		 (filename f))
+	     (list symbol filename)))))))
+  (let ((url (doxymacs-symbol-completion
+	      symbol
+	      (doxymacs-filename-to-completion-list filename))))
     (if url
-        (doxymacs-display-url url))))
+	(doxymacs-display-url (doxymacs-filename-to-url filename) url))))
 
 (defun doxymacs-display-completions (initial collection &optional pred)
   "Display available completions."
@@ -750,11 +895,13 @@ the completion or nil if canceled by the user."
 (defun doxymacs-rescan-tags ()
   "Rescan the Doxygen XML tags file in `doxymacs-doxygen-tags'."
   (interactive)
-  (if (buffer-live-p doxymacs-tags-buffer)
-      (kill-buffer doxymacs-tags-buffer))
-  (if doxymacs-use-external-xml-parser
-      (doxymacs-fill-completion-list-with-external-parser)
-    (doxymacs-fill-completion-list-with-internal-parser)))
+  (let* ((f (buffer-file-name))
+	 (tags-buffer (doxymacs-filename-to-buffer f)))
+    (if (buffer-live-p tags-buffer)
+	(kill-buffer tags-buffer))
+    (if doxymacs-use-external-xml-parser
+	(doxymacs-fill-completion-list-with-external-parser f)
+      (doxymacs-fill-completion-list-with-internal-parser f))))
 
 
 ;; These functions have to do with inserting doxygen commands in code

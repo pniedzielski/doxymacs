@@ -1,15 +1,11 @@
-$Id: TODO,v 1.13 2002/12/01 04:34:18 ryants Exp $
+$Id: TODO,v 1.14 2002/12/09 02:12:27 ryants Exp $
 
 lisp/doxymacs.el:
  - fix all FIXMEs (of course)
  - For a 1.4.0 release:
-   - turn doxymacs-doxygen-root into an assoc list so you can associate
-     path regexps with Doxygen documentation.  For example, you can
-     associate buffers that are editting files under ~/project/foo with
-     the Doxygen documentation for foo, ~/project/bar with the Doxygen 
-     documentation for bar, etc.
-   - similarly for doxymacs-doxygen-tags
-   - automatic testing (DejaGnu)
+   - more testing of new assoc list stuff.
+   - proper autoconf support.
+   - automatic testing (DejaGnu).
  - other stuff?
 
 README:

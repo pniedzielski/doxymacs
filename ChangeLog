@@ -1,4 +1,10 @@
-$Id: ChangeLog,v 1.33 2002/12/01 04:34:18 ryants Exp $
+$Id: ChangeLog,v 1.34 2002/12/09 02:12:26 ryants Exp $
+
+2002-12-08 Ryan T. Sammartino <ryants at shaw dot ca>
+	* lisp/doxymacs.el: move to association lists to support multiple
+	Doxygen generates.
+	* INSTALL: update instructions.
+	* TODO: update.
 
 2002-11-30 Georg Drenkhahn <georg-d at users dot sourceforge dot net>
 	* lisp/doxymacs.el: several FIXMEs fixed, user-defined "void" types

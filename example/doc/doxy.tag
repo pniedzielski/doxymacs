@@ -3,7 +3,7 @@
   <compound kind="file">
     <name>aclass.h</name>
     <path>/home/ryants/projects/doxymacs/example/src/</path>
-    <filename>aclass_8h.html</filename>
+    <filename>aclass_8h</filename>
     <namespace>NameSpaceTest</namespace>
     <class kind="struct">baz</class>
     <class kind="struct">blah</class>

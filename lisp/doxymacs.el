@@ -6,7 +6,7 @@
 ;;      Kris Verbeeck <kris.verbeeck@advalvas.be>
 ;; Contributor: Andreas Fuchs
 ;; Created: 24/03/2001
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -27,7 +27,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.29 2001/05/12 22:36:13 ryants Exp $
+;; $Id: doxymacs.el,v 1.30 2001/05/12 22:44:20 ryants Exp $
 
 ;; Commentary:
 ;;

@@ -1,9 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
+dnl $Id: configure.ac,v 1.3 2003/01/06 00:51:36 ryants Exp $
 AC_INIT(doxymacs, 1.4.0, http://sourceforge.net/projects/doxymacs)
 
 AC_PREREQ(2.57)
 
-AC_REVISION($Revision: 1.2 $)
+AC_REVISION($Revision: 1.3 $)
 
 AC_CONFIG_SRCDIR(c/doxymacs_parser.c)
 
@@ -47,6 +48,8 @@ dnl embedded variables.
 AC_CONFIG_COMMANDS_PRE([abs_bindir=${bindir} ; while echo ${abs_bindir} | grep '${[[A-Za-z0-9_]]\+}' > /dev/null ; do abs_bindir=`eval echo ${abs_bindir}` ; done ; DOXYMACS_PARSER=${abs_bindir}/doxymacs_parser${EXEEXT}])
 
 AC_SUBST(DOXYMACS_PARSER)
+
+AC_ARG_VAR(EMACS, [How to invoke emacs (e.g. EMACS=xemacs to use XEmacs)])
 
 AC_CONFIG_FILES([Makefile c/Makefile lisp/Makefile lisp/doxymacs.el])
 

@@ -1,6 +1,6 @@
 ;;; xml-parse --- code to efficiently read/write XML data with Elisp
 ;;;
-;;; $Id: xml-parse.el,v 1.2 2001/05/01 02:40:19 ryants Exp $
+;;; $Id: xml-parse.el,v 1.3 2001/05/09 07:26:30 ryants Exp $
 
 ;; Copyright (C) 2001 John Wiegley.
 
@@ -122,11 +122,11 @@
 ;; `assoc', since they roughly have the same format as an alist.
 
 ;;;###autoload
-(defun read-xml ()
+(defun read-xml (&optional progress-callback)
   "Parse XML data at point into a Lisp structure.
 See `insert-xml' for a description of the format of this structure.
 Point is left at the end of the XML structure read."
-  (cdr (xml-parse-read)))
+  (cdr (xml-parse-read progress-callback)))
 
 (defsubst xml-tag-with-attributes-p (tag)
   "Does the TAG have attributes or not?"
@@ -315,8 +315,10 @@ Note that this only works if the opening tag starts at column 0."
 		   (buffer-substring-no-properties beg end) lst)))
     lst))
 
-(defun xml-parse-read (&optional inner-p)
+(defun xml-parse-read (&optional progress-callback)
   (let ((beg (search-forward "<" nil t)) after)
+    (funcall progress-callback 
+	     (* (/ (float (point)) (float (point-max))) 100))
     (while (and beg (memq (setq after (char-after)) '(?! ??)))
       (xml-parse-skip-tag)
       (setq beg (search-forward "<" nil t)))
@@ -360,7 +362,7 @@ Note that this only works if the opening tag starts at column 0."
 		 (list tag)
 	       (setq tag (list tag))
 	       (let ((data-beg (point)) (tag-end (last tag)))
-		 (while (and (setq data (xml-parse-read t))
+		 (while (and (setq data (xml-parse-read progress-callback))
 			     (not (stringp (cdr data))))
 		   (setq tag-end (xml-parse-concat data-beg (car data)
 						   tag-end)

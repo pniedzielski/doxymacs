@@ -339,4 +339,4 @@ consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Library General
 Public License instead of this License.
 
-$Id: LICENSE,v 1.1 2001/03/25 00:33:24 ryants Exp $
+$Id: COPYING,v 1.1 2001/03/25 00:41:47 ryants Exp $

@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.9 2001/08/26 23:38:50 ryants Exp $
+$Id: INSTALL,v 1.10 2001/11/04 22:50:29 ryants Exp $
 
 - Put lisp/doxymacs.el and lisp/xml-parse.el somewhere in your {X}Emacs 
   load-path.
@@ -38,6 +38,7 @@ $Id: INSTALL,v 1.9 2001/08/26 23:38:50 ryants Exp $
   - C-c d ; will insert a Doxygen comment for the current member.
   - C-c d m will insert a blank multiline Doxygen comment.
   - C-c d s will insert a blank singleline Doxygen comment.
+  - C-c d @ will insert grouping comments around the current region.
 
 Doxymacs depends on the following packages:
 

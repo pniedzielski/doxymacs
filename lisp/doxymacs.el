@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at shaw dot ca>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.2.1
+;; Version: 1.3.0
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.51 2001/11/02 05:40:15 ryants Exp $
+;; $Id: doxymacs.el,v 1.52 2001/11/04 22:50:29 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -65,6 +65,7 @@
 ;;   - C-c d ; will insert a Doxygen comment for the current member.
 ;;   - C-c d m will insert a blank multiline Doxygen comment.
 ;;   - C-c d s will insert a blank singleline Doxygen comment.
+;;   - C-c d @ will insert grouping comments around the current region.
 ;;
 ;; Doxymacs has been tested on and works with:
 ;; - GNU Emacs 20.7.1
@@ -76,6 +77,9 @@
 
 ;; Change log:
 ;;
+;; 04/11/2001 - add some documentation for default templates.
+;;            - implement grouping comments (C-c d @)
+;;            - version 1.3.0
 ;; 30/09/2001 - doxymacs has been tested on and works with XEmacs 21.4 
 ;;              (patch 4)
 ;; 15/09/2001 - bug #460396 fixed... wrong number of arguments for 
@@ -156,7 +160,7 @@
 (require 'w3-cus)
 (require 'tempo)
 
-(defconst doxymacs-version "1.2.1"
+(defconst doxymacs-version "1.3.0"
   "Doxymacs version number")
 
 (defun doxymacs-version ()
@@ -280,6 +284,25 @@ Should be an empty string if comments are terminated by end-of-line."
 		 string)
   :group 'doxymacs)
 
+(defcustom doxymacs-group-begin-comment-template
+  nil
+  "*A tempo template to begin `doxymacs-insert-grouping-comments'.
+If nil, then a default template based on the current style as indicated
+by `doxymacs-doxygen-style' will be used.  
+
+For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
+  :type 'list
+  :group 'doxymacs)
+
+(defcustom doxymacs-group-end-comment-template
+  nil
+  "*A tempo template to end `doxymacs-insert-grouping-comments'.
+If nil, then a default template based on the current style as indicated
+by `doxymacs-doxygen-style' will be used.  
+
+For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
+  :type 'list
+  :group 'doxymacs)
 
 (defvar doxymacs-tags-buffer nil
   "The buffer with our doxytags.")
@@ -346,6 +369,8 @@ Key bindings:
   'doxymacs-insert-blank-singleline-comment)
 (define-key doxymacs-mode-map "\C-cd;"
   'doxymacs-insert-member-comment)
+(define-key doxymacs-mode-map "\C-cd@"
+  'doxymacs-insert-grouping-comments)
 
 
 ;;;###autoload
@@ -726,16 +751,20 @@ the completion or nil if canceled by the user."
 ;; Default templates
 
 (defconst doxymacs-JavaDoc-blank-multiline-comment-template
- '("/**" > n "* " p > n "* " > n "*/" > n))
+ '("/**" > n "* " p > n "* " > n "*/" > n)
+ "Default JavaDoc-style template for a blank multiline doxygen comment.")
 
 (defconst doxymacs-Qt-blank-multiline-comment-template
- '("//! " p > n "/*! " > n > n "*/" > n))
+ '("//! " p > n "/*! " > n > n "*/" > n)
+ "Default Qt-style template for a blank multiline doxygen comment.")
 
 (defconst doxymacs-JavaDoc-blank-singleline-comment-template
- '("/// " > p))
+ '("/// " > p)
+ "Default JavaDoc-style template for a blank single line doxygen comment.")
 
 (defconst doxymacs-Qt-blank-singleline-comment-template
- '("//! " > p))
+ '("//! " > p)
+ "Default Qt-style template for a blank single line doxygen comment.")
 
 (defconst doxymacs-JavaDoc-file-comment-template
  '("/**" > n 
@@ -752,7 +781,8 @@ the completion or nil if canceled by the user."
    " * @brief  " (p "Brief description of this file: ") > n
    " * " > n
    " * " p > n
-   " */" > n))
+   " */" > n)
+ "Default JavaDoc-style template for file documentation.")
 
 (defconst doxymacs-Qt-file-comment-template
  '("/*!" > n
@@ -769,7 +799,8 @@ the completion or nil if canceled by the user."
    " \\brief  " (p "Brief description of this file: ") > n
    " " > n
    " " p > n
-   "*/" > n))
+   "*/" > n)
+ "Default Qt-style template for file documentation.")
 
 
 (defun doxymacs-parm-tempo-element (parms)
@@ -804,7 +835,8 @@ the completion or nil if canceled by the user."
 	  " */" '>)
        (progn
 	 (error "Can't find next function declaration.")
-	 nil)))))
+	 nil))))
+ "Default JavaDoc-style template for function documentation.")
 
 (defconst doxymacs-Qt-function-comment-template
  '((let ((next-func (doxymacs-find-next-func)))
@@ -822,7 +854,28 @@ the completion or nil if canceled by the user."
 	  " */" '>)
        (progn
 	 (error "Can't find next function declaraton.")
-	 nil)))))
+	 nil))))
+ "Default Qt-style template for function documentation.")
+
+(defconst doxymacs-JavaDoc-group-begin-comment-template
+  ;; The leading space is a hack to get the indentation to work properly
+  '(" //@{" > n)
+  "Default JavaDoc-style template for beginning-of-group comment.")
+
+(defconst doxymacs-JavaDoc-group-end-comment-template
+  ;; The leading space is a hack to get the indentation to work properly
+  '(n " //@}" >)
+  "Default JavaDoc-style template for end-of-group comment.")
+
+(defconst doxymacs-Qt-group-begin-comment-template
+  ;; The leading space is a hack to get the indentation to work properly
+  '(" /*@{*/" > n)
+  "Default Qt-style template for beginning-of-group comment.")
+
+(defconst doxymacs-Qt-group-end-comment-template
+  ;; The leading space is a hack to get the indentation to work properly
+  '(n " /*@}*/" >)
+  "Default Qt-style template for end-of-group comment.")
 
 
 (defun doxymacs-invalid-style ()
@@ -963,6 +1016,17 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 	    (insert starter)
 	    (save-excursion
 	      (insert ender))))))))
+
+(defun doxymacs-insert-grouping-comments (start end)
+  "Inserts doxygen grouping comments around the current region."
+  (interactive "*r")
+  (save-excursion
+    (goto-char start)
+    (beginning-of-line)
+    (doxymacs-call-template "group-begin-comment")
+    (goto-char end)
+    (end-of-line)
+    (doxymacs-call-template "group-end-comment")))
 
 
 ;; These are helper functions that search for the next function

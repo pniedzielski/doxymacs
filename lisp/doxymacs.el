@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at shaw dot ca>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.3.1
+;; Version: 1.3.2
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.55 2002/05/09 23:21:33 ryants Exp $
+;; $Id: doxymacs.el,v 1.56 2002/09/01 01:22:24 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -84,6 +84,9 @@
 
 ;; Change log:
 ;;
+;; 31/08/2002 - bug #601028 fixed... functions with blank lines in their
+;;              argument list confused doxymacs-extract-args-list
+;;            - version 1.3.2
 ;; 09/05/2002 - fix issues compiling doxymacs_parser.c on Mac OS X.
 ;;            - version 1.3.1
 ;; 19/11/2001 - doxymacs has been tested on and works with XEmacs 21.4
@@ -171,7 +174,7 @@
 (require 'w3-cus)
 (require 'tempo)
 
-(defconst doxymacs-version "1.3.1"
+(defconst doxymacs-version "1.3.2"
   "Doxymacs version number")
 
 (defun doxymacs-version ()
@@ -1044,12 +1047,22 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 ;; declerations/definition and extract its name, return type and
 ;; argument list.  Used for documenting functions.
 
+
+;; Make sure the *whole* string matches regexp.
+;; http://sf.net/tracker/index.php?func=detail&aid=601028&group_id=23584&atid=378984
+(defun string-match-whole (regexp string)
+  "Ensures the entire string matches the given regexp"
+  (interactive)
+  (and (string-match regexp string)
+       (= (match-end 0) (length string))
+       (= (match-beginning 0) 0)))
+
 (defun doxymacs-extract-args-list (args-string)
   "Extracts the arguments from the given list (given as a string)."
   (save-excursion
     (cond
-     ((string-match "^[ \t\n]*$" args-string) nil)
-     ((string-match "^[ \t\n]*void[ \t\n]*$" args-string) nil)
+     ((string-match-whole "[ \t\n]*" args-string) nil)
+     ((string-match-whole "[ \t\n]*void[ \t\n]*" args-string) nil)
      (t
       (doxymacs-extract-args-list-helper (split-string args-string ","))))))
 
@@ -1065,7 +1078,7 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 	    "\\([a-zA-Z0-9_]+\\)[ \t\n]*"                ; arg name
 	    "\\(\\[[ \t\n]*[a-zA-Z0-9_]*[ \t\n]*\\]\\)*" ; opt. array bounds
 	    "\\(=[ \t\n]*.+[ \t\n]*\\)?"                 ; optional assignment
-	    "[ \t\n]*$"			                 ; end
+	    "[ \t\n]*$"                                  ; end
 	    )
 	   (car args-list))
 	  (cons

@@ -1,4 +1,8 @@
-$Id: ChangeLog,v 1.31 2002/05/09 23:22:37 ryants Exp $
+$Id: ChangeLog,v 1.32 2002/09/01 01:22:24 ryants Exp $
+
+2002-08-31 Ryan T. Sammartino <ryants at shaw dot ca> (1.3.2)
+	* lisp/doxymacs.el: functions with blank lines in their argument
+	list confused doxymacs-extract-args-list fixed.
 
 2002-09-05 Ryan T. Sammartino <ryants at shaw dot ca> (1.3.1)
 	* c/doxymacs_parser.c: fix compilation issues on Mac OS X.

@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.19 2001/04/29 22:15:08 ryants Exp $
+;; $Id: doxymacs.el,v 1.20 2001/04/30 00:15:55 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -299,81 +299,90 @@ the completion or nil if canceled by the user."
 
 ;; These functions have to do with inserting doxygen commands in code
 
+;; So the non-interactive functions return a pair:
+;; the car is the string to insert, the cadr is the number of lines
+;; to skip.
+
 (defun doxymacs-blank-multiline-comment ()
   (if (equal doxymacs-doxygen-style "JavaDoc")
-      "/**\n * \n * \n */\n"
-    "//! \n/*!\n \n*/\n"))
+      (cons "/**\n * \n * \n */\n" 2)
+    (cons "//! \n/*!\n \n*/\n" 1)))
 
 (defun doxymacs-insert-blank-multiline-comment ()
   "Inserts a mult-line blank doxygen comment at the current point"
   (interactive "*")
-  (save-excursion 
-    (beginning-of-line)
-    (let ((start (point)))
-      (insert (doxymacs-blank-multiline-comment))
-      (let ((end (point)))
-	(indent-region start end nil))))
-  (if (equal doxymacs-doxygen-style "JavaDoc")
-      (end-of-line 2))
-  (end-of-line))
+  (let ((comment (doxymacs-blank-multiline-comment)))
+    (save-excursion 
+      (beginning-of-line)    
+      (let ((start (point)))    
+	(insert (car comment))
+	(let ((end (point)))
+	  (indent-region start end nil))))
+    (end-of-line (cdr comment))))
 
 (defun doxymacs-blank-singleline-comment ()
   (if (equal doxymacs-doxygen-style "JavaDoc")
-      "/// "
-    "//! "))
+      (cons "/// " 1)
+    (cons "//! " 1)))
 
 (defun doxymacs-insert-blank-singleline-comment ()
   "Inserts a single-line blank doxygen comment at current point"
   (interactive "*")
-  (save-excursion
-   (beginning-of-line)
-   (let ((start (point)))
-     (insert (doxymacs-blank-singleline-comment))
-     (let ((end (point)))
-       (indent-region start end nil))))
-  (end-of-line))
+  (let ((comment (doxymacs-blank-singleline-comment)))
+    (save-excursion
+      (beginning-of-line)
+      (let ((start (point)))
+	(insert (car comment))
+	(let ((end (point)))
+	  (indent-region start end nil))))
+    (end-of-line (cdr comment))))
 
 (defun doxymacs-file-comment ()
   (let ((fname (if (buffer-file-name) 
 		   (file-name-nondirectory (buffer-file-name))
 		 "")))
 	(if (equal doxymacs-doxygen-style "JavaDoc")
-	    (format (concat "/**\n"
-			    " * @file   %s\n"
-			    " * @author %s <%s>\n"
-			    " * @date   %s\n"
-			    " *\n"
-			    " * @brief  \n"
-			    " *\n"
-			    " *\n"
-			    " */")
-		    fname
-		    (user-full-name)
-		    (user-mail-address)
-		    (current-time-string))
-	  (format (concat "/*!\n"
-			  " \\file   %s\n"
-			  " \\author %s <%s>\n"
-			  " \\date   %s\n"
-			  " \n"
-			  " \\brief  \n"
-			  " \n"
-			  " \n"
-			  "*/")
-		  fname
-		  (user-full-name)
-		  (user-mail-address)
-		  (current-time-string)))))
+	    (cons
+	     (format (concat "/**\n"
+			     " * @file   %s\n"
+			     " * @author %s <%s>\n"
+			     " * @date   %s\n"
+			     " *\n"
+			     " * @brief  \n"
+			     " *\n"
+			     " *\n"
+			     " */")
+		     fname
+		     (user-full-name)
+		     (user-mail-address)
+		     (current-time-string))
+	     6)
+	  (cons
+	   (format (concat "/*!\n"
+			   " \\file   %s\n"
+			   " \\author %s <%s>\n"
+			   " \\date   %s\n"
+			   " \n"
+			   " \\brief  \n"
+			   " \n"
+			   " \n"
+			   "*/")
+		   fname
+		   (user-full-name)
+		   (user-mail-address)
+		   (current-time-string))
+	   6))))
 
 (defun doxymacs-insert-file-comment ()
   "Inserts doxygen documentation for the current file at current point"
   (interactive "*")
-  (save-excursion
-    (let ((start (point)))
-      (insert (doxymacs-file-comment))
-      (let ((end (point)))
-	(indent-region start end nil))))
-  (end-of-line 6))
+  (let ((comment (doxymacs-file-comment)))
+    (save-excursion
+      (let ((start (point)))
+	(insert (car comment))
+	(let ((end (point)))
+	  (indent-region start end nil))))
+    (end-of-line (cdr comment))))
 
 
 (defun doxymacs-extract-args-list (args-string)
@@ -423,7 +432,7 @@ the completion or nil if canceled by the user."
 	  "\\(\\(template\\s-+<[^>]+>\\s-+\\)?"   ; template formals
 	  "\\([a-zA-Z0-9_*&<,>:]+\\s-+\\)?"       ; type specs
 	  "\\([a-zA-Z0-9_*&<,>\"]+\\s-+\\)?"
-	  "\\([a-zA-Z0-9_*&<,>]+\\)\\s-+\\)"      ; return val
+	  "\\([a-zA-Z0-9_*&<,>]+\\)\\s-+\\)"      ; return type
 	  "\\(\\([a-zA-Z0-9_&~:<,>*]\\|\\(\\s +::\\s +\\)\\)+\\)"
 	  "\\(o?perator\\s *.[^(]*\\)?\\(\\s-\\|\n\\)*(" ; name
 	  "\\([^)]*\\))" ; arg list
@@ -451,36 +460,47 @@ the completion or nil if canceled by the user."
 (defun doxymacs-func-comment (func)
   "Inserts doxygen documentation for the given func"
   (if (equal doxymacs-doxygen-style "JavaDoc")
-      (concat "/**\n"
-	      " * \n"
-	      " * \n"
-	      (doxymacs-parm-comment (cdr (assoc 'args func)))
-	      (unless (equal (cdr (assoc 'return func)) "void")
-		" * @return \n")
-	      " */")
-    (concat "//! \n"
-	    "/*!\n"
-	    " \n"
-	    (doxymacs-parm-comment (cdr (assoc 'args func)))
-	    (unless (equal (cdr (assoc 'return func)) "void")
-	      "  \\return \n")
-	    " */")))
+      (cons
+       (concat "/**\n"
+	       " * \n"
+	       " * \n"
+	       (doxymacs-parm-comment (cdr (assoc 'args func)))
+	       (unless (equal (cdr (assoc 'return func)) "void")
+		 " * @return \n")
+	       " */")
+       2)
+    (cons
+     (concat "//! \n"
+	     "/*!\n"
+	     " \n"
+	     (doxymacs-parm-comment (cdr (assoc 'args func)))
+	     (unless (equal (cdr (assoc 'return func)) "void")
+	       "  \\return \n")
+	     " */")
+     1)))
 
 (defun doxymacs-insert-function-comment ()
   "Inserts doxygen documentation for the next function declaration at 
 current point"
-  (interactive "*")
-  (save-excursion
-    (widen)
-    (let ((start (point))
-	  (next-func (doxymacs-find-next-func)))
-      (if (not (equal next-func nil))
-	  (insert (doxymacs-func-comment next-func))
-	(beep))
-      (let ((end (point)))
-	(indent-region start end nil))))
-  (if (equal doxymacs-doxygen-style "JavaDoc")
-      (end-of-line 2))
-  (end-of-line))
+  (interactive "*")  
+  (let ((num-lines 1))
+    (save-excursion
+      (widen)
+      (let ((start (point))
+	    (next-func (doxymacs-find-next-func)))
+	(if (not (equal next-func nil))
+	    (let ((comment (doxymacs-func-comment next-func)))
+	      (insert (car comment))
+	      (setq num-lines (cdr comment)))
+	  (beep))
+	(let ((end (point)))
+	  (indent-region start end nil))))
+    (end-of-line num-lines)))
+
+
+;; Default key bindings
+
+;; FIXME do this.
+
 
 ;; doxymacs.el ends here

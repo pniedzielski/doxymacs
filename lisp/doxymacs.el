@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.21 2001/04/30 01:43:22 ryants Exp $
+;; $Id: doxymacs.el,v 1.22 2001/04/30 01:52:37 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -290,7 +290,7 @@ the completion or nil if canceled by the user."
 ;; These functions have to do with inserting doxygen commands in code
 
 ;; So the non-interactive functions return a pair:
-;; the car is the string to insert, the cadr is the number of lines
+;; the car is the string to insert, the cdr is the number of lines
 ;; to skip.
 
 (defun doxymacs-blank-multiline-comment ()
@@ -490,7 +490,12 @@ current point"
 
 ;; Default key bindings
 
-;(global-set-key [(control ??)] 'doxymacs-lookup)
+;; FIXME finish this.  What would be good keys for inserting documentation?
+
+(defun doxymacs-default-key-bindings ()
+  "Install default key bindings for doxymacs"
+  (interactive)
+  (global-set-key [(control ??)] 'doxymacs-lookup))
 
 
 ;; doxymacs.el ends here

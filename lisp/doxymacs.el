@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.56 2002/09/01 01:22:24 ryants Exp $
+;; $Id: doxymacs.el,v 1.57 2002/12/01 04:25:53 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -84,6 +84,10 @@
 
 ;; Change log:
 ;;
+;; 30/11/2002 - apply patch 636146:
+;;              - several FIXMEs fixed
+;;              - user-defined "void" types
+;;              - thanks to Georg Drenkhahn
 ;; 31/08/2002 - bug #601028 fixed... functions with blank lines in their
 ;;              argument list confused doxymacs-extract-args-list
 ;;            - version 1.3.2
@@ -276,6 +280,13 @@ The argument list is a list of strings.
 
 For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
+  :group 'doxymacs)
+
+(defcustom doxymacs-void-types
+  "void"
+  "*String with void-kind variable types.  Extend this string if there
+are typedefs of void.  Example: \"void tVOID\"."
+  :type 'string
   :group 'doxymacs)
 
 (defcustom doxymacs-member-comment-start
@@ -842,9 +853,9 @@ the completion or nil if canceled by the user."
 	  " * " 'p '> 'n
 	  " * " '> 'n
 	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)))
-	  (unless
-	      (string-match "^[ \t\n]*void[ \t\n]*$"
-			    (cdr (assoc 'return next-func)))
+	  (unless (string-match
+                   (regexp-quote (cdr (assoc 'return next-func)))
+                   doxymacs-void-types)
 	    '(l " * " > n " * @return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
@@ -861,9 +872,9 @@ the completion or nil if canceled by the user."
 	  "/*! " '> 'n
 	  " " '> 'n
 	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)))
-	  (unless
-	      (string-match "^[ \t\n]*void[ \t\n]*$"
-			    (cdr (assoc 'return next-func)))
+	  (unless (string-match
+                   (regexp-quote (cdr (assoc 'return next-func)))
+                   doxymacs-void-types)
 	    '(l " " > n "  \\return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
@@ -1047,53 +1058,123 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 ;; declerations/definition and extract its name, return type and
 ;; argument list.  Used for documenting functions.
 
-
-;; Make sure the *whole* string matches regexp.
-;; http://sf.net/tracker/index.php?func=detail&aid=601028&group_id=23584&atid=378984
-(defun string-match-whole (regexp string)
-  "Ensures the entire string matches the given regexp"
-  (interactive)
-  (and (string-match regexp string)
-       (= (match-end 0) (length string))
-       (= (match-beginning 0) 0)))
-
 (defun doxymacs-extract-args-list (args-string)
   "Extracts the arguments from the given list (given as a string)."
-  (save-excursion
-    (cond
-     ((string-match-whole "[ \t\n]*" args-string) nil)
-     ((string-match-whole "[ \t\n]*void[ \t\n]*" args-string) nil)
-     (t
-      (doxymacs-extract-args-list-helper (split-string args-string ","))))))
+  (cond
+   ;; arg list is empty
+   ((string-match "\\`[ \t\n]*\\'" args-string)
+    nil)
+   ;; argument list consists of one word
+   ((string-match "\\`[ \t\n]*\\([a-zA-Z0-9_]+\\)[ \t\n]*\\'" args-string)
+    ;; ... extract this word
+    (let ((arg (substring args-string (match-beginning 1) (match-end 1))))
+      ;; if this arg is a void type return nil
+      (if (string-match (regexp-quote arg) doxymacs-void-types)
+          nil
+        ;; else return arg
+        (list arg))))
+   ;; else split the string and extact var names from args
+   (t
+    (doxymacs-extract-args-list-helper
+     (doxymacs-save-split args-string)))))
 
-;;FIXME
-;;for "void blah(int i, const char *fla[FOO] = NULL)", this function
-;;thinks NULL is the second argument.
+
+(defun doxymacs-save-split (args-string)
+  "Splits a declaration list as string and returns list of single
+declarations."
+  (let ((comma-pos (string-match "," args-string))
+        (paren-pos (string-match "(" args-string)))
+    (cond
+     ;; no comma in string found
+     ((null comma-pos)     (list args-string))
+     ;; comma but no parenthethes: split-string is save
+     ((null paren-pos)     (split-string args-string ","))
+     ;; comma first then parenthesis
+     ((< comma-pos paren-pos)
+      (cons (substring args-string 0 comma-pos)
+            (doxymacs-save-split (substring args-string (1+ comma-pos)))))
+     ;; parenthesis first then comma. there must exist a closing parenthesis
+     (t
+      ;; cut off the (...) part
+      (save-excursion
+        ;; create temporary buffer
+        (set-buffer (get-buffer-create "*doxymacs-scratch*"))
+        (erase-buffer)
+        (insert args-string)
+        (beginning-of-buffer)
+        (search-forward "(")
+        (prog1
+            (let ((depth 1)
+                  (exit)
+                  (comma-found))
+              (while (not exit)
+                ;; step through buffer
+                (forward-char 1)
+                (cond
+                 ;; end of buffer: exit
+                 ((= (point) (point-max)) (setq exit t))
+                 ;; decrease depth counter
+                 ((looking-at ")")        (setq depth (1- depth)))
+                 ;; increase depth counter
+                 ((looking-at "(")        (setq depth (1+ depth)))
+                 ;; comma at depth 0, thats it!
+                 ((and (looking-at ",") (= 0 depth))
+                  (setq exit t)
+                  (setq comma-found t))))
+              (if (not comma-found)
+                  ;; whole string is one arg
+                  (list (buffer-substring 1 (point)))
+                ;; else split at comma ...
+                (cons (buffer-substring 1 (point))
+                      ;; and split rest of declaration list
+                      (doxymacs-save-split
+                       (buffer-substring (1+ (point)) (point-max))))))
+          (kill-buffer (current-buffer))))))))
+
+
+;; This regexp fails if the opt. parentheses
+;; contain another level of parentheses.  E.g. for:
+;; int f(int (*g)(int (*h)()))
 (defun doxymacs-extract-args-list-helper (args-list)
   "Recursively get names of arguments."
-  (save-excursion
-    (if args-list
+  (if args-list
       (if (string-match
-	   (concat
-	    "\\([a-zA-Z0-9_]+\\)[ \t\n]*"                ; arg name
-	    "\\(\\[[ \t\n]*[a-zA-Z0-9_]*[ \t\n]*\\]\\)*" ; opt. array bounds
-	    "\\(=[ \t\n]*.+[ \t\n]*\\)?"                 ; optional assignment
-	    "[ \t\n]*$"                                  ; end
-	    )
-	   (car args-list))
-	  (cons
-	   (substring (car args-list) (match-beginning 1) (match-end 1))
-	   (doxymacs-extract-args-list-helper (cdr args-list)))
-	(cons
-	 (car args-list)
-	 (doxymacs-extract-args-list-helper (cdr args-list))))
-      nil)))
+           (concat
+            "\\("
+            "([ \t\n]*\\*[ \t\n]*\\([a-zA-Z0-9_]+\\)[ \t\n]*)"; (*varname)
+            "\\|"                                        ; or
+            "\\*?[ \t\n]*\\([a-zA-Z0-9_]+\\)"            ; opt. *, varname
+            "\\)"
+            "[ \t\n]*"                                   ; opt. spaces
+            "\\(\\[[ \t\n]*[a-zA-Z0-9_]*[ \t\n]*\\]\\|"  ; opt. array bounds
+            "([^()]*)\\)?"                               ; or opt. func args
+            "[ \t\n]*"                                   ; opt. spaces
+            "\\(=[ \t\n]*[^ \t\n]+[ \t\n]*\\)?"          ; optional assignment
+            "[ \t\n]*\\'"                                ; end
+            ) (car args-list))
+          (cons
+           (cond
+            ;; var name in: (*name)
+            ((match-beginning 2)
+             (substring (car args-list) (match-beginning 2) (match-end 2)))
+            ;; var name in: *name
+            ((match-beginning 3)
+             (substring (car args-list) (match-beginning 3) (match-end 3)))
+            ;; no match: return complete declaration
+            (t
+             (car args-list)))
+           (doxymacs-extract-args-list-helper (cdr args-list)))
+        ;; else there is no match
+        nil)))
 
-;; FIXME
-;; This gets confused by the following examples:
-;; - void qsort(int (*comp)(void *, void *), int left, int right);
-;; - int f(int (*daytab)[5], int x);
-;; Of course, these kinds of things can't be done by regexps alone.
+(defun doxymacs-core-string (s)
+  "Returns the argument string with leading and trailing blank
+and new-line characters cut off."
+  (string-match "\\`[ \t\n]*\\(.*?\\)[ \t\n]*\\'" s)
+  (if (match-beginning 1)
+      (substring s (match-beginning 1) (match-end 1))
+    s))
+
 (defun doxymacs-find-next-func ()
   "Returns a list describing next function declaration, or nil if not found.
 
@@ -1112,13 +1193,14 @@ The argument list is a list of strings."
 	  ;; name
 	  "\\(\\([a-zA-Z0-9_~:<,>*&]\\|\\([ \t\n]+::[ \t\n]+\\)\\)+"
 	  "\\(o?perator[ \t\n]*.[^(]*\\)?\\)[ \t\n]*("
-
-	  ;; arg list
-	  "\\([^)]*\\))"
 	  ) nil t)
 
 	(let* ((func (buffer-substring (match-beginning 3) (match-end 3)))
-	       (args (buffer-substring (match-beginning 7) (match-end 7)))
+	       (args (buffer-substring (point) (progn
+                                                (backward-char 1)
+                                                (forward-list)
+                                                (backward-char 1)
+                                                (point))))
 	       (ret (cond
 		     ;; Return type specified
 		     ((match-beginning 1)
@@ -1148,7 +1230,7 @@ The argument list is a list of strings."
 		     (t "int"))))
 	  (list (cons 'func func)
 		(cons 'args (doxymacs-extract-args-list args))
-		(cons 'return ret)))
+		(cons 'return (doxymacs-core-string ret))))
     nil)))
 
 ;;; doxymacs.el ends here

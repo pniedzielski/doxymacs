@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.1 2001/03/25 00:33:24 ryants Exp $
+;; $Id: doxymacs.el,v 1.2 2001/03/25 00:58:37 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -56,7 +56,7 @@
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-tags
-  "/home/ryants/projects/doxymacs/example/doc/doxy.tag"
+  "../example/doc/doxy.tag"
   "*File that contains doxygen tags"
   :type 'string
   :group 'doxymacs)

@@ -27,7 +27,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.28 2001/05/10 03:00:39 ryants Exp $
+;; $Id: doxymacs.el,v 1.29 2001/05/12 22:36:13 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -42,9 +42,16 @@
 ;;   - C-c d i will insert a Doxygen comment for the current file.
 ;;   - C-c d m will insert a blank multiline Doxygen comment.
 ;;   - C-c d s will insert a blank singleline Doxygen comment.
+;;
+;; Doxymacs has been tested on and works with:
+;; - GNU Emacs 20.7.1
+;; - XEmacs 21.1 (patch 14)
 
 ;; Change log:
 ;;
+;; 12/05/2001 - fix some bugs on GNU Emacs... tested and works with GNU
+;;              Emacs 20.7.1
+;;            - version 0.1.2
 ;; 09/05/2001 - change C-? to C-c d ?, since hitting DEL also triggers C-?
 ;;            - update progress while parsing XML file
 ;;            - version 0.1.1
@@ -73,8 +80,6 @@
 ;; TODO:
 ;;
 ;; - better end-user documentation
-;; - test this on other versions of {X}Emacs other than the one I'm 
-;;   using (XEmacs 21.1.14)
 ;; - fix all FIXMEs (of course)
 ;; - other stuff?
 
@@ -366,6 +371,30 @@ doxymacs-completion-list from it"
   "Displays the given match"
   (browse-url (concat doxymacs-doxygen-root "/" url)))
 
+;; GNU Emacs doesn't have symbol-near-point apparently
+;; stolen from browse-cltl2.el, and in turn:
+;; stolen from XEmacs 19.15 syntax.el
+(if (not (fboundp (function symbol-near-point)))
+    (defun symbol-near-point ()
+      "Return the first textual item to the nearest point."
+      (interactive)
+      ;;alg stolen from etag.el
+      (save-excursion
+	(if (not (memq (char-syntax (preceding-char)) '(?w ?_)))
+	    (while (not (looking-at "\\sw\\|\\s_\\|\\'"))
+	      (forward-char 1)))
+	(while (looking-at "\\sw\\|\\s_")
+	  (forward-char 1))
+	(if (re-search-backward "\\sw\\|\\s_" nil t)
+	    (regexp-quote
+	     (progn (forward-char 1)
+		    (buffer-substring (point)
+				      (progn (forward-sexp -1)
+					     (while (looking-at "\\s'")
+					       (forward-char 1))
+					     (point)))))
+	  nil))))
+
 (defun doxymacs-lookup (symbol)
   "Look up the symbol under the cursor in doxygen"
   (interactive 
@@ -479,7 +508,10 @@ the completion or nil if canceled by the user."
    (if (buffer-file-name) 
        (file-name-nondirectory (buffer-file-name)) 
      "") > n
-   " * @author " (user-full-name) " <" (user-mail-address) ">" > n
+   " * @author " (user-full-name) 
+   (if (fboundp 'user-mail-address) 
+       (list 'l " <" (user-mail-address) ">"))
+   > n
    " * @date   " (current-time-string) > n
    " * " > n
    " * @brief  " (p "Brief description of this file: ") > n
@@ -494,7 +526,10 @@ the completion or nil if canceled by the user."
    (if (buffer-file-name) 
        (file-name-nondirectory (buffer-file-name)) 
      "") > n
-   " \\author " (user-full-name) " <" (user-mail-address) ">" > n
+   " \\author " (user-full-name) 
+   (if (fboundp 'user-mail-address) 
+       (list 'l " <" (user-mail-address) ">"))
+   > n
    " \\date   " (current-time-string) > n
    " " > n
    " \\brief  " (p "Brief description of this file: ") > n

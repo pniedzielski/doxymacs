@@ -1,6 +1,6 @@
 ;;; xml-parse --- code to efficiently read/write XML data with Elisp
 ;;;
-;;; $Id: xml-parse.el,v 1.3 2001/05/09 07:26:30 ryants Exp $
+;;; $Id: xml-parse.el,v 1.4 2001/05/12 22:36:13 ryants Exp $
 
 ;; Copyright (C) 2001 John Wiegley.
 
@@ -317,8 +317,9 @@ Note that this only works if the opening tag starts at column 0."
 
 (defun xml-parse-read (&optional progress-callback)
   (let ((beg (search-forward "<" nil t)) after)
-    (funcall progress-callback 
-	     (* (/ (float (point)) (float (point-max))) 100))
+    (if progress-callback
+	(funcall progress-callback 
+		 (* (/ (float (point)) (float (point-max))) 100)))
     (while (and beg (memq (setq after (char-after)) '(?! ??)))
       (xml-parse-skip-tag)
       (setq beg (search-forward "<" nil t)))

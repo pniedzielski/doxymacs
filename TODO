@@ -1,8 +1,6 @@
-$Id: TODO,v 1.10 2001/05/08 03:32:19 ryants Exp $
+$Id: TODO,v 1.11 2001/05/12 22:36:13 ryants Exp $
 
 lisp/doxymacs.el:
- - test this on other versions of {X}Emacs other than the one I'm using 
-   (XEmacs 21.1.14)
  - fix all FIXMEs (of course)
  - other stuff?
 

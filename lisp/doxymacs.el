@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.5 2001/03/30 12:15:44 airborne Exp $
+;; $Id: doxymacs.el,v 1.6 2001/04/01 00:59:47 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -27,6 +27,10 @@
 ;;
 ;; ChangeLog
 ;;
+;; 31/03/2001 - added ability to choose which symbol to look up if more than
+;;              one match
+;;            - slightly changed the format of the list that 
+;;              doxymacs-get-matches returns
 ;; 28/03/2001 - added doxymacs to the "tools" customisation group.
 ;;            - removed doxymacs-browser (just use user's default browser)
 ;;            - minor formatting updates
@@ -36,9 +40,6 @@
 ;;
 ;; - add ability to get tag file from a URL as well as a local file.
 ;; - add ability to automagically insert doxygen comments.
-;; - if doxymacs-get-matches finds more than one match, present user with 
-;;   list of choices
-;;   to select from.  Use third element of list to distinguish each choice.
 ;; - add some default key-bindings 
 ;; - error checking (invalid tags file format, etc).
 ;; - test this on other versions of {X}Emacs other than the one I'm 
@@ -95,7 +96,8 @@
 
 ;;doxymacs-get-matches
 ;;Finds lines in *doxytags* buffer that match symbol.
-;;Returns the matches in a list.
+;;Returns the matches in a list.  The list looks like this:
+;;( (qualified_name URL) (qualified_name URL) ... )
 (defun doxymacs-get-matches (symbol)
   "Find matches in the tags buffer for the given symbol"
   (save-excursion
@@ -104,16 +106,17 @@
         (doxymacs-load-tags))
     (let ((currbuff (current-buffer))
           (matches nil)
-          (regexp (concat "^\\(" (regexp-quote symbol) "\\)\t\\(.*\\)\t\\(.*\\)$")))
+          (regexp (concat "^" (regexp-quote symbol) "\t\\(.*\\)\t\\(.*\\)$")))
       (set-buffer doxymacs-tags-buffer)
       (goto-char (point-min))
       (setq case-fold-search nil)
       (while (re-search-forward regexp nil t) 
         (setq matches (cons 
-                       (list (match-string 1) (match-string 2) (match-string 3))
+                       (list (match-string 2) (match-string 1))
                        matches)))
       (set-buffer currbuff)
       (reverse matches))))
+
 
 (defun doxymacs-display-match (match)
   "Displays the given match"
@@ -121,19 +124,27 @@
 
 
 ;;FIXME
-;; If the length of matches is > 1, then display a list of choices to the user.
-;; The list should show the third element of each element of matches.
-(defun doxymacs-choose-match (matches)
+;;I'd like the *Completions* buffer to come up automatically
+(defun doxymacs-choose-match (symbol matches)
   "Displays the available choices for the user to select"
-  (car matches))
+  (assoc
+   (completing-read
+    (concat "More than one match for " symbol ", select one: ")
+    matches
+    nil 'f)
+   matches))
+  
 
-(defun doxymacs-search (string)
+(defun doxymacs-search (symbol)
   "Look up the symbol under the cursor in doxygen"
   (interactive 
    (save-excursion
-     (let ((string (read-string "Look up: " (symbol-near-point) nil)))
-	 (list string))))
-  (let ((matches (doxymacs-get-matches string)))
+     (let ((symbol (read-string "Look up: " (symbol-near-point) nil)))
+	 (list symbol))))
+  (let ((matches (doxymacs-get-matches symbol)))
     (if (eq (length matches) 1)
 	(doxymacs-display-match (car matches))
-      (doxymacs-display-match (doxymacs-choose-match matches)))))
+      (let ((choice (doxymacs-choose-match symbol matches)))
+	(if (eq choice nil)
+	    (beep) ;; This might be annoying, but seems to be a standard
+	  (doxymacs-display-match choice))))))

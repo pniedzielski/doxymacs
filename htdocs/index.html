@@ -19,8 +19,8 @@
 
     <p>
       <a
-      href="http://sourceforge.net/project/showfiles.php?group_id=23584&amp;release_id=131783">Version 1.4.0</a>,
-      released 05/01/2003, has the following features:
+      href="http://sourceforge.net/project/showfiles.php?group_id=23584&amp;release_id=136088">Version 1.5.0</a>,
+      released 25/01/2003, has the following features:
     </p>
 
     <ul>
@@ -106,10 +106,21 @@ $ EMACSLOADPATH=... make
 $ EMACS=xemacs make
         </pre>
 
+	If you want to avoid byte-compiling altogether:
+	<pre>
+$ make ELCFILES=
+$ make install ELCFILES=
+	</pre>
+
 	For a complete list of configuration options:
 	<pre>
 $ ./configure --help
         </pre>
+
+    	If you do not want to run or cannot run <code>configure</code>
+    	then pre-baked <code>.el</code> files are available in the
+    	<code>no-autoconf/</code> directory; simply
+	copy these to somewhere in your <code>load-path</code>.
 
       </li>
 
@@ -123,8 +134,8 @@ $ ./configure --help
 	(Optional) Customise <code>doxymacs-doxygen-style</code>.  The
 	default is "JavaDoc".  See <a
 	href="http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks">the
-	Doxygen manual</a> for examples of the two available styles
-	(JavaDoc and Qt).
+	Doxygen manual</a> for examples of the three available styles
+	(JavaDoc, Qt and C++).
       </li>
 
       <li>
@@ -134,7 +145,8 @@ $ ./configure --help
       </li>
 
       <li>
-	Put <code>(require 'doxymacs)</code> in your <code>.emacs</code>.
+	Put <code>(require 'doxymacs)</code> in your <code>.emacs</code>
+	file.
       </li>
 
       <li>
@@ -235,8 +247,8 @@ $ ./configure --help
 
       <li>
 	<a
-	   href="http://sourceforge.net/project/showfiles.php?group_id=23584&amp;release_id=131783">Release
-	  1.4.0</a> Download it now.
+	   href="http://sourceforge.net/project/showfiles.php?group_id=23584&amp;release_id=136088">Release
+	  1.5.0</a> Download it now.
       </li>
 
       <li>
@@ -259,10 +271,10 @@ $ ./configure --help
     <address><a href="mailto:ryants@shaw.ca">Ryan T. Sammartino</a></address>
     <!-- Created: Sun Jan  5 18:21:52 PST 2003 -->
     <!-- hhmts start -->
-Last modified: Sun Jan 12 18:38:53 PST 2003
+Last modified: Sun Jan 26 12:23:55 PST 2003
 <!-- hhmts end -->
     <p>
-      <code>$Id: index.html,v 1.9 2003/01/13 02:39:34 ryants Exp $</code>
+      <code>$Id: index.html,v 1.10 2003/01/26 20:25:51 ryants Exp $</code>
     </p>
   </body>
 </html>

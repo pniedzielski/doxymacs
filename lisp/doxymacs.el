@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.26 2001/05/08 03:32:19 ryants Exp $
+;; $Id: doxymacs.el,v 1.27 2001/05/09 06:28:05 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -243,6 +243,7 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 	  (eq (buffer-live-p doxymacs-tags-buffer) nil))
       (progn
 	(setq doxymacs-tags-buffer (generate-new-buffer "*doxytags*"))
+	(message (concat "Loading " doxymacs-doxygen-tags))
 	(let ((currbuff (current-buffer)))
 	  (if (file-regular-p doxymacs-doxygen-tags)
 	      ;;It's a regular file, so just grab it.
@@ -276,6 +277,10 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 		  doxymacs-completion-list)))))
 
 
+(defun doxymacs-xml-progress-callback (amount-done)
+  (message (concat "Parsing " doxymacs-doxygen-tags "... " 
+		   (format "%0.1f" amount-done) "%%")))
+
 (defun doxymacs-fill-completion-list ()
   "Load and parse the tags from the *doxytags* buffer, constructing our 
 doxymacs-completion-list from it"
@@ -284,8 +289,10 @@ doxymacs-completion-list from it"
     (set-buffer doxymacs-tags-buffer)
     (goto-char (point-min))
     (setq doxymacs-completion-list nil)
-    (let ((xml (read-xml))) ;; Parse the XML file
-      (let ((compound-list (xml-tag-children xml)))
+    (let ((xml (read-xml 'doxymacs-xml-progress-callback))) ;Parse the XML file
+      (let* ((compound-list (xml-tag-children xml))
+	     (num-compounds (length compound-list))
+	     (curr-compound-num 0))
 	(if (not (string= (xml-tag-name xml) "tagfile"))
 	    (error (concat "Invalid tag file: " doxymacs-doxygen-tags))
 	  ;; Go through the compounds, adding them and their members to the
@@ -309,10 +316,20 @@ doxymacs-completion-list from it"
 					     compound-url)
 	      
 	      ;; On to the next compound
+	      (message (concat 
+			"Building completion table... "
+			(format "%0.1f"
+				(* (/ 
+				    (float curr-compound-num) 
+				    (float num-compounds)) 
+				   100))
+			"%%"))
+	      (setq curr-compound-num (+ 1 curr-compound-num))
 	      (setq compound-list (cdr compound-list)))))))
-      ;; Don't need the doxytags buffer anymore
-      (kill-buffer doxymacs-tags-buffer)
-      (set-buffer currbuff)))
+    ;; Don't need the doxytags buffer anymore
+    (message "Done.")
+    (kill-buffer doxymacs-tags-buffer)
+    (set-buffer currbuff)))
 
 (defun doxymacs-get-compound-members (compound)
   "Get the members of the given compound"

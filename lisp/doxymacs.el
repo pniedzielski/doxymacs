@@ -1,14 +1,15 @@
-;; doxymacs.el
-;;
-;; $Id: doxymacs.el,v 1.27 2001/05/09 06:28:05 ryants Exp $
-;;
-;; ELisp package for making doxygen related stuff easier.
+;;; doxymacs.el --- ELisp package for making doxygen related stuff easier.
 ;;
 ;; Copyright (C) 2001 Ryan T. Sammartino
-;; http://members.home.net/ryants/
-;; ryants@home.com
 ;;
-;; Doxymacs homepage: http://doxymacs.sourceforge.net/
+;; Author: Ryan T. Sammartino <ryants@home.com>
+;;      Kris Verbeeck <kris.verbeeck@advalvas.be>
+;; Contributor: Andreas Fuchs
+;; Created: 24/03/2001
+;; Version: 0.1.1
+;; Keywords: doxygen documentation
+;;
+;; This file is NOT part of GNU Emacs or XEmacs.
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
@@ -23,20 +24,30 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+;;
+;; Doxymacs homepage: http://doxymacs.sourceforge.net/
+;;
+;; $Id: doxymacs.el,v 1.28 2001/05/10 03:00:39 ryants Exp $
 
+;; Commentary:
 ;;
-;; AUTHORS
-;;
-;; Ryan T. Sammartino <ryants@home.com>
-;; Kris Verbeeck <kris.verbeeck@advalvas.be>
-;;
-;; with patches from:
-;;
-;; Andreas Fuchs
+;; - Put this file and xml-parse somewhere in your {X}Emacs load-path.
+;; - Customise the variables doxymacs-doxygen-root and doxymacs-doxygen-tags.
+;; - Put (require 'doxymacs) in your .emacs
+;; - Invoke doxymacs-mode with M-x doxymacs-mode
+;; - Default key bindings are:
+;;   - C-c d ? will look up documentation for the symbol under the point.
+;;   - C-c d r will rescan your Doxygen tags file.
+;;   - C-c d f will insert a Doxygen comment for the next function.
+;;   - C-c d i will insert a Doxygen comment for the current file.
+;;   - C-c d m will insert a blank multiline Doxygen comment.
+;;   - C-c d s will insert a blank singleline Doxygen comment.
 
+;; Change log:
 ;;
-;; ChangeLog
-;;
+;; 09/05/2001 - change C-? to C-c d ?, since hitting DEL also triggers C-?
+;;            - update progress while parsing XML file
+;;            - version 0.1.1
 ;; 07/05/2001 - minor mode thanks to Kris, and default key map.
 ;;            - released as version 0.1.0 (Alpha)
 ;; 06/05/2001 - Now using tempo templates for the comments... also allow for
@@ -59,7 +70,7 @@
 ;;            - minor formatting updates
 ;; 24/03/2001 - initial version.  Pretty lame.  Need some help.
 
-;; TODO
+;; TODO:
 ;;
 ;; - better end-user documentation
 ;; - test this on other versions of {X}Emacs other than the one I'm 
@@ -206,7 +217,7 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 (defvar doxymacs-mode-map (make-sparse-keymap) 
   "Keymap for doxymacs minor mode.")
 
-(define-key doxymacs-mode-map [(control ??)] 
+(define-key doxymacs-mode-map "\C-cd?"
   'doxymacs-lookup)
 (define-key doxymacs-mode-map "\C-cdr"
   'doxymacs-rescan-tags)
@@ -303,17 +314,16 @@ doxymacs-completion-list from it"
 		   (compound-kind (xml-tag-attr curr-compound "kind"))
 		   (compound-url (cadr 
 				  (xml-tag-child curr-compound "filename")))
-		   (compound-desc (concat compound-kind " " compound-name))
-		   (compound-members (doxymacs-get-compound-members 
-				      curr-compound)))
+		   (compound-desc (concat compound-kind " " compound-name)))
 	      ;; Add this compound to our completion list
 	      (doxymacs-add-to-completion-list compound-name
 					       compound-desc
 					       compound-url)
 	      ;; Add its members
-	      (doxymacs-add-compound-members compound-members 
+	      (doxymacs-add-compound-members curr-compound
 					     compound-name
 					     compound-url)
+
 	      
 	      ;; On to the next compound
 	      (message (concat 
@@ -324,46 +334,34 @@ doxymacs-completion-list from it"
 				    (float num-compounds)) 
 				   100))
 			"%%"))
-	      (setq curr-compound-num (+ 1 curr-compound-num))
+	      (setq curr-compound-num (1+ curr-compound-num))
 	      (setq compound-list (cdr compound-list)))))))
     ;; Don't need the doxytags buffer anymore
     (message "Done.")
     (kill-buffer doxymacs-tags-buffer)
     (set-buffer currbuff)))
 
-(defun doxymacs-get-compound-members (compound)
+(defun doxymacs-add-compound-members (compound compound-name compound-url)
   "Get the members of the given compound"
-  (let ((children (xml-tag-children compound))
-	(members nil))
+  (let ((children (xml-tag-children compound)))
     ;; Run through the children looking for ones with the "member" tag
     (while children
       (let* ((curr-child (car children)))
 	(if (string= (xml-tag-name curr-child) "member")
 	    ;; Found a member.  Throw it on the list.
-	    (setq members (cons curr-child members)))
-	(setq children (cdr children))))
-    members))
+	    (let* ((member-name (cadr (xml-tag-child curr-child "name")))
+		   (member-anchor (cadr (xml-tag-child curr-child "anchor")))
+		   (member-url (concat compound-url "#" member-anchor))
+		   (member-args (if (cdr (xml-tag-child curr-child "arglist"))
+				    (cadr (xml-tag-child curr-child "arglist"))
+				  ""))
+		   (member-desc (concat compound-name "::" 
+					member-name member-args)))
+	      (doxymacs-add-to-completion-list member-name
+					       member-desc
+					       member-url)))
+	(setq children (cdr children))))))
 
-(defun doxymacs-add-compound-members (members compound-name compound-url)
-  "Add the members of the coumpound with compound-name and compound-url"
-  (while members
-    (doxymacs-add-compound-member (car members) compound-name compound-url)
-    (setq members (cdr members))))
-
-(defun doxymacs-add-compound-member (member compound-name compound-url)
-  "Add a single member of the given compound"
-  ;; Get all the juicy info out of the XML tags for this member.
-  (let* ((member-name (cadr (xml-tag-child member "name")))
-	 (member-anchor (cadr (xml-tag-child member "anchor")))
-	 (member-url (concat compound-url "#" member-anchor))
-	 (member-args (if (cdr (xml-tag-child member "arglist"))
-			  (cadr (xml-tag-child member "arglist"))
-			""))
-	 (member-desc (concat compound-name "::" member-name member-args)))
-    (doxymacs-add-to-completion-list member-name
-				     member-desc
-				     member-url)))
-  	
 (defun doxymacs-display-url (url)
   "Displays the given match"
   (browse-url (concat doxymacs-doxygen-root "/" url)))
@@ -678,4 +676,4 @@ current point"
 					      (match-end 5))))
       nil)))
 
-;; doxymacs.el ends here
+;;; doxymacs.el ends here

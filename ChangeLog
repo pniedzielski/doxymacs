@@ -1,5 +1,9 @@
-$Id: ChangeLog,v 1.11 2001/05/08 03:32:19 ryants Exp $
+$Id: ChangeLog,v 1.12 2001/05/10 03:00:39 ryants Exp $
 
+2001-05-09 Ryan T. Sammartino <ryants@home.com> (0.1.1)
+	* lisp/doxymacs.el: change C-? to C-c d ?, add progress info while
+	parsing XML file, and some small optimisations.
+	
 2001-05-07 Ryan T. Sammartino <ryants@home.com> (0.1.0)
 	* lisp/doxymacs.el: Minor mode (thanks to Kris) and default key 
 	bindings.

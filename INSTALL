@@ -1,10 +1,34 @@
-$Id: INSTALL,v 1.13 2003/01/06 00:45:30 ryants Exp $
+$Id: INSTALL,v 1.14 2003/01/07 07:01:27 ryants Exp $
 
-- Use the configure script to configure this file:
+Doxymacs depends on the following packages:
+
+- W3      http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
+- tempo   http://www.lysator.liu.se/~davidk/elisp/
+- libxml2 http://www.libxml.org/
+
+Be sure these are properly configured and installed before proceeding.
+
+- Use the configure script to configure doxymacs:
+
    $ ./configure
    $ make
    $ make install
+
   Use ./configure --help for help on customising your configuration.
+
+  If you get
+
+!! File error (("Cannot open load file" "url"))
+
+  (or something similar) then set the variable EMACSLOADPATH before
+  doing make:
+
+   $ EMACSLOADPATH=... make
+
+  where ... is a colon separated list of directories to search for
+  packages.  To byte compile with XEmacs, set the variable EMACS:
+
+   $ EMACS=xemacs make
 
 - Customise the variable doxymacs-doxygen-dirs.
   Doxymacs customisation can be done from the Options | Customize menu,
@@ -13,11 +37,10 @@ $Id: INSTALL,v 1.13 2003/01/06 00:45:30 ryants Exp $
 - If your tags file is quite large (say, > 1 MB), consider setting
   doxymacs-use-external-xml-parser to t and be sure to set
   doxymacs-external-xml-parser-executable to the right value (the
-  default should usually be fine).  A suitable program is
-  distributed along with this file in the directory doxymacs/c/.
-  With an 11 MB XML tag file, the internal process takes 20 minutes
-  on a PIII 800 with 1 GB of RAM, whereas the external process takes 12
-  seconds.
+  default should usually be fine).  A suitable program is distributed
+  in the directory doxymacs/c/.  With an 11 MB XML tag file, the
+  internal process takes 20 minutes on a PIII 800 with 1 GB of RAM,
+  whereas the external process takes 12 seconds.
 
 - Put (require 'doxymacs) in your .emacs
 
@@ -44,14 +67,7 @@ $Id: INSTALL,v 1.13 2003/01/06 00:45:30 ryants Exp $
   - C-c d f will insert a Doxygen comment for the next function.
   - C-c d i will insert a Doxygen comment for the current file.
   - C-c d ; will insert a Doxygen comment for the current member.
-  - C-c d m will insert a blank multiline Doxygen comment.
-  - C-c d s will insert a blank singleline Doxygen comment.
+  - C-c d m will insert a blank multi-line Doxygen comment.
+  - C-c d s will insert a blank single-line Doxygen comment.
   - C-c d @ will insert grouping comments around the current region.
 
-Doxymacs depends on the following packages:
-
-- W3 	http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
-- tempo http://www.lysator.liu.se/~davidk/elisp/
-
-The external XML parser requires libxml2 version 2.3.4 or greater which can 
-be obtained from http://www.libxml.org/.

@@ -28,31 +28,60 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.2 2003/01/06 00:45:30 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.3 2003/01/07 07:01:29 ryants Exp $
 
 ;; Commentary:
 ;;
-;; - Use the configure script to configure this file:
+;; Doxymacs depends on the following packages:
+;;
+;; - W3      http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
+;; - tempo   http://www.lysator.liu.se/~davidk/elisp/
+;; - libxml2 http://www.libxml.org/
+;;
+;; Be sure these are properly configured and installed before proceeding.
+;;
+;; - Use the configure script to configure doxymacs:
+;;
 ;;    $ ./configure
 ;;    $ make
 ;;    $ make install
+;;
 ;;   Use ./configure --help for help on customising your configuration.
+;;
+;;   If you get
+;;
+;;   !! File error (("Cannot open load file" "url"))
+;;
+;;   (or something similar) then set the variable EMACSLOADPATH before
+;;   doing make:
+;;
+;;    $ EMACSLOADPATH=... make
+;;
+;;   where ... is a colon separated list of directories to search for
+;;   packages.  To byte compile with XEmacs, set the variable EMACS:
+;;
+;;    $ EMACS=xemacs make
+;;
 ;; - Customise the variable doxymacs-doxygen-dirs.
+;;
 ;; - If your tags file is quite large (say, > 1 MB), consider setting
 ;;   doxymacs-use-external-xml-parser to t and be sure to set
 ;;   doxymacs-external-xml-parser-executable to the right value (the
 ;;   default should usually be fine).  A suitable program is
 ;;   distributed along with this file in the directory doxymacs/c/.
 ;;   With an 11 MB XML tag file, the internal process takes 20 minutes
-;;   on a PIII 800 with 1 GB of RAM, whereas the external process takes 12
-;;   seconds.
+;;   on a PIII 800 with 1 GB of RAM, whereas the external process
+;;   takes 12 seconds.
+;;
 ;; - Put (require 'doxymacs) in your .emacs
+;;
 ;; - Invoke doxymacs-mode with M-x doxymacs-mode.  To have doxymacs-mode
 ;;   invoked automatically when in C/C++ mode, put
 ;;
 ;;   (add-hook 'c-mode-common-hook 'doxymacs-mode)
 ;;
 ;;   in your .emacs.
+;;
 ;; - If you want Doxygen keywords fontified use M-x doxymacs-font-lock.
 ;;   To do it automatically, add the following to your .emacs:
 ;;
@@ -62,6 +91,7 @@
 ;;   (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 ;;
 ;;   This will add the Doxygen keywords to c-mode and c++-mode only.
+;;
 ;; - Default key bindings are:
 ;;   - C-c d ? will look up documentation for the symbol under the point.
 ;;   - C-c d r will rescan your Doxygen tags file.
@@ -78,14 +108,6 @@
 ;;
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
-;;
-;; Doxymacs depends on the following packages:
-;;
-;; - W3    http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
-;; - tempo http://www.lysator.liu.se/~davidk/elisp/
-;;
-;; The external XML parser requires libxml2 version 2.3.4 or greater which
-;; can be obtained from http://www.libxml.org/.
 
 ;; Change log:
 ;;

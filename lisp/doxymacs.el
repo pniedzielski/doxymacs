@@ -27,7 +27,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.31 2001/05/22 06:04:13 ryants Exp $
+;; $Id: doxymacs.el,v 1.32 2001/05/22 06:17:10 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -275,7 +275,7 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 	  (eq (buffer-live-p doxymacs-tags-buffer) nil))
       (progn
 	(setq doxymacs-tags-buffer (generate-new-buffer "*doxytags*"))
-	(message (concat "Loading " doxymacs-doxygen-tags))
+	(message (concat "Loading " doxymacs-doxygen-tags "..."))
 	(let ((currbuff (current-buffer)))
 	  (if (file-regular-p doxymacs-doxygen-tags)
 	      ;;It's a regular file, so just grab it.
@@ -316,8 +316,9 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
     (goto-char (point-min))
     (setq doxymacs-completion-list nil)
     (message (concat 
-	      "Calling external process " 
-	      doxymacs-external-xml-parser-executable))
+	      "Executing external process " 
+	      doxymacs-external-xml-parser-executable
+	     "..."))
     (let ((status (call-process-region 
 		   (point-min) (point-max) 
 		   doxymacs-external-xml-parser-executable
@@ -325,12 +326,17 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
       (if (eq status 0)
 	  (progn
 	    (goto-char (point-min))
-	    (message "Reading completion list")
+	    (message "Reading completion list...")
 	    (setq doxymacs-completion-list (read (current-buffer)))
-	    (message "Done"))
-	(message "There were problems"))
-      (kill-buffer doxymacs-tags-buffer)
-      (set-buffer currbuff))))
+	    (message "Done.")
+	    (kill-buffer doxymacs-tags-buffer)
+	    (set-buffer currbuff))
+	(progn
+	  (switch-to-buffer doxymacs-tags-buffer)
+	  (message (concat 
+		    "There were problems parsing " 
+		    doxymacs-doxygen-tags)))))))
+
 
 (defun doxymacs-xml-progress-callback (amount-done)
   (message (concat "Parsing " doxymacs-doxygen-tags "... " 

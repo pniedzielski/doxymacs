@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.9 2001/04/12 03:13:14 ryants Exp $
+;; $Id: doxymacs.el,v 1.10 2001/04/15 22:33:03 airborne Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -80,6 +80,17 @@
 (defvar doxymacs-tags-buffer nil
   "The buffer with our doxytags")
 
+;; The structure of this list has been chosen for ease of use in the
+;; completin functions.  The structure is as follows:
+;; ( (symbol-1 . ((description-1a . url-1a) (description-1b . url-1b)))
+;;   (symbol-2 . ((description-2a . url-2a)))
+;;   ... )
+(defvar doxymacs-completion-list nil
+  "The list with doxytags completions")
+
+(defvar doxymacs-completion-buffer "*Completions*"
+  "The buffer used for displaying multiple completions")
+
 
 ;;These functions have to do with looking stuff up in doxygen generated
 ;;documentation
@@ -141,8 +152,7 @@
   (assoc
    (completing-read
     (concat "More than one match for " symbol ", select one: ")
-    matches
-    nil 'f)
+    matches)
    matches))
   
 
@@ -163,6 +173,94 @@
 	  (if (eq choice nil)
 	      (beep) ;; This might be annoying, but seems to be a standard
 	    (doxymacs-display-match choice)))))))
+
+;; ===[ New completion stuff ]===
+
+;; doxymacs-fill-completion-list
+;; Parses the *doxytags* buffer and constructs the doxymacs-completion-list 
+;; out of it.
+(defun doxymacs-fill-completion-list ()
+  "For now it (loads and) parses the tags from the *doxytags* buffer"
+  (doxymacs-load-tags)
+  (let ((currbuff (current-buffer))
+        (regexp (concat "^\\(.*\\)\t\\(.*\\)\t\\(.*\\)$")))
+    (set-buffer doxymacs-tags-buffer)
+    (goto-char (point-min))
+    (setq doxymacs-completion-list nil)
+    (while (re-search-forward regexp nil t)
+      (let* ((symbol (match-string 1))
+             (url (match-string 2))
+             (desc (match-string 3))
+             (check (assoc symbol doxymacs-completion-list)))
+        (if check
+            ;; There is already a symbol with the same name in the list
+            (if (not (assoc desc (cdr check)))
+                ;; If there is not yet a symbol with this description, add it
+                ;; FIXME: what to do if there is already a symbol??
+                (setcdr check (cons (cons desc url)
+                                    (cdr check))))
+          ;; There is not yet a symbol with this name in the list
+          (setq doxymacs-completion-list (cons (cons symbol (list (cons desc url)))
+                                               doxymacs-completion-list)))))
+    (set-buffer currbuff)))
+
+(defun doxymacs-display-url (url)
+  "Displays the given match"
+  (browse-url (concat doxymacs-doxygen-root "/" url)))
+
+(defun doxymacs-search-new ()
+  "Look up the symbol under the cursor in doxygen"
+  (interactive)
+  (let ((url (doxymacs-symbol-completion (symbol-near-point) doxymacs-completion-list)))
+    (if url
+        (doxymacs-display-url url))))
+
+(defun doxymacs-symbol-completion (initial collection &optional pred)
+  "Do completion for given symbol"
+  (let ((completion (try-completion initial collection pred)))
+    (cond ((eq completion t)
+           ;; Only one completion found.  Validate it.
+           (doxymacs-validate-symbol-completion initial collection pred))
+          ((null completion)
+           ;; No completion found
+           (message "No documentation for '%s'" initial)
+           (ding))
+          (t
+           ;; There is more than one possible completion
+           (let ((matches (all-completions initial collection pred)))
+             (with-output-to-temp-buffer doxymacs-completion-buffer
+               (display-completion-list (sort matches #'string-lessp))))
+           (let ((completion (completing-read "Select: " collection pred nil initial)))
+             (delete-window (get-buffer-window doxymacs-completion-buffer))
+             (if completion
+                 ;; If there is a completion, validate it.
+                 (doxymacs-validate-symbol-completion completion collection pred)
+               ;; Otherwise just return nil
+               nil))))))
+
+(defun doxymacs-validate-symbol-completion (initial collection &optional pred)
+  "Checks whether the symbol (initial) has multiple descriptions, and if so
+continue completion on those descriptions.  In the end it returns the URL for
+the completion or nil if canceled by the user."
+  (let ((new-collection (cdr (assoc initial collection))))
+    (if (> (length new-collection) 1)
+        ;; More than one
+        (doxymacs-description-completion "" new-collection pred)
+      ;; Only one, return the URL
+      (cdar new-collection))))
+
+(defun doxymacs-description-completion (initial collection &optional pred)
+  "Do completion for given description"
+  (let ((matches (all-completions initial collection pred)))
+    (with-output-to-temp-buffer doxymacs-completion-buffer
+      (display-completion-list (sort matches #'string-lessp))))
+  (let ((completion (completing-read "Select: " collection pred nil initial)))
+    (delete-window (get-buffer-window doxymacs-completion-buffer))
+    (if completion
+        ;; Return the URL if there is a completion
+        (cdr (assoc completion collection)))))
+
+;; ===[ End of new completion stuff ]===
 
 
 ;; These functions have to do with inserting doxygen commands in code

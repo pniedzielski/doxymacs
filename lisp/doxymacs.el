@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.8 2001/04/12 02:44:41 ryants Exp $
+;; $Id: doxymacs.el,v 1.9 2001/04/12 03:13:14 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -29,6 +29,7 @@
 ;;
 ;; 11/04/2001 - added ability to insert blank doxygen comments with either
 ;;              Qt or JavaDoc style.
+;;            - also did "file" comments
 ;; 31/03/2001 - added ability to choose which symbol to look up if more than
 ;;              one match
 ;;            - slightly changed the format of the list that 
@@ -171,7 +172,7 @@
       "/**\n * \n * \n */\n"
     "//! \n/*!\n \n*/\n"))
 
-(defun doxymacs-insert-multiline-comment ()
+(defun doxymacs-insert-blank-multiline-comment ()
   "Inserts a mult-line blank doxygen comment at the current point"
   (interactive "*")
   (save-excursion 
@@ -189,7 +190,7 @@
       "/// "
     "//! "))
 
-(defun doxymacs-insert-singleline-comment ()
+(defun doxymacs-insert-blank-singleline-comment ()
   "Inserts a single-line blank doxygen comment at current point"
   (interactive "*")
   (save-excursion
@@ -200,3 +201,44 @@
        (indent-region start end nil))))
   (end-of-line))
 
+(defun doxymacs-file-comment ()
+  (let ((fname (if (buffer-file-name) 
+		   (file-name-nondirectory (buffer-file-name))
+		 "")))
+	(if (equal doxymacs-doxygen-style "JavaDoc")
+	    (format (concat "/**\n"
+			    " * @file   %s\n"
+			    " * @author %s <%s>\n"
+			    " * @date   %s\n"
+			    " *\n"
+			    " * @brief  \n"
+			    " *\n"
+			    " *\n"
+			    " */")
+		    fname
+		    (user-full-name)
+		    (user-mail-address)
+		    (current-time-string))
+	  (format (concat "/*!\n"
+			  " \\file   %s\n"
+			  " \\author %s <%s>\n"
+			  " \\date   %s\n"
+			  " \n"
+			  " \\brief  \n"
+			  " \n"
+			  " \n"
+			  "*/")
+		  fname
+		  (user-full-name)
+		  (user-mail-address)
+		  (current-time-string)))))
+
+(defun doxymacs-insert-file-comment ()
+  "Inserts doxygen documentation for the current file at current point"
+  (interactive "*")
+  (save-excursion
+    (let ((start (point)))
+      (insert (doxymacs-file-comment))
+      (let ((end (point)))
+	(indent-region start end nil))))
+  (end-of-line 6))

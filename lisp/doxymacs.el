@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at home dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.2.0
+;; Version: 1.2.1
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.47 2001/08/27 01:37:53 ryants Exp $
+;; $Id: doxymacs.el,v 1.48 2001/09/16 02:00:34 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -75,6 +75,10 @@
 
 ;; Change log:
 ;;
+;; 15/09/2001 - bug #460396 fixed... wrong number of arguments for 
+;;              doxymacs-parm-tempo-element in
+;;              doxymacs-Qt-function-comment-template
+;;            - version 1.2.1
 ;; 26/08/2001 - feature request #454122 (single line member comments) done.
 ;;            - feature request #454123 (key bindings description) done.
 ;;            - clean up template code to make it easier to add new templates
@@ -807,7 +811,7 @@ the completion or nil if canceled by the user."
 	  "//! " 'p '> 'n
 	  "/*! " '> 'n
 	  " " '> 'n
-	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)) "Qt")
+	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)))
 	  (unless
 	      (string-match "^[ \t\n]*void[ \t\n]*$" 
 			    (cdr (assoc 'return next-func)))

@@ -1,4 +1,9 @@
-$Id: ChangeLog,v 1.23 2001/08/26 23:38:50 ryants Exp $
+$Id: ChangeLog,v 1.24 2001/09/16 02:00:34 ryants Exp $
+
+2001-09-15 Ryan T. Sammartino <ryants at home dot com> (1.2.1)
+	* lisp/doxymacs.el: fix bug #460396: invalid number of arguments
+	to doxymacs-parm-tempo-element in
+	doxymacs-Qt-function-comment-template
 
 2001-08-26 Ryan T. Sammartino <ryants at home dot com> (1.2.0)
 	* lisp/doxymacs.el: implement feature request #454122 (single line

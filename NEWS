@@ -1,3 +1,7 @@
-$Id: NEWS,v 1.1 2001/03/25 00:33:24 ryants Exp $
+$Id: NEWS,v 1.2 2001/05/08 03:32:19 ryants Exp $
 
-No news is good news, I guess.
+
+07/05/2001 Version 0.1.0 (Alpha) released.
+	This represents the first public release of doxymacs.  It works for us,
+	now let's see if it works for other people too.
+

@@ -1,4 +1,9 @@
-$Id: ChangeLog,v 1.10 2001/05/07 00:12:04 ryants Exp $
+$Id: ChangeLog,v 1.11 2001/05/08 03:32:19 ryants Exp $
+
+2001-05-07 Ryan T. Sammartino <ryants@home.com> (0.1.0)
+	* lisp/doxymacs.el: Minor mode (thanks to Kris) and default key 
+	bindings.
+	* INSTALL: some better instructions (I hope)
 
 2001-05-06 Ryan T. Sammartino <ryants@home.com>
 	* lisp/doxymacs.el: Now using tempo templates for inserting comments.

@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.25 2001/05/07 17:33:29 airborne Exp $
+;; $Id: doxymacs.el,v 1.26 2001/05/08 03:32:19 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -37,7 +37,9 @@
 ;;
 ;; ChangeLog
 ;;
-;; 06/04/2001 - Now using tempo templates for the comments... also allow for
+;; 07/05/2001 - minor mode thanks to Kris, and default key map.
+;;            - released as version 0.1.0 (Alpha)
+;; 06/05/2001 - Now using tempo templates for the comments... also allow for
 ;;              user defined templates.
 ;; 29/04/2001 - The doxytags.pl PERL script is no longer necessary, as we can
 ;;              now parse the XML file that doxygen creates directly.
@@ -59,7 +61,6 @@
 
 ;; TODO
 ;;
-;; - add some default key-bindings 
 ;; - better end-user documentation
 ;; - test this on other versions of {X}Emacs other than the one I'm 
 ;;   using (XEmacs 21.1.14)
@@ -77,24 +78,26 @@
 (require 'tempo)
 
 (defgroup doxymacs nil
-  "Find documentation for symbol at point"
+  "Find documentation created by Doxygen, and create Doxygen comments"
   :group 'tools)
 
 (defcustom doxymacs-doxygen-root
   ""
-  "*Root for doxygen documentation (URL)"
+  "*Root for doxygen documentation (URL)."
   :type 'string
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-tags
   ""
-  "*File name or URL that contains doxygen tags"
+  "*File name or URL that contains doxygen tags."
   :type 'string
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-style
   "JavaDoc"
-  "*The style of comments to insert into code"
+  "*The style of comments to insert into code.
+See http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks for examples
+of the two styles."
   :type '(radio (const :tag "JavaDoc" "JavaDoc") (const :tag "Qt" "Qt"))  
   :group 'doxymacs)
 
@@ -118,7 +121,8 @@
   nil
   "*A tempo template to insert when calling doxymacs-insert-blank-multiline-comment.  
 If nil, then a default template based on the current style as indicated
-by doxymacs-doxygen-style will be used"
+by doxymacs-doxygen-style will be used.  For help with tempo templates,
+see "
   :type 'list
   :set 'doxymacs-set-user-template
   :group 'doxymacs)
@@ -127,7 +131,8 @@ by doxymacs-doxygen-style will be used"
   nil
   "*A tempo template to insert when calling doxymacs-insert-blank-singleline-comment.  
 If nil, then a default template based on the current style as indicated
-by doxymacs-doxygen-style will be used"
+by doxymacs-doxygen-style will be used.  For help with tempo templates,
+see "
   :type 'list
   :set 'doxymacs-set-user-template
   :group 'doxymacs)
@@ -136,7 +141,8 @@ by doxymacs-doxygen-style will be used"
   nil
   "*A tempo template to insert when calling doxymacs-insert-file-comment.  
 If nil, then a default template based on the current style as indicated
-by doxymacs-doxygen-style will be used"
+by doxymacs-doxygen-style will be used.  For help with tempo templates,
+see "
   :type 'list
   :set 'doxymacs-set-user-template
   :group 'doxymacs)
@@ -148,13 +154,15 @@ If nil, then a default template based on the current style as indicated
 by doxymacs-doxygen-style will be used.  Note that the function 
 doxymacs-find-next-func is available to you... it returns an assoc list
 with the function's name (BUG: it may be incorrect for C++ operator-style 
-declerations), argument list, and return value:
+declerations), argument list (BUG: may be incorrect for parameters that
+require parentheses), and return value:
 
 (cdr (assoc 'func (doxymacs-find-next-func))) is the function name (string).
 (cdr (assoc 'args (doxymacs-find-next-func))) is a list of arguments.
 (cdr (assoc 'return (doxymacs-find-next-func))) is the return type (string).
 
-The argument list is a list of strings."
+The argument list is a list of strings.  For help with tempo templates,
+see "
   :type 'list
   :set 'doxymacs-set-user-template
   :group 'doxymacs)
@@ -178,7 +186,9 @@ The argument list is a list of strings."
 
 ;; Minor mode implementation
 
-(defvar doxymacs-mode nil "nil disables doxymacs, non-nil enables")
+(defvar doxymacs-mode nil 
+  "nil disables doxymacs, non-nil enables.")
+
 (make-variable-buffer-local 'doxymacs-mode)
 
 (defun doxymacs-mode (&optional arg)
@@ -193,9 +203,23 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
           ;; Enable/Disbale according to arg
           (> (prefix-numeric-value arg) 0))))
 
-(defvar doxymacs-mode-map (make-sparse-keymap) "Keymap voor doxymacs minor mode.")
+(defvar doxymacs-mode-map (make-sparse-keymap) 
+  "Keymap for doxymacs minor mode.")
 
-(define-key doxymacs-mode-map "\M-\t" 'doxymacs-lookup)
+(define-key doxymacs-mode-map [(control ??)] 
+  'doxymacs-lookup)
+(define-key doxymacs-mode-map "\C-cdr"
+  'doxymacs-rescan-tags)
+
+(define-key doxymacs-mode-map "\C-cdf"
+  'doxymacs-insert-function-comment)
+(define-key doxymacs-mode-map "\C-cdi"
+  'doxymacs-insert-file-comment)
+(define-key doxymacs-mode-map "\C-cdm"
+  'doxymacs-insert-blank-multiline-comment)
+(define-key doxymacs-mode-map "\C-cds"
+  'doxymacs-insert-blank-singleline-comment)
+
 
 ;;;###autoload
 (or (assoc 'doxymacs-mode minor-mode-alist)
@@ -232,7 +256,8 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 		    (set-buffer doxymacs-tags-buffer)
 		    (url-insert-file-contents doxymacs-doxygen-tags)
 		    (set-buffer-modified-p nil))
-		(error (concat doxymacs-doxygen-tags " not found.")))))
+		(error (concat 
+			"Tag file " doxymacs-doxygen-tags " not found.")))))
 	  (set-buffer currbuff)))))
 
 (defun doxymacs-add-to-completion-list (symbol desc url)
@@ -610,10 +635,7 @@ current point"
 ;; - void qsort(int (*comp)(void *, void *), int left, int right);
 ;; - int f(int (*daytab)[5], int x);
 ;; - Anything that doesn't declare its return value
-;; NOTE
-;; - It doesn't really matter if the function name is incorrect... the 
-;;   important bits are the arguments and the return value... those need
-;;   to be correct for sure.
+;; - Also gets the names of certain C++ operator-style declerations wrong
 (defun doxymacs-find-next-func ()
   "Returns a list describing next function declaration, or nil if not found"
   (interactive)
@@ -638,16 +660,5 @@ current point"
 	      (cons 'return (buffer-substring (match-beginning 5)
 					      (match-end 5))))
       nil)))
-
-
-;; Default key bindings
-
-;; FIXME finish this.  What would be good keys for inserting documentation?
-
-(defun doxymacs-default-key-bindings ()
-  "Install default key bindings for doxymacs"
-  (interactive)
-  (global-set-key [(control ??)] 'doxymacs-lookup))
-
 
 ;; doxymacs.el ends here

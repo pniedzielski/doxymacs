@@ -1,6 +1,6 @@
 2005-04-01  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
 
-	* AUTHORS: update contact info
+	* AUTHORS, README: update contact info
 
 	* example/src/doxy.conf: update for new doxygen
 

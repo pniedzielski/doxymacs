@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.20 2001/04/30 00:15:55 ryants Exp $
+;; $Id: doxymacs.el,v 1.21 2001/04/30 01:43:22 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -60,6 +60,8 @@
 
 (require 'custom)
 (require 'xml-parse)
+(require 'url)
+(require 'w3-cus)
 
 (defgroup doxymacs nil
   "Find documentation for symbol at point"
@@ -72,7 +74,8 @@
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-tags
-;  "file:///home/ryants/projects/doxymacs/example/doc/doxy.tag"
+;  "http://members.home.net/ryants/doxy.tag"
+;  "file:/home/ryants/projects/doxymacs/example/doc/doxy.tag"
   "../example/doc/doxy.tag"
   "*File name or URL that contains doxygen tags"
   :type 'string
@@ -117,35 +120,14 @@
 		(set-buffer doxymacs-tags-buffer)
 		(insert-file-contents doxymacs-doxygen-tags))
 	    ;; Otherwise, try and grab it as a URL
-	    ;; FIXME  What if something goes wrong?
-	    (let ((url-working-buffer 
-		   (cdr (url-retrieve doxymacs-doxygen-tags))))
-	      (set-buffer url-working-buffer)
-	      (url-uncompress)
-	      (set-buffer doxymacs-tags-buffer)
-	      (insert-buffer url-working-buffer)
-	      (kill-buffer url-working-buffer)))
+	    (progn
+	      (if (url-file-exists doxymacs-doxygen-tags)
+		  (progn
+		    (set-buffer doxymacs-tags-buffer)
+		    (url-insert-file-contents doxymacs-doxygen-tags)
+		    (set-buffer-modified-p nil))
+		(error (concat doxymacs-doxygen-tags " not found.")))))
 	  (set-buffer currbuff)))))
-
-;; OBSOLETE
-;; This is the old-school way, before we had an XML parser
-;; doxymacs-fill-completion-list
-;; Parses the *doxytags* buffer and constructs the doxymacs-completion-list 
-;; out of it.
-;(defun doxymacs-fill-completion-list ()
-;  "For now it (loads and) parses the tags from the *doxytags* buffer"
-;  (doxymacs-load-tags)
-;  (let ((currbuff (current-buffer))
-;        (regexp (concat "^\\(.*\\)\t\\(.*\\)\t\\(.*\\)$")))
-;    (set-buffer doxymacs-tags-buffer)
-;    (goto-char (point-min))
-;    (setq doxymacs-completion-list nil)
-;    (while (re-search-forward regexp nil t)
-;      (let* ((symbol (match-string 1))
-;             (url (match-string 2))
-;             (desc (match-string 3)))
-;	(doxymacs-add-to-completion-list symbol desc url)))
-;    (set-buffer currbuff)))
 
 (defun doxymacs-add-to-completion-list (symbol desc url)
   "Add a symbol to our completion list, along with its description and URL"
@@ -171,27 +153,33 @@ doxymacs-completion-list from it"
     (set-buffer doxymacs-tags-buffer)
     (goto-char (point-min))
     (setq doxymacs-completion-list nil)
-    (let ((compound-list (xml-tag-children (read-xml))))
-      (while compound-list
-	(let* ((curr-compound (car compound-list))
-	       (compound-name (cadr (xml-tag-child curr-compound "name")))
-	       (compound-kind (xml-tag-attr curr-compound "kind"))
-	       (compound-url (cadr (xml-tag-child curr-compound "filename")))
-	       (compound-desc (concat compound-kind " " compound-name))
-	       (compound-members (doxymacs-get-compound-members 
-				  curr-compound)))
-	  ;; Add this compound to our completion list
-	  (doxymacs-add-to-completion-list compound-name
-					   compound-desc
-					   compound-url)
-	  ;; Add its members
-	  (doxymacs-add-compound-members compound-members 
-					 compound-name
-					 compound-url)
-	  
-	  ;; On to the next compound
-	  (setq compound-list (cdr compound-list)))))
-    (set-buffer currbuff)))
+    (let ((xml (read-xml)))
+      (let ((compound-list (xml-tag-children xml)))
+	(if (not (string= (xml-tag-name xml) "tagfile"))
+	    (error (concat "Invalid tag file: " doxymacs-doxygen-tags))
+	  (while compound-list
+	    (let* ((curr-compound (car compound-list))
+		   (compound-name (cadr (xml-tag-child curr-compound "name")))
+		   (compound-kind (xml-tag-attr curr-compound "kind"))
+		   (compound-url (cadr 
+				  (xml-tag-child curr-compound "filename")))
+		   (compound-desc (concat compound-kind " " compound-name))
+		   (compound-members (doxymacs-get-compound-members 
+				      curr-compound)))
+	      ;; Add this compound to our completion list
+	      (doxymacs-add-to-completion-list compound-name
+					       compound-desc
+					       compound-url)
+	      ;; Add its members
+	      (doxymacs-add-compound-members compound-members 
+					     compound-name
+					     compound-url)
+	      
+	      ;; On to the next compound
+	      (setq compound-list (cdr compound-list)))))))
+      ;; Don't need the doxytags buffer anymore
+      (kill-buffer doxymacs-tags-buffer)
+      (set-buffer currbuff)))
 
 (defun doxymacs-get-compound-members (compound)
   "Get the members of the given compound"
@@ -294,6 +282,8 @@ the completion or nil if canceled by the user."
 (defun doxymacs-rescan-tags ()
   "Rescan the tags file"
   (interactive)
+  (if (buffer-live-p doxymacs-tags-buffer)
+      (kill-buffer doxymacs-tags-buffer))
   (doxymacs-fill-completion-list))
 
 
@@ -500,7 +490,7 @@ current point"
 
 ;; Default key bindings
 
-;; FIXME do this.
+;(global-set-key [(control ??)] 'doxymacs-lookup)
 
 
 ;; doxymacs.el ends here

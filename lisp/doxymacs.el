@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.37 2001/06/02 20:52:14 ryants Exp $
+;; $Id: doxymacs.el,v 1.38 2001/06/07 02:11:38 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -59,6 +59,7 @@
 
 ;; Change log:
 ;;
+;; 06/06/2001 - fix bug #427660 (mouse selection problems).
 ;; 26/05/2001 - fix bug #427351 (thinks "void" is a parameter) and bug
 ;;              #427350 (can't document constructors/destructors), and
 ;;              generally made the whole doxymacs-find-next-func function
@@ -82,8 +83,7 @@
 ;;              now parse the XML file that doxygen creates directly.
 ;; 22/04/2001 - Function documentation.
 ;; 18/04/2001 - Going with Kris' "new style" look up code.  It's excellent.
-;;            - Incorprated Andreas Fuchs' patch for loading tags from a
-;;              URL.
+;;            - Load tags from URL.
 ;; 11/04/2001 - added ability to insert blank doxygen comments with either
 ;;              Qt or JavaDoc style.
 ;;            - also did "file" comments
@@ -201,12 +201,12 @@ see http://www.lysator.liu.se/~davidk/elisp/"
 (defcustom doxymacs-function-comment-template
   nil
   "*A tempo template to insert when calling doxymacs-insert-function-comment.  
-If nil, then a default template based on the current style as indicated
-by doxymacs-doxygen-style will be used.  Note that the function 
-doxymacs-find-next-func is available to you... it returns an assoc list
-with the function's name (BUG: it may be incorrect for C++ operator-style 
-declerations), argument list (BUG: may be incorrect for parameters that
-require parentheses), and return value:
+If nil, then a default template based on the current style as
+indicated by doxymacs-doxygen-style will be used.  Note that the
+function doxymacs-find-next-func is available to you... it returns
+an assoc list with the function's name, argument list (BUG: may be
+incorrect for parameters that require parentheses), and return
+value:
 
 (cdr (assoc 'func (doxymacs-find-next-func))) is the function name (string).
 (cdr (assoc 'args (doxymacs-find-next-func))) is a list of arguments.
@@ -766,7 +766,7 @@ current point"
 ;; This gets confused by the following examples:
 ;; - void qsort(int (*comp)(void *, void *), int left, int right);
 ;; - int f(int (*daytab)[5], int x);
-;; Of course, these kinds of things can't be done by regexp's along.
+;; Of course, these kinds of things can't be done by regexp's alone.
 (defun doxymacs-find-next-func ()
   "Returns a list describing next function declaration, or nil if not found"
   (interactive)

@@ -1,4 +1,7 @@
-$Id: ChangeLog,v 1.16 2001/05/27 19:07:51 ryants Exp $
+$Id: ChangeLog,v 1.17 2001/06/07 02:11:38 ryants Exp $
+
+2001-06-06 Ryan T. Sammartino <ryants at home dot com> (1.0.0)
+	* lisp/doxymacs.el: fix bug #427660 "mouse selection problems".
 
 2001-05-26 Ryan T. Sammartino <ryants at home dot com> (0.2.1)
 	* lisp/doxymacs.el: fix bug #427351 "thinks "void" is a parameter"

@@ -1,4 +1,10 @@
-$Id: NEWS,v 1.4 2001/05/27 06:55:32 ryants Exp $
+$Id: NEWS,v 1.5 2001/06/07 02:11:38 ryants Exp $
+
+06/06/2001 Version 1.0.0 released.
+	The first stable release.  There are still some bugs left (see
+	the FIXMEs in lisp/doxymacs.el), but they are both sufficiently
+	rare and hard to fix that they don't warrant holding up a stable
+	release.
 
 26/05/2001 Version 0.2.1 released.
 	Er... forgot to update this file the past few releases.

@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.11 2001/04/19 03:06:14 ryants Exp $
+;; $Id: doxymacs.el,v 1.12 2001/04/19 03:39:05 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -28,6 +28,8 @@
 ;; ChangeLog
 ;;
 ;; 18/04/2001 - Going with Kris' "new style" look up code.  It's excellent.
+;;            - Incorprated Andreas Fuchs' patch for loading tags from a
+;;              URL.
 ;;
 ;; 11/04/2001 - added ability to insert blank doxygen comments with either
 ;;              Qt or JavaDoc style.
@@ -68,8 +70,9 @@
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-tags
-  "../example/doc/doxy.tag"
-  "*File that contains doxygen tags"
+  "file:///home/ryants/projects/doxymacs/example/doc/doxy.tag"
+;  "../example/doc/doxy.tag"
+  "*File name or URL that contains doxygen tags"
   :type 'string
   :group 'doxymacs)
 
@@ -114,8 +117,20 @@
       (progn
 	(setq doxymacs-tags-buffer (generate-new-buffer "*doxytags*"))
 	(let ((currbuff (current-buffer)))
-	  (set-buffer doxymacs-tags-buffer)
-	  (insert-file-contents doxymacs-doxygen-tags)
+	  (if (file-regular-p doxymacs-doxygen-tags)
+	      ;;It's a regular file, so just grab it.
+	      (progn
+		(set-buffer doxymacs-tags-buffer)
+		(insert-file-contents doxymacs-doxygen-tags))
+	    ;; Otherwise, try and grab it as a URL
+	    ;; FIXME  What if something goes wrong?
+	    (let ((url-working-buffer 
+		   (cdr (url-retrieve doxymacs-doxygen-tags))))
+	      (set-buffer url-working-buffer)
+	      (url-uncompress)
+	      (set-buffer doxymacs-tags-buffer)
+	      (insert-buffer url-working-buffer)
+	      (kill-buffer url-working-buffer)))
 	  (set-buffer currbuff)))))
 
 ;; doxymacs-fill-completion-list

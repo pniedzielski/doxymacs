@@ -10,6 +10,8 @@ BAZ2	class_Foo.html#s2s1	Foo::BAZ2
 Foo	class_Foo.html#a0	Foo::Foo
 GetBlah	class_Foo.html#a1	Foo::GetBlah
 _blah	class_Foo.html#o0	Foo::_blah
+NameSpaceTest	namespace_NameSpaceTest.html	namespace NameSpaceTest
+foobazbar	namespace_NameSpaceTest.html#a0	NameSpaceTest::foobazbar
 baz	struct_baz.html	struct baz
 z	struct_baz.html#m0	baz::z
 blah	struct_blah.html	struct blah

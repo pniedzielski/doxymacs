@@ -1,4 +1,4 @@
-// $Id: aclass.h,v 1.1 2001/03/25 00:33:24 ryants Exp $ 
+// $Id: aclass.h,v 1.2 2001/04/28 23:49:39 ryants Exp $ 
 // This is just some silly sample file to test out doxymacs with.
 #ifndef _ACLASS_H_
 #define _ACLASS_H_
@@ -57,5 +57,11 @@ enum _blah
     FOO_SNAZ,
     Foo
 };
+
+/** Some namespace */
+namespace NameSpaceTest
+{
+    int foobazbar;
+}
 
 #endif // _ACLASS_H_

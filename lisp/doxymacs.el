@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.44 2001/08/24 04:04:21 ryants Exp $
+;; $Id: doxymacs.el,v 1.45 2001/08/25 05:07:53 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -138,6 +138,15 @@
 (require 'url)
 (require 'w3-cus)
 (require 'tempo)
+
+(defconst doxymacs-version "1.1.4"
+  "Doxymacs version number")
+
+(defun doxymacs-version ()
+  "Report the current version of doxymacs in the minibuffer."
+  (interactive)
+  (message "Using doxymacs version %s" doxymacs-version))
+  
 
 (defgroup doxymacs nil
   "Find documentation created by Doxygen, and create Doxygen comments"
@@ -269,9 +278,19 @@ see http://www.lysator.liu.se/~davidk/elisp/"
 (make-variable-buffer-local 'doxymacs-mode)
 
 (defun doxymacs-mode (&optional arg)
-  "Doxymacs Minor mode.
-With no argument, this command toggles doxymacs mode.
-With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
+  ;; All of the following text shows up in the "mode help" (C-h m)
+  "Minor mode for using/creating Doxygen comments.
+To submit a problem report, request a feature or get support, please
+visit doxymacs' homepage at http://doxymacs.sourceforge.net/.
+
+To see what version of doxymacs you are running, enter
+`\\[doxymacs-version]'.
+
+In order for `doxymacs-lookup' to work you will need to customise the
+variables `doxymacs-doxygen-root' and `doxymacs-doxygen-tags'.
+
+Key bindings:
+\\{doxymacs-mode-map}"
   (interactive "P")
   (setq doxymacs-mode
         (if (null arg)

@@ -25,7 +25,7 @@
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
  *
- * $Id: doxymacs_parser.c,v 1.8 2002/12/09 05:53:33 ryants Exp $
+ * $Id: doxymacs_parser.c,v 1.9 2002/12/10 05:36:39 ryants Exp $
  *
  */
 
@@ -333,6 +333,7 @@ inline char *Encode(const char *s)
                 }
                 s++;
             }
+            *r =3D '\0';
         }
         return ret;
     }

@@ -1,4 +1,9 @@
-$Id: ChangeLog,v 1.35 2002/12/09 05:53:33 ryants Exp $
+$Id: ChangeLog,v 1.36 2002/12/10 05:36:37 ryants Exp $
+
+2002-12-09 Ryan T. Sammartino <ryants at shaw dot ca>
+	* c/doxymacs_parser.c: terminate Encoded string with \0.
+	* lisp/doxymacs.el: set the doxytags buffer modified flag to false
+	to avoid asking user if OK to kill modified buffer.
 
 2002-12-08 Ryan T. Sammartino <ryants at shaw dot ca>
 	* lisp/doxymacs.el, c/doxymacs_parser.c: work around apparent bug in

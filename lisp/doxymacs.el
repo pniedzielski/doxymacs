@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.59 2002/12/09 05:53:33 ryants Exp $
+;; $Id: doxymacs.el,v 1.60 2002/12/10 05:36:39 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -84,6 +84,8 @@
 
 ;; Change log:
 ;;
+;; 09/12/2002 - turn off buffer modified flag for doxytags to avoid
+;;              prompting user for killing a modified buffer.
 ;; 08/12/2002 - move to association lists to support multiple Doxygen
 ;;              generates.
 ;; 30/11/2002 - apply patch 636146:
@@ -690,6 +692,7 @@ completion list."
 		      (cons (cons dir new-list)
 			    doxymacs-completion-lists))))
 	    (message "Done.")
+	    (set-buffer-modified-p nil)
 	    (kill-buffer tags-buffer)
 	    (set-buffer currbuff))
 	(progn
@@ -761,6 +764,7 @@ completion list."
     (setq doxymacs-current-completion-list nil)
     (message "Done.")
     ;; Don't need the doxytags buffer anymore
+    (set-buffer-modified-p nil)
     (kill-buffer tags-buffer)
     (set-buffer currbuff)))
 

@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.36 2001/05/27 19:07:51 ryants Exp $
+;; $Id: doxymacs.el,v 1.37 2001/06/02 20:52:14 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -476,6 +476,18 @@ doxymacs-completion-list from it using the internal XML file parser"
     (if url
         (doxymacs-display-url url))))
 
+(defun doxymacs-display-completions (initial collection &optional pred)
+  "Display available completions"
+  (let ((matches (all-completions initial collection pred)))
+    ;; FIXME - Is this the proper way of doing this? Seems to work, but...
+    (set-buffer (format " *Minibuf-%d*"
+			;; Here's a kludge.
+			(if (featurep 'xemacs)
+			    (minibuffer-depth)
+			  (1+ (minibuffer-depth)))))
+    (with-output-to-temp-buffer doxymacs-completion-buffer
+      (display-completion-list (sort matches 'string-lessp)))))
+
 (defun doxymacs-symbol-completion (initial collection &optional pred)
   "Do completion for given symbol"
   (let ((completion (try-completion initial collection pred)))
@@ -488,9 +500,7 @@ doxymacs-completion-list from it using the internal XML file parser"
            (ding))
           (t
            ;; There is more than one possible completion
-           (let ((matches (all-completions initial collection pred)))
-             (with-output-to-temp-buffer doxymacs-completion-buffer
-               (display-completion-list (sort matches #'string-lessp))))
+	   (doxymacs-display-completions initial collection pred)
            (let ((completion (completing-read 
 			      "Select: " 
 			      collection pred nil initial)))
@@ -515,9 +525,7 @@ the completion or nil if canceled by the user."
 
 (defun doxymacs-description-completion (initial collection &optional pred)
   "Do completion for given description"
-  (let ((matches (all-completions initial collection pred)))
-    (with-output-to-temp-buffer doxymacs-completion-buffer
-      (display-completion-list (sort matches #'string-lessp))))
+  (doxymacs-display-completions initial collection pred)
   (let ((completion (completing-read "Select: " collection pred nil initial)))
     (delete-window (get-buffer-window doxymacs-completion-buffer))
     (if completion

@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.58 2002/12/09 02:12:27 ryants Exp $
+;; $Id: doxymacs.el,v 1.59 2002/12/09 05:53:33 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -728,6 +728,10 @@ completion list."
 		   (compound-url (cadr
 				  (xml-tag-child curr-compound "filename")))
 		   (compound-desc (concat compound-kind " " compound-name)))
+	      ;; Work around apparent bug in Doxygen 1.2.18
+	      (if (not (string-match "\\.html$" compound-url))
+		  (setq compound-url (concat compound-url ".html")))
+
 	      ;; Add this compound to our completion list for this directory
 	      (doxymacs-add-to-completion-list compound-name
 					       compound-desc

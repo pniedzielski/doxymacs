@@ -1,4 +1,9 @@
-$Id: ChangeLog,v 1.34 2002/12/09 02:12:26 ryants Exp $
+$Id: ChangeLog,v 1.35 2002/12/09 05:53:33 ryants Exp $
+
+2002-12-08 Ryan T. Sammartino <ryants at shaw dot ca>
+	* lisp/doxymacs.el, c/doxymacs_parser.c: work around apparent bug in
+	Doxygen 1.2.18.
+	* c/doxymacs_parser.c: fix memory leak.
 
 2002-12-08 Ryan T. Sammartino <ryants at shaw dot ca>
 	* lisp/doxymacs.el: move to association lists to support multiple

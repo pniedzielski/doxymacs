@@ -25,7 +25,7 @@
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
  *
- * $Id: doxymacs_parser.c,v 1.7 2002/05/09 23:09:09 ryants Exp $
+ * $Id: doxymacs_parser.c,v 1.8 2002/12/09 05:53:33 ryants Exp $
  *
  */
 
@@ -235,6 +235,8 @@ inline int AddToCompletionList(const char *name,
 
             check->descs = new_desc;
         }
+        /* Free the name, which was strdup'ed */
+        free((char*)name);
     }
     else
     {
@@ -599,8 +601,30 @@ int main(int argc, char *argv[])
 
             sprintf(compound_desc, "%s %s", compound_kind, compound_name);
 
-            compound_name_copy = strdup(compound_name);
-            compound_url_copy = strdup(compound_url);
+            /* Workaround for apparent Doxygen 1.2.18 bug */
+            {
+                int copy_url = 1;
+                /* Some compounds don't get the .html in the URL */
+                if (strcmp(compound_url + strlen(compound_url)
+                           - strlen(".html"),
+                           ".html") != 0)
+                {
+                    compound_url_copy = (char *)malloc(strlen(compound_url) +
+                                                       strlen(".html") + 1);
+                    sprintf(compound_url_copy, "%s.html", compound_url);
+                    compound_url = compound_url_copy;
+                    copy_url = 0;
+                }
+                compound_name_copy = strdup(compound_name);
+                if (copy_url)
+                {
+                    compound_url_copy = strdup(compound_url);
+                }
+                else
+                {
+                    compound_url_copy = compound_url;
+                }
+            }
 
             if (!compound_name_copy || !compound_url_copy)
             {

@@ -1,4 +1,8 @@
-$Id: NEWS,v 1.16 2003/01/06 00:45:30 ryants Exp $
+$Id: NEWS,v 1.17 2003/01/26 01:52:29 ryants Exp $
+
+25/01/2003 Version 1.5.0 released.
+	New C++ style.  Pre-baked .el files for people who do not have
+	autoconf.  Several small fontification bug fixes.
 
 05/01/2003 Version 1.4.0 released.
 	doxymacs now uses autoconf to configure, build and install itself.

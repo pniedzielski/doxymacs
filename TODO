@@ -1,0 +1,13 @@
+$Id: TODO,v 1.1 2001/03/25 00:33:24 ryants Exp $
+
+lisp/doxymacs.el:
+ - add ability to get tag file from a URL as well as a local file.
+ - add ability to automagically insert doxygen comments.
+ - if doxymacs-get-matches finds more than one match, present user with list of choices
+   to select from.  Use third element of list to distinguish each choice.
+ - add some default key-bindings 
+ - error checking (invalid tags file format, etc).
+ - test this on other versions of {X}Emacs other than the one I'm using (XEmacs 21.1.14)
+ - other stuff?
+
+perl/doxytag.pl:

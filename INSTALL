@@ -1,0 +1,6 @@
+$Id: INSTALL,v 1.1 2001/03/25 00:33:24 ryants Exp $
+
+- Put lisp/doxymacs.el somewhere in your {X}Emacs load-path.
+- Edit the default values of the variables near the top of lisp/doxymacs.el
+- Put (require doxymacs) in your .emacs
+

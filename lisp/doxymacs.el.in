@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.10 2005/04/01 06:01:33 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.11 2005/04/02 02:10:39 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -115,6 +115,8 @@
 
 ;; Change log:
 ;;
+;; 01/04/2005 - patch #1024026: use new font-lock-add-keywords function if
+;;              available.
 ;; 31/03/2005 - patch #1102042: handle @param[in] etc. constructs
 ;; 25/01/2003 - remove hard coded version number from comments.
 ;;            - add instructions to avoid byte compiling files.
@@ -597,10 +599,14 @@ Key bindings:
   "Turn on font-lock for Doxygen keywords."
   ;; FIXME How do I turn *off* font-lock for Doxygen keywords?
   (interactive)
-  (let ((old (if (eq (car-safe font-lock-keywords) t)
+  (if (functionp 'font-lock-add-keywords)
+      ;; Use new (proper?) font-lock-add-keywords function
+      (font-lock-add-keywords nil doxymacs-doxygen-keywords)
+    ;; Use old-school way
+    (let ((old (if (eq (car-safe font-lock-keywords) t)
 		 (cdr font-lock-keywords)
 	       font-lock-keywords)))
-    (setq font-lock-keywords (append old doxymacs-doxygen-keywords))))
+      (setq font-lock-keywords (append old doxymacs-doxygen-keywords)))))
 
 
 

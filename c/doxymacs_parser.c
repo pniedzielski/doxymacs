@@ -25,14 +25,13 @@
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
  *
- * $Id: doxymacs_parser.c,v 1.6 2002/04/02 06:34:35 ryants Exp $
+ * $Id: doxymacs_parser.c,v 1.7 2002/05/09 23:09:09 ryants Exp $
  *
  */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 

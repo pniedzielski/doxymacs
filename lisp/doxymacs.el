@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.14 2001/04/22 08:08:27 ryants Exp $
+;; $Id: doxymacs.el,v 1.15 2001/04/22 08:11:35 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -45,7 +45,6 @@
 
 ;; TODO
 ;;
-;; - add ability to get tag file from a URL as well as a local file.
 ;; - add ability to automagically insert doxygen comments.
 ;;   - kind of have that now... would like ability to define 'user' styles
 ;; - add some default key-bindings 

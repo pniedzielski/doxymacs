@@ -7,7 +7,7 @@
 ;; Author: Ryan T. Sammartino <ryants at shaw dot ca>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.3.2
+;; Version: @VERSION@
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.5 2003/01/21 07:36:47 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.6 2003/01/26 01:11:36 ryants Exp $
 
 ;; Commentary:
 ;;

@@ -1,24 +1,24 @@
 2005-04-01  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
 
-	* AUTHORS, README: update contact info
+	* AUTHORS, README: update contact info.
 
-	* example/src/doxy.conf: update for new doxygen
+	* example/src/doxy.conf: update for new doxygen.
 
 	* example/src/aclass.h: try new @param[in] etc.
 
-	* example/doc/html/*: regenerate
+	* example/doc/html/*: regenerate.
 
 	* lisp/doxymacs.el.in (doxymacs-doxygen-keywords): patch #1102042:
 	handle @param[in], etc.
 	(doxymacs-font-lock): patch #1024026: use font-lock-add-keywords,
-	if available
+	if available.
 
-	* aclocal/libxml.m4: update from libxml source
+	* aclocal/libxml.m4: update from libxml source.
 
-	* c/Makefile.am: fix link issues with newer libxml
+	* c/Makefile.am: fix link issues with newer libxml.
 
 	* configure.ac: update libxml2 version requirements to match what
-	was used for libxml.m4
+	was used for libxml.m4.
 
 2003-01-25  Ryan T. Sammartino  <ryants@shaw.ca> (1.5.0)
 

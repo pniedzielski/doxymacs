@@ -27,7 +27,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.33 2001/05/23 04:52:01 ryants Exp $
+;; $Id: doxymacs.el,v 1.34 2001/05/26 22:42:55 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -43,7 +43,9 @@
 ;;   on a PIII 800 with 1 GB of RAM, whereas the external process takes 12
 ;;   seconds.
 ;; - Put (require 'doxymacs) in your .emacs
-;; - Invoke doxymacs-mode with M-x doxymacs-mode
+;; - Invoke doxymacs-mode with M-x doxymacs-mode (or, to have doxymacs-mode
+;;   invoked automatically when in C/C++ mode, put 
+;;   (add-hook 'c-mode-common-hook 'doxymacs-mode) in your .emacs)
 ;; - Default key bindings are:
 ;;   - C-c d ? will look up documentation for the symbol under the point.
 ;;   - C-c d r will rescan your Doxygen tags file.
@@ -627,7 +629,8 @@ the completion or nil if canceled by the user."
 	  " * " '> 'n
 	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)) "JavaDoc")
 	  " * " '> 'n
-	  (unless (string= (cdr (assoc 'return next-func)) "void")
+	  (unless 
+	      (string-match "^\\s-*void\\s-*$" (cdr (assoc 'return next-func)))
 	    '(l " * @return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
@@ -646,7 +649,8 @@ the completion or nil if canceled by the user."
 	  " " '> 'n
 	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)) "Qt")
 	  " " '> 'n
-	  (unless (string= (cdr (assoc 'return next-func)) "void")
+	  (unless
+	      (string-match "^\\s-*void\\s-*$" (cdr (assoc 'return next-func)))
 	    '(l "  \\return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
@@ -716,9 +720,11 @@ current point"
 (defun doxymacs-extract-args-list (args-string)
   "Extracts the arguments from the given list (given as a string)"
   (save-excursion
-    (if (string= args-string "")
-	nil
-      (doxymacs-extract-args-list-helper (split-string args-string ",")))))
+    (cond
+     ((string= args-string "") nil)
+     ((string-match "^\\s-*void\\s-*$" args-string) nil)
+     (t
+      (doxymacs-extract-args-list-helper (split-string args-string ","))))))
 
 (defun doxymacs-extract-args-list-helper (args-list)
   "Recursively get names of arguments"
@@ -727,8 +733,8 @@ current point"
       (if (string-match 
 	   (concat
 	    "\\([a-zA-Z0-9_]+\\)\\s-*" ; arg name
-	    "\\(\\[\\s-*[a-zA-Z0-9_]*\\s-*\\]\\)*" ; optional array bounds
-	    "\\(=\\s-*.+\\s-*\\)?" ;optional assignment
+	    "\\(?:\\[\\s-*\\s_*\\s-*\\]\\)*" ; optional array bounds
+	    "\\(?:=\\s-*.+\\s-*\\)?" ;optional assignment
 	    "\\s-*$" ; end
 	    )
 	   (car args-list))
@@ -750,7 +756,7 @@ current point"
 (defun doxymacs-find-next-func ()
   "Returns a list describing next function declaration, or nil if not found"
   (interactive)
-  (save-excursion    
+  (save-excursion
     (if (re-search-forward
 	 (concat 
 	  ;;I stole the following from func-menu.el

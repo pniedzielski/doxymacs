@@ -18,27 +18,27 @@
 #
 # Doxymacs homepage: http://doxymacs.sourceforge.net/
 #
-# $Id: Makefile,v 1.4 2001/05/27 19:07:51 ryants Exp $
+# $Id: Makefile,v 1.5 2001/07/10 01:59:48 ryants Exp $
 
 # Double check that these settings make sense for your system.
 # (Sorry about not having a configure script... just seems like overkill
 # for such a small program)
 #
-# doxymacs_parser requires libxml version 2 or greater, which can be
+# doxymacs_parser requires libxml version 2.3.4 or greater, which can be
 # obtained from http://www.libxml.org/.
 
 CC		= 	gcc
 
 CFLAGS		= 	-O2 -g -Wall -Werror \
 			-fexpensive-optimizations -fomit-frame-pointer \
-			`xml-config --cflags`
+			`xml2-config --cflags`
 
-LDFLAGS		=	`xml-config --libs`
+LDFLAGS		=	`xml2-config --libs`
 
 INSTALL_DIR	=	$(HOME)/bin
 
 
-# No user serviceable part below this line.
+# No user serviceable parts below this line.
 
 all: doxymacs_parser
 

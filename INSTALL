@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.7 2001/06/13 06:02:36 ryants Exp $
+$Id: INSTALL,v 1.8 2001/07/10 01:59:48 ryants Exp $
 
 - Put lisp/doxymacs.el and lisp/xml-parse.el somewhere in your {X}Emacs 
   load-path.
@@ -43,5 +43,5 @@ Doxymacs depends on the following packages:
 - W3 http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
 - tempo http://www.lysator.liu.se/~davidk/elisp/
 
-The external parser requires libxml version 2 or greater and can be
+The external XML parser requires libxml version 2.3.4 or greater and can be
 obtained from http://www.libxml.org/.

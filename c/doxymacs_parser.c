@@ -6,7 +6,7 @@
  * A utility program used by doxymacs to speed up building the look up
  * completion list from a Doxygen XML file.
  *
- * This file requires libxml version 2 or greater, which you can get from
+ * This file requires libxml version 2.3.4 or greater, which you can get from
  * http://www.libxml.org/
  *
  * This program is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
  *
- * $Id: doxymacs_parser.c,v 1.3 2001/05/27 19:07:51 ryants Exp $
+ * $Id: doxymacs_parser.c,v 1.4 2001/07/10 01:59:48 ryants Exp $
  *
  */
 
@@ -120,15 +120,16 @@ inline void FreeHash(void)
 
 inline char *XMLTagChild(xmlNodePtr node, const char *name)
 {
-    xmlNodePtr cur = node->children;
+    xmlNodePtr cur = node->xmlChildrenNode;
 
     while (cur)
     {
         if (!xmlStrcmp(cur->name, (const xmlChar *) name))
         {
-            if (cur->children)
+            xmlNodePtr cur_child = cur->xmlChildrenNode;
+            if (cur_child)
             {
-                return cur->children->content;
+                return cur_child->content;
             }
             else
             {
@@ -149,9 +150,10 @@ inline char *XMLTagAttr(xmlNodePtr node, const char *attr)
     {
         if (!xmlStrcmp(props->name, (const xmlChar *) attr))
         {
-            if (props->children)
+            xmlNodePtr props_child = props->xmlChildrenNode;
+            if (props_child)
             {
-                return (char *)props->children->content;
+                return (char *)props_child->content;
             }
             else
             {
@@ -428,7 +430,7 @@ inline void FreeCompletionList(void)
 inline int AddCompoundMembers(xmlNodePtr compound, 
                               const char *name, const char *url)
 {
-    xmlNodePtr child = compound->children;
+    xmlNodePtr child = compound->xmlChildrenNode;
     int ret = 0;
 
     while (child && !ret)
@@ -507,6 +509,8 @@ int main(int argc, char *argv[])
 #define BUFF_SIZE 25 * 1024
     char buff[BUFF_SIZE];
 
+    LIBXML_TEST_VERSION;
+    
     comp_list = NULL;
     memset(symbol_hash, 0, sizeof(symbol_hash));
 

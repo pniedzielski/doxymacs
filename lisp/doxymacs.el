@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at home dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.1.2
+;; Version: 1.1.3
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.42 2001/07/05 01:40:56 uid49028 Exp $
+;; $Id: doxymacs.el,v 1.43 2001/07/10 01:59:48 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -71,6 +71,9 @@
 
 ;; Change log:
 ;;
+;; 07/08/2001 - make external XML parser work with libxml2. Now requires
+;;              version 2.3.4 or greater
+;;            - version 1.1.3 
 ;; 04/07/2001 - GNU Emacs doesn't understand ?: in regexps, so take them out
 ;;            - version 1.1.2
 ;; 20/06/2001 - fix bug #432837  missing @see keyword

@@ -1,6 +1,6 @@
 ;;; xml-parse --- code to efficiently read/write XML data with Elisp
 ;;;
-;;; $Id: xml-parse.el,v 1.1 2001/04/29 21:51:41 ryants Exp $
+;;; $Id: xml-parse.el,v 1.2 2001/05/01 02:40:19 ryants Exp $
 
 ;; Copyright (C) 2001 John Wiegley.
 
@@ -240,6 +240,12 @@ Note that this only works if the opening tag starts at column 0."
 
 ;;; Internal Functions
 
+
+;;; RTS did this 30/04/2001
+(if (featurep 'xemacs)
+    (defalias 'match-string-no-properties 'match-string))
+
+
 (defun xml-parse-profile ()
   (interactive)
   (let ((elp-function-list
@@ -248,8 +254,7 @@ Note that this only works if the opening tag starts at column 0."
 	   char-before
 	   forward-char
 	   looking-at
-;	   match-string-no-properties
-	   match-string
+	   match-string-no-properties
 	   match-beginning
 	   match-end
 	   point
@@ -343,10 +348,8 @@ Note that this only works if the opening tag starts at column 0."
 		 (goto-char after)
 		 (while (re-search-forward
 			 "\\([^ \t\n=]+\\)=\"\\([^\"]+\\)\"" end t)
-;		   (let ((attr (cons (match-string-no-properties 1)
-;				     (match-string-no-properties 2))))
-		   (let ((attr (cons (match-string 1)
-				     (match-string 2))))
+		   (let ((attr (cons (match-string-no-properties 1)
+				     (match-string-no-properties 2))))
 		     (setcdr lastattr (list attr))
 		     (setq lastattr (cdr lastattr))))
 		 (goto-char end)

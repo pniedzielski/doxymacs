@@ -1,4 +1,13 @@
-$Id: ChangeLog,v 1.2 2001/03/29 03:38:42 ryants Exp $
+$Id: ChangeLog,v 1.3 2001/04/01 00:57:30 ryants Exp $
+
+2001-03-31 Ryan T. Sammartino <ryants@home.com>
+	* lisp/doxymacs.el: if symbol matches more than one entry in the tags,
+	you can now select which one you really mean (but please take a look
+	at the FIXME comment before doxymacs-choose-match) and slightly
+	changed the format of the list that doxymacs-get-matches returns.
+	* perl/doxytag.pl, example/doc/doxy.tag: added some more info to the 
+	third column of doxytag.pl's output.
+	* TODO: removed the "choose which symbol you really mean" item (yay!).
 	
 2001-03-28 Ryan T. Sammartino <ryants@home.com>
 	* lisp/doxymacs.el: applied patch from Kris Verbeeck so that

@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.7 2003/01/26 01:12:35 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.8 2003/01/26 01:13:48 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -264,8 +264,8 @@ file:///home/me/project/bar/doc/ and the XML tags file is at
 See http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks for examples
 of the various styles.
 
-Must be one of \"JavaDoc\", \"Qt\" or \"C++\". Setting this variable to anything
-else will generate errors."
+Must be one of \"JavaDoc\", \"Qt\" or \"C++\". Setting this variable
+to anything else will generate errors."
   :type '(radio (const :tag "JavaDoc" "JavaDoc")
 		(const :tag "Qt" "Qt")
 		(const :tag "C++" "C++"))

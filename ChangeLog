@@ -1,4 +1,6 @@
-$Id: ChangeLog,v 1.36 2002/12/10 05:36:37 ryants Exp $
+2003-01-05  Ryan T. Sammartino  <ryants@shaw.ca>
+
+	* Autoconf-ise the project.
 
 2002-12-09 Ryan T. Sammartino <ryants at shaw dot ca>
 	* c/doxymacs_parser.c: terminate Encoded string with \0.

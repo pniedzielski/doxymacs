@@ -13,11 +13,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 doxymacs is an e-lisp package for making doxygen usage easier under XEmacs.
 
-See COPYING for the full text of the license under which is this work is being made available.
+doxymacs homepage: http://doxymacs.sourceforge.net/
+
+See COPYING for the full text of the license under which is this work
+is being made available.
 
 See ChangeLog for recent changes.
 
@@ -27,10 +30,11 @@ See TODO for a list of things that you can help out with.
 
 See INSTALL for instructions on how to install this.
 
-Feel free to contact me about any issues you may have, or to volunteer to help out.
+Feel free to contact me about any issues you may have, or to volunteer
+to help out.
 
 Ryan T. Sammartino
 http://members.home.net/ryants/
 ryants@home.com
 
-$Id: README,v 1.1 2001/03/25 00:33:24 ryants Exp $
+$Id: README,v 1.2 2001/03/29 03:38:42 ryants Exp $

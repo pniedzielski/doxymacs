@@ -1,5 +1,12 @@
-$Id: ChangeLog,v 1.1 2001/03/25 00:33:24 ryants Exp $
+$Id: ChangeLog,v 1.2 2001/03/29 03:38:42 ryants Exp $
 	
+2001-03-28 Ryan T. Sammartino <ryants@home.com>
+	* lisp/doxymacs.el: applied patch from Kris Verbeeck so that
+	doxymacs customisation stuff is under the "Tools" group.  Also
+	removed doxymacs-browser, since we'll just use the user's default
+	browser anyways.  Minor formatting changes as well.
+	* README: added doxymacs' URL
+
 2001-03-24 Ryan T. Sammartino <ryants@home.com>
 	* doxymacs: Initial CVS check in.
 

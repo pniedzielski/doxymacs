@@ -1,12 +1,14 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.2 2001/03/25 00:58:37 ryants Exp $
+;; $Id: doxymacs.el,v 1.3 2001/03/29 03:38:42 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
 ;; Copyright (C) 2001 Ryan T. Sammartino
 ;; http://members.home.net/ryants/
 ;; ryants@home.com
+;;
+;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
@@ -25,17 +27,22 @@
 ;;
 ;; ChangeLog
 ;;
+;; 28/03/2001 - added doxymacs to the "tools" customisation group.
+;;            - removed doxymacs-browser (just use user's default browser)
+;;            - minor formatting updates
 ;; 24/03/2001 - initial version.  Pretty lame.  Need some help.
 
 ;; TODO
 ;;
 ;; - add ability to get tag file from a URL as well as a local file.
 ;; - add ability to automagically insert doxygen comments.
-;; - if doxymacs-get-matches finds more than one match, present user with list of choices
+;; - if doxymacs-get-matches finds more than one match, present user with 
+;;   list of choices
 ;;   to select from.  Use third element of list to distinguish each choice.
 ;; - add some default key-bindings 
 ;; - error checking (invalid tags file format, etc).
-;; - test this on other versions of {X}Emacs other than the one I'm using (XEmacs 21.1.14)
+;; - test this on other versions of {X}Emacs other than the one I'm 
+;;   using (XEmacs 21.1.14)
 ;; - other stuff?
 
 
@@ -44,10 +51,9 @@
 (require 'custom)
 (require 'w3)
 
-;;FIXME
-;;Is this correct? I don't know how this is supposed to work.
 (defgroup doxymacs nil
-  "Find documentation for symbol at point")
+  "Find documentation for symbol at point"
+  :group 'tools)
 
 (defcustom doxymacs-doxygen-root
   "file:///home/ryants/projects/doxymacs/example/doc/html/"
@@ -61,26 +67,21 @@
   :type 'string
   :group 'doxymacs)
 
-(defcustom doxymacs-browser
-  "netscape"
-  "*Browser to use for reading documentation"
-  :type '(choice "netscape" "lynx" "w3" string)
-  :group 'doxymacs)
-
-
 (defvar doxymacs-tags-buffer nil
   "The buffer with our doxytags")
 
 
 
 ;;doxymacs-load-tag
-;;This loads the tags file into the buffer *doxytags*.  Note that the format of this file
-;;is expected to be:
+;;This loads the tags file into the buffer *doxytags*.  
+;;Note that the format of this file is expected to be:
+;;
 ;;<symbol><TAB><HTML href><TAB><description>
 ;;
 ;;The doxytags.pl PERL script will generate a tag file with the right format.
 ;;
-;;FIXME - this should check that the file we load has the right format, or something.
+;;FIXME - this should check that the file we load has the right format, 
+;;or something.
 (defun doxymacs-load-tags ()
   "Loads a tags file"
   (if (or (eq doxymacs-tags-buffer nil)
@@ -109,36 +110,26 @@
 	(goto-char (point-min))
 	(setq case-fold-search nil)
 	;;The following line contains a <TAB> in the regexp.
-	(while (re-search-forward (concat "^" (regexp-quote symbol) "	") nil t) 
+	(while (re-search-forward (concat "^" (regexp-quote symbol) "	") 
+				  nil t) 
 	  (progn
 	    (beginning-of-line)
 	    (let ((start (point)))
 	      (end-of-line)
-	      (setq matches (cons (split-string (buffer-substring start (point))) matches)))))
+	      (setq matches (cons 
+			     (split-string (buffer-substring start (point))) 
+			     matches)))))
 	(set-buffer currbuff)
 	(reverse matches)))))
 
-;;FIXME
-;; This should use the browser selected in doxymacs-browser
 (defun doxymacs-display-match (match)
   "Displays the given match"
   (browse-url (concat doxymacs-doxygen-root "/" (cadr match))))
 
 
-;(defun doxymacs-symbol-at-point ()
-;  "Find the symbol under the current point"
-;  (save-excursion
-;    (if (re-search-backward "[^a-z0-9A-Z_]" nil t)
-;	(let ((start (+ (point) 1)))
-;	  (goto-char start)
-;	  (if (re-search-forward "[^a-z0-9A-Z_]" nil t)
-;	      (buffer-substring start (- (point) 1))
-;	    nil))
-;      nil)))
-    
 ;;FIXME
 ;; If the length of matches is > 1, then display a list of choices to the user.
-;; The list should show the thrid element of each element of matches.
+;; The list should show the third element of each element of matches.
 (defun doxymacs-choose-match (matches)
   "Displays the available choices for the user to select"
   (car matches))

@@ -1,8 +1,10 @@
-$Id: TODO,v 1.5 2001/04/21 01:23:34 ryants Exp $
+$Id: TODO,v 1.6 2001/04/29 00:27:33 ryants Exp $
 
 lisp/doxymacs.el:
- - add ability to automagically insert doxygen comments.
-   - we sort of have that now... now work on allowing for a "user" style.
+ - get rid of our silly tags format, and instead use doxygen's default XML
+   file and parse it using xml-parse.el (see 
+   http://www.gci-net.com/users/j/johnw/emacs.html)
+ - allow for a "user" style when inserting doxygen comments
  - add some default key-bindings 
  - error checking (invalid tags file format, etc).
  - test this on other versions of {X}Emacs other than the one I'm using 
@@ -10,7 +12,5 @@ lisp/doxymacs.el:
  - other stuff?
 
 perl/doxytag.pl:
+ - this should become obsolete when point #1 above gets done (XML parser)
 
-misc:
- - write a patch for the *real* doxytags program so that it will output our
-   tags format, and submit it to the doxygen maintainer.

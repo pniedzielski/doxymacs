@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.3 2003/01/07 07:01:29 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.4 2003/01/12 05:41:28 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -111,6 +111,14 @@
 
 ;; Change log:
 ;;
+;; 11/01/2003 - feature #665470: C++ style.
+;;            - fix bug #665099: missing @var fontification.
+;;            - fix bug #665372: @example not fontified properly.
+;;            - fix fontification for other keywords as well.
+;;            - new customisation variable doxymacs-command-character
+;;              which allows for customisation of the character used
+;;              to introduce Doxygen commands independent of the
+;;              current style.
 ;; 05/01/2003 - autoconf-ise.
 ;;            - version 1.4.0
 ;; 09/12/2002 - turn off buffer modified flag for doxytags to avoid
@@ -251,16 +259,27 @@ file:///home/me/project/bar/doc/ and the XML tags file is at
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-style
-  "@DOXYMACS_DEFAULT_STYLE@"
+;;  "@DOXYMACS_DEFAULT_STYLE@"
+  "C++"
   "The style of comments to insert into code.
 See http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks for examples
-of the two styles.
+of the various styles.
 
-Must be one of \"JavaDoc\" or \"Qt\". Setting this variable to anything
+Must be one of \"JavaDoc\", \"Qt\" or \"C++\". Setting this variable to anything
 else will generate errors."
-  :type '(radio (const :tag "JavaDoc" "JavaDoc") (const :tag "Qt" "Qt"))
+  :type '(radio (const :tag "JavaDoc" "JavaDoc")
+		(const :tag "Qt" "Qt")
+		(const :tag "C++" "C++"))
   :group 'doxymacs)
 
+(defcustom doxymacs-command-character
+  nil
+  "The character to use to introduce Doxygen commands when inserting comments.
+If nil, then use the default dictated by `doxymacs-doxygen-style'.  Otherwise,
+must be one of \"@\" or \"\\\"."
+  :type '(choice (const :tag "None" nil)
+		 string)
+  :group 'doxymacs)
 
 (defcustom doxymacs-use-external-xml-parser
   @DOXYMACS_USE_EXTERNAL_XML_PARSER@
@@ -268,7 +287,7 @@ else will generate errors."
 For smallish tag files, you are better off with the internal parser.
 For larger tag files, you are better off with the external one.
 Set to non-nil to use the external XML parser."
-  :type '(choice (const :tag "Yes" t)
+  :type '(chioce (const :tag "Yes" t)
 		 (const :tag "No" nil))
   :group 'doxymacs)
 
@@ -496,7 +515,7 @@ Key bindings:
     '(0 font-lock-warning-face prepend))
    ;; keywords that take a variable name as an argument
    (list
-    (concat "\\([@\\\\]\\(param\\|a\\|if\\|namespace\\|relates"
+    (concat "\\([@\\\\]\\(var\\|param\\|a\\|if\\|namespace\\|relates"
 	    "\\|def\\)\\)\\s-+\\(\\sw+\\)")
     '(1 font-lock-keyword-face prepend)
     '(3 font-lock-variable-name-face prepend))
@@ -531,25 +550,40 @@ Key bindings:
     "\\([@\\\\]ingroup\\)\\s-+\\(\\(\\sw+\\s-*\\)+\\)\\s-*$"
     '(1 font-lock-keyword-face prepend)
     '(2 font-lock-string-face prepend))
-   ;; two arguments
-   (list
-    "\\([@\\\\]image\\)\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)"
-    '(1 font-lock-keyword-face prepend)
-    '(2 font-lock-string-face prepend)
-    '(3 font-lock-string-face prepend))
    ;; one argument that can contain arbitrary non-whitespace stuff
    (list
-    "\\([@\\\\]link\\)\\s-+\\([^ \t\n]+\\)"
+    "\\([@\\\\]\\(link\\|copydoc\\)\\)\\s-+\\([^ \t\n]+\\)"
     '(1 font-lock-keyword-face prepend)
-    '(2 font-lock-string-face prepend))
+    '(3 font-lock-string-face prepend))
+   ;; one argument that has to be a filename
+   (list
+    (concat "\\([@\\\\]\\(example\\|\\(dont\\)?include"
+	    "\\|htmlinclude\\|verbinclude\\)\\)\\s-+"
+	    "\\(\"?[~:\\/a-zA-Z0-9_. ]+\"?\\)")
+    '(1 font-lock-keyword-face prepend)
+    '(4 font-lock-string-face prepend))
+   ;; dotfile <file> ["caption"]
+   (list
+    (concat "\\([@\\\\]dotfile\\)\\s-+"
+	    "\\(\"?[~:\\/a-zA-Z0-9_. ]+\"?\\)\\(\\s-+\"[^\"]+\"\\)?")
+    '(1 font-lock-keyword-face prepend)
+    '(2 font-lock-string-face prepend)
+    '(3 font-lock-string-face prepend t))
+   ;; image <format> <file> ["caption"] [<sizeindication>=<size>]
+   (list
+    "\\([@\\\\]image\\)\\s-+\\(html\\|latex\\)\\s-+\\(\"?[~:\\/a-zA-Z0-9_. ]+\"?\\)\\(\\s-+\"[^\"]+\"\\)?\\(\\s-+\\sw+=[0-9]+\\sw+\\)?"
+    '(1 font-lock-keyword-face prepend)
+    '(2 font-lock-string-face prepend)
+    '(3 font-lock-string-face prepend)
+    '(4 font-lock-string-face prepend t)
+    '(5 font-lock-string-face prepend t))
    ;; one argument that has to be a word
    (list
     (concat "\\([@\\\\]\\(addtogroup\\|defgroup\\|weakgroup"
-	    "\\|example\\|page\\|anchor\\|ref\\|section\\|subsection"
-	    "\\|\\(dont\\)?include\\|verbinclude"
-	    "\\|htmlinclude\\)\\)\\s-+\\(\\sw+\\)")
+	    "\\|page\\|anchor\\|ref\\|section\\|subsection"
+	    "\\)\\)\\s-+\\(\\sw+\\)")
     '(1 font-lock-keyword-face prepend)
-    '(4 font-lock-string-face prepend))))
+    '(3 font-lock-string-face prepend))))
 
 (defun doxymacs-font-lock ()
   "Turn on font-lock for Doxygen keywords."
@@ -967,6 +1001,10 @@ the completion or nil if canceled by the user."
  '("//! " p > n "/*! " > n > n "*/" > n)
  "Default Qt-style template for a blank multiline doxygen comment.")
 
+(defconst doxymacs-C++-blank-multiline-comment-template
+ '("///" > n "/// " p > n "///" > n)
+ "Default C++-style template for a blank multiline doxygen comment.")
+
 (defconst doxymacs-JavaDoc-blank-singleline-comment-template
  '("/// " > p)
  "Default JavaDoc-style template for a blank single line doxygen comment.")
@@ -975,19 +1013,31 @@ the completion or nil if canceled by the user."
  '("//! " > p)
  "Default Qt-style template for a blank single line doxygen comment.")
 
+(defconst doxymacs-C++-blank-singleline-comment-template
+ '("/// " > p)
+ "Default C++-style template for a blank single line doxygen comment.")
+
+(defun doxymacs-doxygen-command-char ()
+  (cond
+   (doxymacs-command-character doxymacs-command-character)
+   ((string= doxymacs-doxygen-style "JavaDoc") "@")
+   ((string= doxymacs-doxygen-style "Qt") "\\")
+   ((string= doxymacs-doxygen-style "C++") "@")
+   (t "@")))
+
 (defconst doxymacs-JavaDoc-file-comment-template
  '("/**" > n
-   " * @file   "
+   " * " (doxymacs-doxygen-command-char) "file   "
    (if (buffer-file-name)
        (file-name-nondirectory (buffer-file-name))
      "") > n
-   " * @author " (user-full-name)
+   " * " (doxymacs-doxygen-command-char) "author " (user-full-name)
    (if (fboundp 'user-mail-address)
        (list 'l " <" (user-mail-address) ">"))
    > n
-   " * @date   " (current-time-string) > n
+   " * " (doxymacs-doxygen-command-char) "date   " (current-time-string) > n
    " * " > n
-   " * @brief  " (p "Brief description of this file: ") > n
+   " * " (doxymacs-doxygen-command-char) "brief  " (p "Brief description of this file: ") > n
    " * " > n
    " * " p > n
    " */" > n)
@@ -995,21 +1045,39 @@ the completion or nil if canceled by the user."
 
 (defconst doxymacs-Qt-file-comment-template
  '("/*!" > n
-   " \\file   "
+   " " (doxymacs-doxygen-command-char) "file   "
    (if (buffer-file-name)
        (file-name-nondirectory (buffer-file-name))
      "") > n
-   " \\author " (user-full-name)
+   " " (doxymacs-doxygen-command-char) "author " (user-full-name)
    (if (fboundp 'user-mail-address)
        (list 'l " <" (user-mail-address) ">"))
    > n
-   " \\date   " (current-time-string) > n
+   " " (doxymacs-doxygen-command-char) "date   " (current-time-string) > n
    " " > n
-   " \\brief  " (p "Brief description of this file: ") > n
+   " " (doxymacs-doxygen-command-char) "brief  " (p "Brief description of this file: ") > n
    " " > n
    " " p > n
    "*/" > n)
  "Default Qt-style template for file documentation.")
+
+(defconst doxymacs-C++-file-comment-template
+ '("///" > n
+   "/// " (doxymacs-doxygen-command-char) "file   "
+   (if (buffer-file-name)
+       (file-name-nondirectory (buffer-file-name))
+     "") > n
+   "/// " (doxymacs-doxygen-command-char) "author " (user-full-name)
+   (if (fboundp 'user-mail-address)
+       (list 'l " <" (user-mail-address) ">"))
+   > n
+   "/// " (doxymacs-doxygen-command-char) "date   " (current-time-string) > n
+   "/// " > n
+   "/// " (doxymacs-doxygen-command-char) "brief  " (p "Brief description of this file: ") > n
+   "/// " > n
+   "/// " p > n
+   "///" > n)
+ "Default C++-style template for file documentation.")
 
 
 (defun doxymacs-parm-tempo-element (parms)
@@ -1018,10 +1086,16 @@ the completion or nil if canceled by the user."
       (let ((prompt (concat "Parameter " (car parms) ": ")))
 	(cond
 	 ((string= doxymacs-doxygen-style "JavaDoc")
-	  (list 'l " * @param " (car parms) " " (list 'p prompt) '> 'n
+	  (list 'l " * " (doxymacs-doxygen-command-char)
+		"param " (car parms) " " (list 'p prompt) '> 'n
 		(doxymacs-parm-tempo-element (cdr parms))))
 	 ((string= doxymacs-doxygen-style "Qt")
-	  (list 'l " \\param " (car parms) " " (list 'p prompt) '> 'n
+	  (list 'l " " (doxymacs-doxygen-command-char)
+		"param " (car parms) " " (list 'p prompt) '> 'n
+		(doxymacs-parm-tempo-element (cdr parms))))
+	 ((string= doxymacs-doxygen-style "C++")
+	  (list 'l "/// " (doxymacs-doxygen-command-char)
+		"param " (car parms) " " (list 'p prompt) '> 'n
 		(doxymacs-parm-tempo-element (cdr parms))))
 	 (t
 	  (doxymacs-invalid-style))))
@@ -1040,7 +1114,8 @@ the completion or nil if canceled by the user."
 	  (unless (string-match
                    (regexp-quote (cdr (assoc 'return next-func)))
                    doxymacs-void-types)
-	    '(l " * " > n " * @return " (p "Returns: ") > n))
+	    '(l " * " > n " * " (doxymacs-doxygen-command-char)
+		"return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
 	 (error "Can't find next function declaration.")
@@ -1059,12 +1134,32 @@ the completion or nil if canceled by the user."
 	  (unless (string-match
                    (regexp-quote (cdr (assoc 'return next-func)))
                    doxymacs-void-types)
-	    '(l " " > n "  \\return " (p "Returns: ") > n))
+	    '(l " " > n "  " (doxymacs-doxygen-command-char)
+		"return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
 	 (error "Can't find next function declaraton.")
 	 nil))))
  "Default Qt-style template for function documentation.")
+
+(defconst doxymacs-C++-function-comment-template
+ '((let ((next-func (doxymacs-find-next-func)))
+     (if next-func
+	 (list
+	  'l
+	  "/// " 'p '> 'n
+	  "///" '> 'n
+	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)))
+	  (unless (string-match
+                   (regexp-quote (cdr (assoc 'return next-func)))
+                   doxymacs-void-types)
+	    '(l "///" > n "/// " (doxymacs-doxygen-command-char)
+		"return " (p "Returns: ") > n))
+	  "///" '>)
+       (progn
+	 (error "Can't find next function declaraton.")
+	 nil))))
+ "Default C++-style template for function documentation.")
 
 (defconst doxymacs-JavaDoc-group-begin-comment-template
   ;; The leading space is a hack to get the indentation to work properly
@@ -1086,6 +1181,15 @@ the completion or nil if canceled by the user."
   '(n " /*@}*/" >)
   "Default Qt-style template for end-of-group comment.")
 
+(defconst doxymacs-C++-group-begin-comment-template
+  ;; The leading space is a hack to get the indentation to work properly
+  '(" /// @{" > n)
+  "Default C++-style template for beginning-of-group comment.")
+
+(defconst doxymacs-C++-group-end-comment-template
+  ;; The leading space is a hack to get the indentation to work properly
+  '(n " /// @}" >)
+  "Default C++-style template for end-of-group comment.")
 
 (defun doxymacs-invalid-style ()
   "Warn the user that he has set `doxymacs-doxygen-style' to an invalid
@@ -1093,7 +1197,7 @@ style."
   (error (concat
 	  "Invalid `doxymacs-doxygen-style': "
 	  doxymacs-doxygen-style
-	  ": must be one of \"JavaDoc\" or \"Qt\"")))
+	  ": must be one of \"JavaDoc\", \"Qt\" or \"C++\".")))
 
 ;; This should make it easier to add new templates and cut down
 ;; on copy-and-paste programming.
@@ -1171,6 +1275,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 			"/**< ")
 		       ((string= doxymacs-doxygen-style "Qt")
 			"/*!< ")
+		       ((string= doxymacs-doxygen-style "C++")
+			"///< ")
 		       (t
 			(doxymacs-invalid-style)))))
 	 (skip (concat (regexp-quote starter) "*"))
@@ -1180,6 +1286,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 			" */")
 		       ((string= doxymacs-doxygen-style "Qt")
 			" */")
+		       ((string= doxymacs-doxygen-style "C++")
+			"")
 		       (t
 			(doxymacs-invalid-style))))))
     (if empty

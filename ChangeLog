@@ -1,3 +1,28 @@
+2003-01-11  Ryan T. Sammartino  <ryants@shaw.ca>
+
+	Feature #665470: C++ style.
+	Bug #665099: @var missing.
+	Bug #665372: @example not fontified properly.
+	* lisp/doxymacs.el.in (doxymacs-doxygen-keywords): fix var,
+	example, image, dotfile, other commands.
+	(doxymacs-doxygen-style): new C++ style.
+	(doxymacs-command-character): new variable.
+	(doxymacs-C++-blank-multiline-comment-template): new template.
+	(doxymacs-C++-blank-singleline-comment-template): new template.
+	(doxymacs-doxygen-command-char): new function.
+	(doxymacs-JavaDoc-file-comment-template): use
+	doxymacs-doxygen-command-char
+	(doxymacs-Qt-file-comment-template): ditto.
+	(doxymacs-JavaDoc-function-comment-template): ditto.
+	(doxymacs-Qt-function-comment-template): ditto.
+	(doxymacs-parm-tempo-element): ditto and add C++ style.
+	(doxymacs-C++-file-comment-template): new template.
+	(doxymacs-C++-function-comment-template): new template.
+	(doxymacs-C++-group-begin-comment-template): new template.
+	(doxymacs-C++-group-end-comment-template): new template.
+	(doxymacs-invalid-style): add C++ style.
+	(doxymacs-insert-member-comment): add C++ style.
+
 2003-01-06  Ryan T. Sammartino  <ryants at shaw dot ca>
 
 	* configure.ac: mention EMACSLOADPATH in the help.

@@ -2,7 +2,7 @@
 
 # doxytag.pl
 #
-# $Id: doxytag.pl,v 1.1 2001/03/25 00:33:24 ryants Exp $
+# $Id: doxytag.pl,v 1.2 2001/04/01 00:45:07 ryants Exp $
 #
 # This perl script creates an easier-to-parse tag file from Doxygen-created HTML files.
 #
@@ -42,13 +42,13 @@ foreach $html_file (@html_files) {
       if (!$compound_entry_done) {
 	print "$compound\t$html_file";
 	if ($html_file =~ /^class_$compound/) {
-	  print "\tclass\n";
+	  print "\tclass $compound\n";
 	} elsif ($html_file =~ /^struct_$compound/) {
-	  print "\tstruct\n";
+	  print "\tstruct $compound\n";
 	} elsif ($html_file =~ /^union_$compound/) {
-	  print "\tunion\n";
+	  print "\tunion $compound\n";
 	} else {
-	  print "\tfile\n";
+	  print "\tfile $compound\n";
 	}
 	$compound_for_this_file = $compound;
 	$compound_entry_done = 1;

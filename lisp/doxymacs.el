@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.10 2001/04/15 22:33:03 airborne Exp $
+;; $Id: doxymacs.el,v 1.11 2001/04/19 03:06:14 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -26,6 +26,8 @@
 
 ;;
 ;; ChangeLog
+;;
+;; 18/04/2001 - Going with Kris' "new style" look up code.  It's excellent.
 ;;
 ;; 11/04/2001 - added ability to insert blank doxygen comments with either
 ;;              Qt or JavaDoc style.
@@ -116,66 +118,6 @@
 	  (insert-file-contents doxymacs-doxygen-tags)
 	  (set-buffer currbuff)))))
 
-;;doxymacs-get-matches
-;;Finds lines in *doxytags* buffer that match symbol.
-;;Returns the matches in a list.  The list looks like this:
-;;( (qualified_name URL) (qualified_name URL) ... )
-(defun doxymacs-get-matches (symbol)
-  "Find matches in the tags buffer for the given symbol"
-  (save-excursion
-    (if (or (eq doxymacs-tags-buffer nil) 
-            (eq (buffer-live-p doxymacs-tags-buffer) nil))
-        (doxymacs-load-tags))
-    (let ((currbuff (current-buffer))
-          (matches nil)
-          (regexp (concat "^" (regexp-quote symbol) "\t\\(.*\\)\t\\(.*\\)$")))
-      (set-buffer doxymacs-tags-buffer)
-      (goto-char (point-min))
-      (setq case-fold-search nil)
-      (while (re-search-forward regexp nil t) 
-        (setq matches (cons 
-                       (list (match-string 2) (match-string 1))
-                       matches)))
-      (set-buffer currbuff)
-      (reverse matches))))
-
-
-(defun doxymacs-display-match (match)
-  "Displays the given match"
-  (browse-url (concat doxymacs-doxygen-root "/" (cadr match))))
-
-
-;;FIXME
-;;I'd like the *Completions* buffer to come up automatically
-(defun doxymacs-choose-match (symbol matches)
-  "Displays the available choices for the user to select"
-  (assoc
-   (completing-read
-    (concat "More than one match for " symbol ", select one: ")
-    matches)
-   matches))
-  
-
-(defun doxymacs-search (symbol)
-  "Look up the symbol under the cursor in doxygen"
-  (interactive 
-   (save-excursion
-     (let ((symbol (read-string "Look up: " (symbol-near-point) nil)))
-	 (list symbol))))
-  (let ((matches (doxymacs-get-matches symbol)))
-    (if (eq (length matches) 0)
-	(progn
-	  (beep)
-	  (message (concat "Symbol " symbol " not found")))
-      (if (eq (length matches) 1)
-	  (doxymacs-display-match (car matches))
-	(let ((choice (doxymacs-choose-match symbol matches)))
-	  (if (eq choice nil)
-	      (beep) ;; This might be annoying, but seems to be a standard
-	    (doxymacs-display-match choice)))))))
-
-;; ===[ New completion stuff ]===
-
 ;; doxymacs-fill-completion-list
 ;; Parses the *doxytags* buffer and constructs the doxymacs-completion-list 
 ;; out of it.
@@ -200,18 +142,27 @@
                 (setcdr check (cons (cons desc url)
                                     (cdr check))))
           ;; There is not yet a symbol with this name in the list
-          (setq doxymacs-completion-list (cons (cons symbol (list (cons desc url)))
-                                               doxymacs-completion-list)))))
+          (setq doxymacs-completion-list 
+		(cons (cons symbol (list (cons desc url)))
+		      doxymacs-completion-list)))))
     (set-buffer currbuff)))
 
 (defun doxymacs-display-url (url)
   "Displays the given match"
   (browse-url (concat doxymacs-doxygen-root "/" url)))
 
-(defun doxymacs-search-new ()
+(defun doxymacs-lookup (symbol)
   "Look up the symbol under the cursor in doxygen"
-  (interactive)
-  (let ((url (doxymacs-symbol-completion (symbol-near-point) doxymacs-completion-list)))
+  (interactive 
+   (save-excursion
+     (if (eq doxymacs-completion-list nil)
+	 ;;Build our completion list if not already done
+	 (doxymacs-fill-completion-list))
+     (let ((symbol (completing-read 
+		    "Look up: " 
+		    doxymacs-completion-list nil nil (symbol-near-point))))
+	 (list symbol))))
+  (let ((url (doxymacs-symbol-completion symbol doxymacs-completion-list)))
     (if url
         (doxymacs-display-url url))))
 
@@ -230,11 +181,14 @@
            (let ((matches (all-completions initial collection pred)))
              (with-output-to-temp-buffer doxymacs-completion-buffer
                (display-completion-list (sort matches #'string-lessp))))
-           (let ((completion (completing-read "Select: " collection pred nil initial)))
+           (let ((completion (completing-read 
+			      "Select: " 
+			      collection pred nil initial)))
              (delete-window (get-buffer-window doxymacs-completion-buffer))
              (if completion
                  ;; If there is a completion, validate it.
-                 (doxymacs-validate-symbol-completion completion collection pred)
+                 (doxymacs-validate-symbol-completion 
+		  completion collection pred)
                ;; Otherwise just return nil
                nil))))))
 
@@ -260,7 +214,11 @@ the completion or nil if canceled by the user."
         ;; Return the URL if there is a completion
         (cdr (assoc completion collection)))))
 
-;; ===[ End of new completion stuff ]===
+;;This is mostly a convenience function for the user
+(defun doxymacs-rescan-tags ()
+  "Rescan the tags file"
+  (interactive)
+  (doxymacs-fill-completion-list))
 
 
 ;; These functions have to do with inserting doxygen commands in code

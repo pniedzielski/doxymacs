@@ -1,4 +1,8 @@
-$Id: ChangeLog,v 1.5 2001/04/12 03:13:14 ryants Exp $
+$Id: ChangeLog,v 1.6 2001/04/19 03:06:14 ryants Exp $
+
+2001-04-18 Ryan T. Sammartino <ryants@home.com>
+	* lisp/doxymacs.el: Going with Kris' "new style" look up
+	code. It's excellent, and exactly what I wanted.  Thanks Kris.
 
 2001-04-11 Ryan T. Sammartino <ryants@home.com>
 	* lisp/doxymacs.el: insert blank or "file" doxygen comments with style

@@ -1,4 +1,7 @@
-$Id: ChangeLog,v 1.17 2001/06/07 02:11:38 ryants Exp $
+$Id: ChangeLog,v 1.18 2001/06/13 06:02:36 ryants Exp $
+
+2001-06-12 Ryan T. Sammartino <ryants at home dot com> (1.1.0)
+	* lisp/doxymacs.el: add font lock keywords for Doxygen keywords 
 
 2001-06-06 Ryan T. Sammartino <ryants at home dot com> (1.0.0)
 	* lisp/doxymacs.el: fix bug #427660 "mouse selection problems".

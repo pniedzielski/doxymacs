@@ -1,4 +1,7 @@
-$Id: NEWS,v 1.5 2001/06/07 02:11:38 ryants Exp $
+$Id: NEWS,v 1.6 2001/06/13 06:02:36 ryants Exp $
+
+12/06/2001 Version 1.1.0 released.
+	New feature: font lock for Doxygen keywords.
 
 06/06/2001 Version 1.0.0 released.
 	The first stable release.  There are still some bugs left (see

@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at home dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.0.0
+;; Version: 1.1.0
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.39 2001/06/07 02:13:10 ryants Exp $
+;; $Id: doxymacs.el,v 1.40 2001/06/13 06:02:36 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -42,9 +42,21 @@
 ;;   on a PIII 800 with 1 GB of RAM, whereas the external process takes 12
 ;;   seconds.
 ;; - Put (require 'doxymacs) in your .emacs
-;; - Invoke doxymacs-mode with M-x doxymacs-mode (or, to have doxymacs-mode
+;; - Invoke doxymacs-mode with M-x doxymacs-mode.  To have doxymacs-mode
 ;;   invoked automatically when in C/C++ mode, put 
-;;   (add-hook 'c-mode-common-hook 'doxymacs-mode) in your .emacs)
+;;
+;;   (add-hook 'c-mode-common-hook 'doxymacs-mode) 
+;;
+;;   in your .emacs.
+;; - If you want Doxygen keywords fontified use M-x doxymacs-font-lock.
+;;   To do it automatically, add the following to your .emacs:
+;;
+;;   (defun my-doxymacs-font-lock-hook ()
+;;     (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
+;;         (doxymacs-font-lock)))
+;;   (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
+;;
+;;   This will add the Doxygen keywords to c-mode and c++-mode only.
 ;; - Default key bindings are:
 ;;   - C-c d ? will look up documentation for the symbol under the point.
 ;;   - C-c d r will rescan your Doxygen tags file.
@@ -59,7 +71,10 @@
 
 ;; Change log:
 ;;
+;; 12/06/2001 - add font lock keywords for Doxygen keywords
+;;            - version 1.1.0
 ;; 06/06/2001 - fix bug #427660 (mouse selection problems).
+;;            - version 1.0.0
 ;; 26/05/2001 - fix bug #427351 (thinks "void" is a parameter) and bug
 ;;              #427350 (can't document constructors/destructors), and
 ;;              generally made the whole doxymacs-find-next-func function
@@ -218,7 +233,6 @@ see http://www.lysator.liu.se/~davidk/elisp/"
   :set 'doxymacs-set-user-template
   :group 'doxymacs)
 
-
 (defvar doxymacs-tags-buffer nil
   "The buffer with our doxytags")
 
@@ -254,6 +268,8 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
           ;; Enable/Disable according to arg
           (> (prefix-numeric-value arg) 0))))
 
+;; Keymap
+
 (defvar doxymacs-mode-map (make-sparse-keymap) 
   "Keymap for doxymacs minor mode.")
 
@@ -281,6 +297,54 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
     (setq minor-mode-map-alist
 	  (cons (cons 'doxymacs-mode doxymacs-mode-map) 
 		minor-mode-map-alist)))
+
+;; This stuff has to do with fontification
+;; Thanks to Alec Panovici
+
+(defvar doxymacs-doxygen-keywords
+  '(("\\([@\\\\]\\(brief\\|li\\|\\(end\\)?code\\|sa\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn\\|hideinitializer\\|showinitializer\\|interface\\|internal\\|nosubgrouping\\|author\\|date\\|endif\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par\\|addindex\\|line\\|skip\\|skipline\\|until\\)\\)\\>"
+     0 font-lock-keyword-face prepend)
+    ("\\([@\\\\]\\(attention\\|warning\\|todo\\|bug\\)\\)\\>"
+     0 font-lock-warning-face prepend)
+    ("\\([@\\\\]\\(param\\|a\\|if\\|namespace\\|relates\\|def\\)\\)\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face prepend)
+     (3 font-lock-variable-name-face prepend))
+    ("\\([@\\\\]\\(class\\|struct\\|union\\|exception\\|throw\\)\\)\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face prepend)
+     (3 font-lock-type-face prepend))
+    ("\\([@\\\\]retval\\)\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face prepend)
+     (2 font-lock-function-name-face prepend))
+    ("\\([@\\\\]b\\)\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face prepend)
+     (2 'bold prepend))
+    ("\\([@\\\\][cp]\\)\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face prepend)
+     (2 'underline prepend))
+    ("\\([@\\\\]e\\(m\\)?\\)\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face prepend)
+     (3 'italic prepend))
+    ("\\([@\\\\]ingroup\\)\\s-+\\(\\(\\sw+\\s-+\\)+\\)$"
+     (1 font-lock-keyword-face prepend)
+     (2 font-lock-string-face prepend))
+    ("\\([@\\\\]image\\)\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face prepend)
+     (2 font-lock-string-face prepend)
+     (3 font-lock-string-face prepend))
+    ("\\([@\\\\]\\(addtogroup\\|defgroup\\|weakgroup\\|example\\|page\\|anchor\\|link\\|ref\\|section\\|subsection\\|\\(dont\\)?include\\|verbinclude\\|htmlinclude\\)\\)\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face prepend)
+     (4 font-lock-string-face prepend))))
+
+(defun doxymacs-font-lock ()
+  "Turn on font-lock for Doxygen keywords"
+  ;; FIXME How do I turn *off* font-lock for Doxygen keywords?
+  (interactive)
+  (let ((old (if (eq (car-safe font-lock-keywords) t)
+		 (cdr font-lock-keywords)
+	       font-lock-keywords)))
+    (setq font-lock-keywords (append old doxymacs-doxygen-keywords))))
+
+    
 
 
 ;;These functions have to do with looking stuff up in doxygen generated

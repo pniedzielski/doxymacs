@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.3 2001/03/29 03:38:42 ryants Exp $
+;; $Id: doxymacs.el,v 1.4 2001/03/29 18:44:15 airborne Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -100,10 +100,8 @@
   "Find matches in the tags buffer for the given symbol"
   (save-excursion
     (if (or (eq doxymacs-tags-buffer nil) 
-	    (eq (buffer-live-p doxymacs-tags-buffer) nil))
-	(progn
-	  (doxymacs-load-tags) 
-	  (doxymacs-get-matches symbol))
+            (eq (buffer-live-p doxymacs-tags-buffer) nil))
+        (doxymacs-load-tags))
       (let ((currbuff (current-buffer))
 	    (matches nil))
 	(set-buffer doxymacs-tags-buffer)
@@ -120,7 +118,7 @@
 			     (split-string (buffer-substring start (point))) 
 			     matches)))))
 	(set-buffer currbuff)
-	(reverse matches)))))
+	(reverse matches))))
 
 (defun doxymacs-display-match (match)
   "Displays the given match"
@@ -144,5 +142,3 @@
     (if (eq (length matches) 1)
 	(doxymacs-display-match (car matches))
       (doxymacs-display-match (doxymacs-choose-match matches)))))
-
-    

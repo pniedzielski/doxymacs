@@ -1,8 +1,19 @@
-$Id: INSTALL,v 1.4 2001/05/10 03:00:39 ryants Exp $
+$Id: INSTALL,v 1.5 2001/05/23 04:52:01 ryants Exp $
 
 - Put lisp/doxymacs.el and lisp/xml-parse.el somewhere in your {X}Emacs 
   load-path.
 - Customise the variables doxymacs-doxygen-root and doxymacs-doxygen-tags.
+  Doxymacs customisation can be done from the Options | Customize menu,
+  under Emacs | Programming | Tools | Doxymacs.
+- If your tags file is quite large (say, > 1 MB), consider setting
+  doxymacs-use-external-xml-parser to t and be sure to set
+  doxymacs-external-xml-parser-executable to the right value (the
+  default should usually be fine).  A suitable program is
+  distributed along with this file in the directory doxymacs/c/.
+  Edit the Makefile, then type "make", followed by "make install".
+  With an 11 MB XML tag file, the internal process takes 20 minutes
+  on a PIII 800 with 1 GB of RAM, whereas the external process takes 12
+  seconds.
 - Put (require 'doxymacs) in your .emacs
 - Invoke doxymacs-mode with M-x doxymacs-mode
 - Default key bindings are:
@@ -13,4 +24,10 @@ $Id: INSTALL,v 1.4 2001/05/10 03:00:39 ryants Exp $
   - C-c d m will insert a blank multiline Doxygen comment.
   - C-c d s will insert a blank singleline Doxygen comment.
 
+Doxymacs depends on the following packages:
 
+- W3 http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
+- tempo http://www.lysator.liu.se/~davidk/elisp/
+
+The external parser requires libxml version 2 or greater and can be
+obtained from http://www.libxml.org/.

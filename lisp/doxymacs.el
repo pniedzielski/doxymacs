@@ -6,7 +6,7 @@
 ;;      Kris Verbeeck <kris.verbeeck@advalvas.be>
 ;; Contributor: Andreas Fuchs
 ;; Created: 24/03/2001
-;; Version: 0.1.2
+;; Version: 0.2.0
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -27,12 +27,21 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.32 2001/05/22 06:17:10 ryants Exp $
+;; $Id: doxymacs.el,v 1.33 2001/05/23 04:52:01 ryants Exp $
 
 ;; Commentary:
 ;;
 ;; - Put this file and xml-parse somewhere in your {X}Emacs load-path.
 ;; - Customise the variables doxymacs-doxygen-root and doxymacs-doxygen-tags.
+;; - If your tags file is quite large (say, > 1 MB), consider setting
+;;   doxymacs-use-external-xml-parser to t and be sure to set
+;;   doxymacs-external-xml-parser-executable to the right value (the
+;;   default should usually be fine).  A suitable program is
+;;   distributed along with this file in the directory doxymacs/c/.
+;;   Edit the Makefile, then type "make", followed by "make install".
+;;   With an 11 MB XML tag file, the internal process takes 20 minutes
+;;   on a PIII 800 with 1 GB of RAM, whereas the external process takes 12
+;;   seconds.
 ;; - Put (require 'doxymacs) in your .emacs
 ;; - Invoke doxymacs-mode with M-x doxymacs-mode
 ;; - Default key bindings are:
@@ -49,6 +58,9 @@
 
 ;; Change log:
 ;;
+;; 21/05/2001 - now able to optionally use an "external" XML parser to speed
+;;              things up.
+;;            - version 0.2.0
 ;; 12/05/2001 - fix some bugs on GNU Emacs... tested and works with GNU
 ;;              Emacs 20.7.1
 ;;            - version 0.1.2
@@ -154,7 +166,7 @@ Set to non-nil to use the external XML parser."
   "*A tempo template to insert when calling doxymacs-insert-blank-multiline-comment.  
 If nil, then a default template based on the current style as indicated
 by doxymacs-doxygen-style will be used.  For help with tempo templates,
-see "
+see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
   :set 'doxymacs-set-user-template
   :group 'doxymacs)
@@ -164,7 +176,7 @@ see "
   "*A tempo template to insert when calling doxymacs-insert-blank-singleline-comment.  
 If nil, then a default template based on the current style as indicated
 by doxymacs-doxygen-style will be used.  For help with tempo templates,
-see "
+see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
   :set 'doxymacs-set-user-template
   :group 'doxymacs)
@@ -174,7 +186,7 @@ see "
   "*A tempo template to insert when calling doxymacs-insert-file-comment.  
 If nil, then a default template based on the current style as indicated
 by doxymacs-doxygen-style will be used.  For help with tempo templates,
-see "
+see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
   :set 'doxymacs-set-user-template
   :group 'doxymacs)
@@ -194,7 +206,7 @@ require parentheses), and return value:
 (cdr (assoc 'return (doxymacs-find-next-func))) is the return type (string).
 
 The argument list is a list of strings.  For help with tempo templates,
-see "
+see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
   :set 'doxymacs-set-user-template
   :group 'doxymacs)
@@ -335,7 +347,7 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 	  (switch-to-buffer doxymacs-tags-buffer)
 	  (message (concat 
 		    "There were problems parsing " 
-		    doxymacs-doxygen-tags)))))))
+		    doxymacs-doxygen-tags ".")))))))
 
 
 (defun doxymacs-xml-progress-callback (amount-done)

@@ -1,4 +1,11 @@
-$Id: ChangeLog,v 1.13 2001/05/12 22:41:11 ryants Exp $
+$Id: ChangeLog,v 1.14 2001/05/23 04:52:01 ryants Exp $
+
+2001-05-21 Ryan T. Sammartino <ryants@home.com> (0.2.0)
+	* lisp/doxymacs.el: now can optionally use the external XML parser
+	to speed things up.  Some documentation updates.
+	* c/doxymacs_parser.c, c/Makefile: new files.  doxymacs_parser.c is
+	the external XML parser.
+	* INSTALL: documentation updates.
 
 2001-05-12 Ryan T. Sammartino <ryants@home.com> (0.1.2)
 	* lisp/doxymacs.el: bug fixes for GNU Emacs: symbol-near-point and

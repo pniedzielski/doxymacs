@@ -5,7 +5,7 @@
  * A utility program used by doxymacs to speed up building the look up
  * completion list from a Doxygen XML file.
  *
- * This file depends on libxml, which you can get from
+ * This file requires libxml version 2 or greater, which you can get from
  * http://www.libxml.org/
  *
  * This program is free software; you can redistribute it and/or
@@ -24,7 +24,7 @@
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
  *
- * $Id: doxymacs_parser.c,v 1.1 2001/05/21 19:36:20 ryants Exp $
+ * $Id: doxymacs_parser.c,v 1.2 2001/05/23 04:52:01 ryants Exp $
  *
  */
 
@@ -223,7 +223,7 @@ inline int AddToCompletionList(const char *name,
 
             if (!new_desc)
             {
-                fprintf(stderr, "malloc failed");
+                fprintf(stderr, "malloc failed\n");
                 return -1;
             }
 
@@ -241,7 +241,7 @@ inline int AddToCompletionList(const char *name,
 
         if (!new_entry)
         {
-            fprintf(stderr, "malloc failed");
+            fprintf(stderr, "malloc failed\n");
             return -1;
         }
 
@@ -251,7 +251,7 @@ inline int AddToCompletionList(const char *name,
 
         if (!new_entry->descs)
         {
-            fprintf(stderr, "malloc failed");
+            fprintf(stderr, "malloc failed\n");
             return -1;
         }
 
@@ -296,7 +296,7 @@ inline char *Encode(const char *s)
 
         if (!ret)
         {
-            fprintf(stderr, "malloc failed");
+            fprintf(stderr, "malloc failed\n");
         }
         return ret;
     }
@@ -307,7 +307,7 @@ inline char *Encode(const char *s)
 
         if (!ret)
         {
-            fprintf(stderr, "malloc failed");
+            fprintf(stderr, "malloc failed\n");
         }
         else
         {
@@ -388,7 +388,7 @@ inline int OutputCompletionList(void)
         cur = cur->next;
     }
     
-    printf(")");
+    printf(")\n");
 
     return 0;
 }
@@ -559,7 +559,7 @@ int main(int argc, char *argv[])
 
     if (xmlStrcmp(cur->name, (const xmlChar *) "tagfile")) 
     {
-        fprintf(stderr, "Invalid Doxygen tag file, root node != tagfile");
+        fprintf(stderr, "Invalid Doxygen tag file, root node != tagfile\n");
         ret = -1;
         goto abort;
     }

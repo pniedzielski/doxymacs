@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.4 2001/03/29 18:44:15 airborne Exp $
+;; $Id: doxymacs.el,v 1.5 2001/03/30 12:15:44 airborne Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -102,23 +102,18 @@
     (if (or (eq doxymacs-tags-buffer nil) 
             (eq (buffer-live-p doxymacs-tags-buffer) nil))
         (doxymacs-load-tags))
-      (let ((currbuff (current-buffer))
-	    (matches nil))
-	(set-buffer doxymacs-tags-buffer)
-	(goto-char (point-min))
-	(setq case-fold-search nil)
-	;;The following line contains a <TAB> in the regexp.
-	(while (re-search-forward (concat "^" (regexp-quote symbol) "	") 
-				  nil t) 
-	  (progn
-	    (beginning-of-line)
-	    (let ((start (point)))
-	      (end-of-line)
-	      (setq matches (cons 
-			     (split-string (buffer-substring start (point))) 
-			     matches)))))
-	(set-buffer currbuff)
-	(reverse matches))))
+    (let ((currbuff (current-buffer))
+          (matches nil)
+          (regexp (concat "^\\(" (regexp-quote symbol) "\\)\t\\(.*\\)\t\\(.*\\)$")))
+      (set-buffer doxymacs-tags-buffer)
+      (goto-char (point-min))
+      (setq case-fold-search nil)
+      (while (re-search-forward regexp nil t) 
+        (setq matches (cons 
+                       (list (match-string 1) (match-string 2) (match-string 3))
+                       matches)))
+      (set-buffer currbuff)
+      (reverse matches))))
 
 (defun doxymacs-display-match (match)
   "Displays the given match"

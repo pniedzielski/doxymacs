@@ -2,8 +2,8 @@
 ;;
 ;; Copyright (C) 2001 Ryan T. Sammartino
 ;;
-;; Author: Ryan T. Sammartino <ryants@home.com>
-;;      Kris Verbeeck <kris.verbeeck@advalvas.be>
+;; Author: Ryan T. Sammartino <ryants at home dot com>
+;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
 ;; Version: 0.2.1
 ;; Keywords: doxygen documentation
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.35 2001/05/27 01:03:32 ryants Exp $
+;; $Id: doxymacs.el,v 1.36 2001/05/27 19:07:51 ryants Exp $
 
 ;; Commentary:
 ;;

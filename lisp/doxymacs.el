@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.23 2001/04/30 04:41:46 ryants Exp $
+;; $Id: doxymacs.el,v 1.24 2001/05/07 00:12:04 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -25,9 +25,21 @@
 ;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 ;;
+;; AUTHORS
+;;
+;; Ryan T. Sammartino <ryants@home.com>
+;; Kris Verbeeck <kris.verbeeck@advalvas.be>
+;;
+;; with patches from:
+;;
+;; Andreas Fuchs
+
+;;
 ;; ChangeLog
 ;;
-;; 29/03/2001 - The doxytags.pl PERL script is no longer necessary, as we can
+;; 06/04/2001 - Now using tempo templates for the comments... also allow for
+;;              user defined templates.
+;; 29/04/2001 - The doxytags.pl PERL script is no longer necessary, as we can
 ;;              now parse the XML file that doxygen creates directly.
 ;; 22/04/2001 - Function documentation.
 ;; 18/04/2001 - Going with Kris' "new style" look up code.  It's excellent.
@@ -47,11 +59,11 @@
 
 ;; TODO
 ;;
-;; - 'user' styles for inserting comments
 ;; - add some default key-bindings 
-;; - error checking (invalid tags file format, etc).
+;; - better end-user documentation
 ;; - test this on other versions of {X}Emacs other than the one I'm 
 ;;   using (XEmacs 21.1.14)
+;; - fix all FIXMEs (of course)
 ;; - other stuff?
 
 ;; Front matter and variables
@@ -62,21 +74,20 @@
 (require 'xml-parse)
 (require 'url)
 (require 'w3-cus)
+(require 'tempo)
 
 (defgroup doxymacs nil
   "Find documentation for symbol at point"
   :group 'tools)
 
 (defcustom doxymacs-doxygen-root
-  "file:///home/ryants/projects/doxymacs/example/doc/html/"
+  ""
   "*Root for doxygen documentation (URL)"
   :type 'string
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-tags
-;  "http://members.home.net/ryants/doxy.tag"
-;  "file:/home/ryants/projects/doxymacs/example/doc/doxy.tag"
-  "../example/doc/doxy.tag"
+  ""
   "*File name or URL that contains doxygen tags"
   :type 'string
   :group 'doxymacs)
@@ -86,6 +97,68 @@
   "*The style of comments to insert into code"
   :type '(radio (const :tag "JavaDoc" "JavaDoc") (const :tag "Qt" "Qt"))  
   :group 'doxymacs)
+
+
+;; here's a hack... a one-size-fits-all set user template func.
+;; maybe there's a better way of doing this?
+(defun doxymacs-set-user-template (symbol value)
+  (let* ((symbol-name (prin1-to-string symbol))
+	 (template-name (concat "user-"
+				(substring symbol-name 
+					   (length "doxymacs-")
+					   (- 0 (length "-template")))))
+	 (func-name (car 
+		     (read-from-string 
+		      (concat "tempo-template-" template-name)))))
+    (if value
+	(tempo-define-template template-name value)
+      (fmakunbound func-name))))
+
+(defcustom doxymacs-blank-multiline-comment-template
+  nil
+  "*A tempo template to insert when calling doxymacs-insert-blank-multiline-comment.  
+If nil, then a default template based on the current style as indicated
+by doxymacs-doxygen-style will be used"
+  :type 'list
+  :set 'doxymacs-set-user-template
+  :group 'doxymacs)
+
+(defcustom doxymacs-blank-singleline-comment-template
+  nil
+  "*A tempo template to insert when calling doxymacs-insert-blank-singleline-comment.  
+If nil, then a default template based on the current style as indicated
+by doxymacs-doxygen-style will be used"
+  :type 'list
+  :set 'doxymacs-set-user-template
+  :group 'doxymacs)
+
+(defcustom doxymacs-file-comment-template
+  nil
+  "*A tempo template to insert when calling doxymacs-insert-file-comment.  
+If nil, then a default template based on the current style as indicated
+by doxymacs-doxygen-style will be used"
+  :type 'list
+  :set 'doxymacs-set-user-template
+  :group 'doxymacs)
+
+(defcustom doxymacs-function-comment-template
+  nil
+  "*A tempo template to insert when calling doxymacs-insert-function-comment.  
+If nil, then a default template based on the current style as indicated
+by doxymacs-doxygen-style will be used.  Note that the function 
+doxymacs-find-next-func is available to you... it returns an assoc list
+with the function's name (BUG: it may be incorrect for C++ operator-style 
+declerations), argument list, and return value:
+
+(cdr (assoc 'func (doxymacs-find-next-func))) is the function name (string).
+(cdr (assoc 'args (doxymacs-find-next-func))) is a list of arguments.
+(cdr (assoc 'return (doxymacs-find-next-func))) is the return type (string).
+
+The argument list is a list of strings."
+  :type 'list
+  :set 'doxymacs-set-user-template
+  :group 'doxymacs)
+
 
 (defvar doxymacs-tags-buffer nil
   "The buffer with our doxytags")
@@ -294,104 +367,194 @@ the completion or nil if canceled by the user."
 
 ;; These functions have to do with inserting doxygen commands in code
 
-;; So the non-interactive functions return a pair:
-;; the car is the string to insert, the cdr is the number of lines
-;; to skip.
+;; FIXME
+;; So, in the source code for XEmacs 21.1.14, they commented out the
+;; definition of deactivate-mark for some reason... and the tempo package
+;; needs it.  So, here is a placeholder just to get it to stop
+;; complaining. This is a hack, since I don't know what the proper fix
+;; should be.
+(if (not (fboundp 'deactivate-mark))
+    (defsubst deactivate-mark ()
+      (zmacs-deactivate-region))) ;; Is this correct?
+;; Also need a hack for mark-active
+(if (not (boundp 'mark-active))
+    (defvar mark-active nil)) ;; Is this correct? Probably not.
 
-(defun doxymacs-blank-multiline-comment ()
-  (if (equal doxymacs-doxygen-style "JavaDoc")
-      (cons "/**\n * \n * \n */\n" 2)
-    (cons "//! \n/*!\n \n*/\n" 1)))
+
+;; Default templates
+
+(tempo-define-template
+ "JavaDoc-blank-multiline-comment"
+ '("/**" > n "* " p > n "* " > n "*/" > n))
+
+(tempo-define-template 
+ "Qt-blank-multiline-comment"
+ '("//! " p > n "/*! " > n > n "*/" > n))
+
+(tempo-define-template
+ "JavaDoc-blank-singleline-comment"
+ '("/// " > p))
+
+(tempo-define-template
+ "Qt-blank-singleline-comment"
+ '("//! " > p))
+
+(tempo-define-template
+ "JavaDoc-file-comment"
+ '("/**" > n 
+   " * @file   "  
+   (if (buffer-file-name) 
+       (file-name-nondirectory (buffer-file-name)) 
+     "") > n
+   " * @author " (user-full-name) " <" (user-mail-address) ">" > n
+   " * @date   " (current-time-string) > n
+   " * " > n
+   " * @brief  " (p "Brief description of this file: ") > n
+   " * " > n
+   " * " p > n
+   " */" > n))
+
+(tempo-define-template
+ "Qt-file-comment"
+ '("/*!" > n
+   " \\file   "
+   (if (buffer-file-name) 
+       (file-name-nondirectory (buffer-file-name)) 
+     "") > n
+   " \\author " (user-full-name) " <" (user-mail-address) ">" > n
+   " \\date   " (current-time-string) > n
+   " " > n
+   " \\brief  " (p "Brief description of this file: ") > n
+   " " > n
+   " " p > n
+   "*/" > n))
+
+
+;; Need to pass in style directly instead of looking at 
+;; doxymacs-doxygen-style since user might call the tempo-template-
+;; functions directly
+(defun doxymacs-parm-tempo-element (parms style)
+  "Inserts tempo elements for the given parms in the given style"
+  (if parms
+      (let ((prompt (concat "Parameter " (car parms) ": ")))
+	(cond
+	 ((string= style "JavaDoc")
+	  (list 'l " * @param " (car parms) " " (list 'p prompt) '> 'n
+		(doxymacs-parm-tempo-element (cdr parms) style)))
+	 ((string= style "Qt")
+	  (list 'l " \\param " (car parms) " " (list 'p prompt) '> 'n
+		(doxymacs-parm-tempo-element (cdr parms) style)))))
+    nil))
+
+
+(tempo-define-template
+ "JavaDoc-function-comment"
+ '((let ((next-func (doxymacs-find-next-func)))
+     (if next-func
+	 (list
+	  'l 
+	  "/** " '> 'n
+	  " * " 'p '> 'n
+	  " * " '> 'n
+	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)) "JavaDoc")
+	  " * " '> 'n
+	  (unless (string= (cdr (assoc 'return next-func)) "void")
+	    '(l " * @return " (p "Returns: ") > n))
+	  " */" '>)
+       (progn
+	 (beep)
+	 nil)))))
+
+
+(tempo-define-template
+ "Qt-function-comment"
+ '((let ((next-func (doxymacs-find-next-func)))
+     (if next-func
+	 (list
+	  'l 
+	  "//! " 'p '> 'n
+	  "/*! " '> 'n
+	  " " '> 'n
+	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)) "Qt")
+	  " " '> 'n
+	  (unless (string= (cdr (assoc 'return next-func)) "void")
+	    '(l "  \\return " (p "Returns: ") > n))
+	  " */" '>)
+       (progn
+	 (beep)
+	 nil)))))
+
+
+;; Wrapper functions for the above... these check to see if the user
+;; has his own template for the particular comment that is going to be
+;; inserted and calls it if it is defined... otherwise, calls the default
+;; template depending on the currently set style.
 
 (defun doxymacs-insert-blank-multiline-comment ()
   "Inserts a multi-line blank doxygen comment at the current point"
   (interactive "*")
-  (let ((comment (doxymacs-blank-multiline-comment)))
-    (save-excursion 
-      (beginning-of-line)    
-      (let ((start (point)))    
-	(insert (car comment))
-	(let ((end (point)))
-	  (indent-region start end nil))))
-    (end-of-line (cdr comment))))
-
-(defun doxymacs-blank-singleline-comment ()
-  (if (equal doxymacs-doxygen-style "JavaDoc")
-      (cons "/// " 1)
-    (cons "//! " 1)))
-
+  (if (fboundp 'tempo-template-user-blank-multiline-comment)
+      ;; Use the user's template
+      (tempo-template-user-blank-multiline-comment)
+    (cond
+     ((string= doxymacs-doxygen-style "JavaDoc")
+      (tempo-template-JavaDoc-blank-multiline-comment))
+     ((string= doxymacs-doxygen-style "Qt")
+      (tempo-template-Qt-blank-multiline-comment)))))
+    
 (defun doxymacs-insert-blank-singleline-comment ()
   "Inserts a single-line blank doxygen comment at current point"
   (interactive "*")
-  (let ((comment (doxymacs-blank-singleline-comment)))
-    (save-excursion
-      (beginning-of-line)
-      (let ((start (point)))
-	(insert (car comment))
-	(let ((end (point)))
-	  (indent-region start end nil))))
-    (end-of-line (cdr comment))))
-
-(defun doxymacs-file-comment ()
-  (let ((fname (if (buffer-file-name) 
-		   (file-name-nondirectory (buffer-file-name))
-		 "")))
-	(if (equal doxymacs-doxygen-style "JavaDoc")
-	    (cons
-	     (format (concat "/**\n"
-			     " * @file   %s\n"
-			     " * @author %s <%s>\n"
-			     " * @date   %s\n"
-			     " *\n"
-			     " * @brief  \n"
-			     " *\n"
-			     " *\n"
-			     " */")
-		     fname
-		     (user-full-name)
-		     (user-mail-address)
-		     (current-time-string))
-	     6)
-	  (cons
-	   (format (concat "/*!\n"
-			   " \\file   %s\n"
-			   " \\author %s <%s>\n"
-			   " \\date   %s\n"
-			   " \n"
-			   " \\brief  \n"
-			   " \n"
-			   " \n"
-			   "*/")
-		   fname
-		   (user-full-name)
-		   (user-mail-address)
-		   (current-time-string))
-	   6))))
+  (if (fboundp 'tempo-template-user-blank-singleline-comment)
+      ;; Use the user's template
+      (tempo-template-user-blank-singleline-comment)
+    (cond
+     ((string= doxymacs-doxygen-style "JavaDoc")
+      (tempo-template-JavaDoc-blank-singleline-comment))
+     ((string= doxymacs-doxygen-style "Qt")
+      (tempo-template-Qt-blank-singleline-comment)))))
 
 (defun doxymacs-insert-file-comment ()
   "Inserts doxygen documentation for the current file at current point"
   (interactive "*")
-  (let ((comment (doxymacs-file-comment)))
-    (save-excursion
-      (let ((start (point)))
-	(insert (car comment))
-	(let ((end (point)))
-	  (indent-region start end nil))))
-    (end-of-line (cdr comment))))
+  (if (fboundp 'tempo-template-user-file-comment)
+      ;; Use the user's template
+      (tempo-template-user-file-comment)
+    (cond
+     ((string= doxymacs-doxygen-style "JavaDoc")
+      (tempo-template-JavaDoc-file-comment))
+     ((string= doxymacs-doxygen-style "Qt")
+      (tempo-template-Qt-file-comment)))))
 
+(defun doxymacs-insert-function-comment ()
+  "Inserts doxygen documentation for the next function declaration at 
+current point"
+  (interactive "*")
+  (if (fboundp 'tempo-template-user-function-comment)
+      ;; Use the user's template
+      (tempo-template-user-function-comment)
+    (cond
+     ((string= doxymacs-doxygen-style "JavaDoc")
+      (tempo-template-JavaDoc-function-comment))
+     ((string= doxymacs-doxygen-style "Qt")
+      (tempo-template-Qt-function-comment)))))
+
+
+;; These are helper functions that search for the next function
+;; declerations/definition and extract its name, return type and 
+;; argument list.  Used for documenting functions.
 
 (defun doxymacs-extract-args-list (args-string)
   "Extracts the arguments from the given list (given as a string)"
   (save-excursion
-    (if (equal args-string "")
+    (if (string= args-string "")
 	nil
       (doxymacs-extract-args-list-helper (split-string args-string ",")))))
 
 (defun doxymacs-extract-args-list-helper (args-list)
   "Recursively get names of arguments"
   (save-excursion
-    (if (eq args-list nil)
-	nil
+    (if args-list
       (if (string-match 
 	   (concat
 	    "\\([a-zA-Z0-9_]+\\)\\s-*" ; arg name
@@ -405,7 +568,8 @@ the completion or nil if canceled by the user."
 	   (doxymacs-extract-args-list-helper (cdr args-list)))
 	(cons
 	 (car args-list)
-	 (doxymacs-extract-args-list-helper (cdr args-list)))))))
+	 (doxymacs-extract-args-list-helper (cdr args-list))))
+      nil)))
 
 
 ;; FIXME
@@ -441,56 +605,6 @@ the completion or nil if canceled by the user."
 	      (cons 'return (buffer-substring (match-beginning 5)
 					      (match-end 5))))
       nil)))
-
-(defun doxymacs-parm-comment (parms)
-  "Inserts doxygen documentation for the given parms"
-  (if (equal parms nil)
-      ""
-    (if (equal doxymacs-doxygen-style "JavaDoc")
-	(concat " * @param " (car parms) "\t\n"
-		(doxymacs-parm-comment (cdr parms)))
-      (concat "  \\param " (car parms) "\t\n"
-	      (doxymacs-parm-comment (cdr parms))))))
-
-(defun doxymacs-func-comment (func)
-  "Inserts doxygen documentation for the given func"
-  (if (equal doxymacs-doxygen-style "JavaDoc")
-      (cons
-       (concat "/**\n"
-	       " * \n"
-	       " * \n"
-	       (doxymacs-parm-comment (cdr (assoc 'args func)))
-	       (unless (equal (cdr (assoc 'return func)) "void")
-		 " * @return \n")
-	       " */")
-       2)
-    (cons
-     (concat "//! \n"
-	     "/*!\n"
-	     " \n"
-	     (doxymacs-parm-comment (cdr (assoc 'args func)))
-	     (unless (equal (cdr (assoc 'return func)) "void")
-	       "  \\return \n")
-	     " */")
-     1)))
-
-(defun doxymacs-insert-function-comment ()
-  "Inserts doxygen documentation for the next function declaration at 
-current point"
-  (interactive "*")  
-  (let ((num-lines 1))
-    (save-excursion
-      (widen)
-      (let ((start (point))
-	    (next-func (doxymacs-find-next-func)))
-	(if (not (equal next-func nil))
-	    (let ((comment (doxymacs-func-comment next-func)))
-	      (insert (car comment))
-	      (setq num-lines (cdr comment)))
-	  (beep))
-	(let ((end (point)))
-	  (indent-region start end nil))))
-    (end-of-line num-lines)))
 
 
 ;; Default key bindings

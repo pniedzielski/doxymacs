@@ -1,6 +1,6 @@
 # doxymacs_parser Makefile
 # Copyright (C) 2001 Ryan T. Sammartino
-# <ryants at home dot com>
+# <ryants at shaw dot ca>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
 #
 # Doxymacs homepage: http://doxymacs.sourceforge.net/
 #
-# $Id: Makefile,v 1.5 2001/07/10 01:59:48 ryants Exp $
+# $Id: Makefile,v 1.6 2001/11/02 05:40:15 ryants Exp $
 
 # Double check that these settings make sense for your system.
 # (Sorry about not having a configure script... just seems like overkill

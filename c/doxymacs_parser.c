@@ -1,7 +1,7 @@
 /*
  * doxymacs_parser.c
  * Copyright (C) 2001 Ryan T. Sammartino
- * <ryants at home dot com>
+ * <ryants at shaw dot ca>
  *
  * A utility program used by doxymacs to speed up building the look up
  * completion list from a Doxygen XML file.
@@ -25,7 +25,7 @@
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
  *
- * $Id: doxymacs_parser.c,v 1.4 2001/07/10 01:59:48 ryants Exp $
+ * $Id: doxymacs_parser.c,v 1.5 2001/11/02 05:40:15 ryants Exp $
  *
  */
 

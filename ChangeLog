@@ -1,4 +1,8 @@
-$Id: ChangeLog,v 1.25 2001/09/30 21:49:36 ryants Exp $
+$Id: ChangeLog,v 1.26 2001/11/02 05:40:14 ryants Exp $
+
+2001-11-01 Ryan T. Sammartino <ryants at shaw dot ca>
+	* README, AUTHORS, ...: make note that Ryan's homepage and e-mail
+	address have changed.
 
 2001-09-30 Ryan T. Sammartino <ryants at home dot com>
 	* lisp/doxymacs.el, README: make note of the fact that doxymacs

@@ -2,7 +2,7 @@
 ;;
 ;; Copyright (C) 2001 Ryan T. Sammartino
 ;;
-;; Author: Ryan T. Sammartino <ryants at home dot com>
+;; Author: Ryan T. Sammartino <ryants at shaw dot ca>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
 ;; Version: 1.2.1
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.50 2001/09/30 21:49:37 ryants Exp $
+;; $Id: doxymacs.el,v 1.51 2001/11/02 05:40:15 ryants Exp $
 
 ;; Commentary:
 ;;

@@ -1,10 +1,13 @@
-$Id: TODO,v 1.8 2001/04/30 02:00:25 ryants Exp $
+$Id: TODO,v 1.9 2001/05/07 00:11:43 ryants Exp $
 
 lisp/doxymacs.el:
- - allow for a "user" style when inserting doxygen comments
  - add some default key-bindings 
  - test this on other versions of {X}Emacs other than the one I'm using 
    (XEmacs 21.1.14)
+ - fix all FIXMEs (of course)
  - other stuff?
 
+README:
+INSTALL:
+ - better end-user documentation
 

@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.9 2003/01/26 01:49:56 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.10 2005/04/01 06:01:33 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -115,6 +115,7 @@
 
 ;; Change log:
 ;;
+;; 31/03/2005 - patch #1102042: handle @param[in] etc. constructs
 ;; 25/01/2003 - remove hard coded version number from comments.
 ;;            - add instructions to avoid byte compiling files.
 ;;            - version 1.5.0
@@ -122,7 +123,7 @@
 ;;            - fix bug #665099: missing @var fontification.
 ;;            - fix bug #665372: @example not fontified properly.
 ;;            - fix fontification for other keywords as well.
-;;            - new customisation variable doxymacs-command-character
+;;            - new customisation variable doxymacs command-character
 ;;              which allows for customisation of the character used
 ;;              to introduce Doxygen commands independent of the
 ;;              current style.
@@ -521,8 +522,9 @@ Key bindings:
     '(0 font-lock-warning-face prepend))
    ;; keywords that take a variable name as an argument
    (list
-    (concat "\\([@\\\\]\\(var\\|param\\|a\\|if\\|namespace\\|relates"
-	    "\\|def\\)\\)\\s-+\\(\\sw+\\)")
+    (concat "\\([@\\\\]\\(param\\(?:\\[\\(?:in\\|out\\|in,out\\)\\]\\)?"
+	    "\\|a\\|if\\|namespace\\|relates"
+	    "\\|var\\|def\\)\\)\\s-+\\(\\sw+\\)")
     '(1 font-lock-keyword-face prepend)
     '(3 font-lock-variable-name-face prepend))
    ;; keywords that take a type name as an argument

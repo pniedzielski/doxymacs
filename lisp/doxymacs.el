@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.24 2001/05/07 00:12:04 ryants Exp $
+;; $Id: doxymacs.el,v 1.25 2001/05/07 17:33:29 airborne Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -173,6 +173,39 @@ The argument list is a list of strings."
 
 (defvar doxymacs-completion-buffer "*Completions*"
   "The buffer used for displaying multiple completions")
+
+
+
+;; Minor mode implementation
+
+(defvar doxymacs-mode nil "nil disables doxymacs, non-nil enables")
+(make-variable-buffer-local 'doxymacs-mode)
+
+(defun doxymacs-mode (&optional arg)
+  "Doxymacs Minor mode.
+With no argument, this command toggles doxymacs mode.
+With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
+  (interactive "P")
+  (setq doxymacs-mode
+        (if (null arg)
+            ;; Toggle mode
+            (not doxymacs-mode)
+          ;; Enable/Disbale according to arg
+          (> (prefix-numeric-value arg) 0))))
+
+(defvar doxymacs-mode-map (make-sparse-keymap) "Keymap voor doxymacs minor mode.")
+
+(define-key doxymacs-mode-map "\M-\t" 'doxymacs-lookup)
+
+;;;###autoload
+(or (assoc 'doxymacs-mode minor-mode-alist)
+    (setq minor-mode-alist
+	  (cons '(doxymacs-mode " doxy") minor-mode-alist)))
+
+(or (assoc 'doxymacs-mode minor-mode-map-alist)
+    (setq minor-mode-map-alist
+	  (cons (cons 'doxymacs-mode doxymacs-mode-map) 
+		minor-mode-map-alist)))
 
 
 ;;These functions have to do with looking stuff up in doxygen generated

@@ -1,4 +1,4 @@
-// $Id: aclass.h,v 1.2 2001/04/28 23:49:39 ryants Exp $ 
+// $Id: aclass.h,v 1.3 2005/04/01 06:05:06 ryants Exp $
 // This is just some silly sample file to test out doxymacs with.
 #ifndef _ACLASS_H_
 #define _ACLASS_H_
@@ -35,6 +35,15 @@ class Foo
 
   private:
 
+    /**
+     * Testing the in/out parameter stuff.
+     *
+     * @param[in] in An "in" parameter
+     * @param[out] out An "out" parameter
+     * @param[in,out] inout An "inout" parameter
+     */
+    Foo(int &in, int &out, int &inout) { out = in + inout; }
+
     /** This is a measure of our blahness. */
     int _blah;
 };
@@ -54,7 +63,7 @@ typedef struct
 /** This is a useless enum */
 enum _blah
 {
-    FOO_SNAZ,
+    FOO_SNAZ,                   /**< More silly stuff. */
     Foo
 };
 

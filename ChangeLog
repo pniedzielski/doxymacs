@@ -1,4 +1,8 @@
-$Id: ChangeLog,v 1.24 2001/09/16 02:00:34 ryants Exp $
+$Id: ChangeLog,v 1.25 2001/09/30 21:49:36 ryants Exp $
+
+2001-09-30 Ryan T. Sammartino <ryants at home dot com>
+	* lisp/doxymacs.el, README: make note of the fact that doxymacs
+	seems to work with XEmacs 21.4 (patch 4)
 
 2001-09-15 Ryan T. Sammartino <ryants at home dot com> (1.2.1)
 	* lisp/doxymacs.el: fix bug #460396: invalid number of arguments

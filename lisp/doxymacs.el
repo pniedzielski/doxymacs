@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.49 2001/09/16 20:13:34 ryants Exp $
+;; $Id: doxymacs.el,v 1.50 2001/09/30 21:49:37 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -69,12 +69,15 @@
 ;; Doxymacs has been tested on and works with:
 ;; - GNU Emacs 20.7.1
 ;; - XEmacs 21.1 (patch 14)
+;; - XEmacs 21.4 (patch 4)
 ;;
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
 
 ;; Change log:
 ;;
+;; 30/09/2001 - doxymacs has been tested on and works with XEmacs 21.4 
+;;              (patch 4)
 ;; 15/09/2001 - bug #460396 fixed... wrong number of arguments for 
 ;;              doxymacs-parm-tempo-element in
 ;;              doxymacs-Qt-function-comment-template

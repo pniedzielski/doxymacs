@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at shaw dot ca>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.3.0
+;; Version: 1.3.1
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.54 2002/04/02 06:34:35 ryants Exp $
+;; $Id: doxymacs.el,v 1.55 2002/05/09 23:21:33 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -84,6 +84,8 @@
 
 ;; Change log:
 ;;
+;; 09/05/2002 - fix issues compiling doxymacs_parser.c on Mac OS X.
+;;            - version 1.3.1
 ;; 19/11/2001 - doxymacs has been tested on and works with XEmacs 21.4
 ;;              (patch 5) and GNU Emacs 21.1.1
 ;; 04/11/2001 - add some documentation for default templates.
@@ -169,7 +171,7 @@
 (require 'w3-cus)
 (require 'tempo)
 
-(defconst doxymacs-version "1.3.0"
+(defconst doxymacs-version "1.3.1"
   "Doxymacs version number")
 
 (defun doxymacs-version ()

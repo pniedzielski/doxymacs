@@ -1,3 +1,7 @@
+2003-01-12  Ryan T. Sammartino  <ryants@shaw.ca>
+
+	* configure.ac: add "C++" to help string for --with-default-style.
+
 2003-01-11  Ryan T. Sammartino  <ryants@shaw.ca>
 
 	Feature #665470: C++ style.

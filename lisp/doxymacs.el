@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.12 2001/04/19 03:39:05 ryants Exp $
+;; $Id: doxymacs.el,v 1.13 2001/04/19 04:06:00 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -30,7 +30,6 @@
 ;; 18/04/2001 - Going with Kris' "new style" look up code.  It's excellent.
 ;;            - Incorprated Andreas Fuchs' patch for loading tags from a
 ;;              URL.
-;;
 ;; 11/04/2001 - added ability to insert blank doxygen comments with either
 ;;              Qt or JavaDoc style.
 ;;            - also did "file" comments
@@ -47,6 +46,7 @@
 ;;
 ;; - add ability to get tag file from a URL as well as a local file.
 ;; - add ability to automagically insert doxygen comments.
+;;   - kind of have that now... would like ability to define 'user' styles
 ;; - add some default key-bindings 
 ;; - error checking (invalid tags file format, etc).
 ;; - test this on other versions of {X}Emacs other than the one I'm 
@@ -70,8 +70,8 @@
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-tags
-  "file:///home/ryants/projects/doxymacs/example/doc/doxy.tag"
-;  "../example/doc/doxy.tag"
+;  "file:///home/ryants/projects/doxymacs/example/doc/doxy.tag"
+  "../example/doc/doxy.tag"
   "*File name or URL that contains doxygen tags"
   :type 'string
   :group 'doxymacs)
@@ -313,3 +313,5 @@ the completion or nil if canceled by the user."
       (let ((end (point)))
 	(indent-region start end nil))))
   (end-of-line 6))
+
+

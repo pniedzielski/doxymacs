@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.18 2001/04/29 21:51:41 ryants Exp $
+;; $Id: doxymacs.el,v 1.19 2001/04/29 22:15:08 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -214,8 +214,11 @@ doxymacs-completion-list from it"
   "Add a single member of the given compound"
   (let* ((member-name (cadr (xml-tag-child member "name")))
 	 (member-anchor (cadr (xml-tag-child member "anchor")))
-	 (member-url (concat compound-url "\#" member-anchor))
-	 (member-desc (concat compound-name "::" member-name)))
+	 (member-url (concat compound-url "#" member-anchor))
+	 (member-args (if (cdr (xml-tag-child member "arglist"))
+			  (cadr (xml-tag-child member "arglist"))
+			""))
+	 (member-desc (concat compound-name "::" member-name member-args)))
     (doxymacs-add-to-completion-list member-name
 				     member-desc
 				     member-url)))

@@ -1,4 +1,8 @@
-$Id: NEWS,v 1.9 2001/08/24 04:04:21 ryants Exp $
+$Id: NEWS,v 1.10 2001/08/26 23:38:50 ryants Exp $
+
+26/08/2001 Version 1.2.0 released.
+	Better on-line documentation.  New "member comment" command which
+	works much like M-; (indent-for-comment).
 
 23/08/2001 Version 1.1.4 released.
 	minor bugfixes.

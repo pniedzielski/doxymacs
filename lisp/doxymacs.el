@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at home dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.1.4
+;; Version: 1.2.0
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.45 2001/08/25 05:07:53 ryants Exp $
+;; $Id: doxymacs.el,v 1.46 2001/08/26 23:38:50 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -62,15 +62,25 @@
 ;;   - C-c d r will rescan your Doxygen tags file.
 ;;   - C-c d f will insert a Doxygen comment for the next function.
 ;;   - C-c d i will insert a Doxygen comment for the current file.
+;;   - C-c d ; will insert a Doxygen comment for the current member.
 ;;   - C-c d m will insert a blank multiline Doxygen comment.
 ;;   - C-c d s will insert a blank singleline Doxygen comment.
 ;;
 ;; Doxymacs has been tested on and works with:
 ;; - GNU Emacs 20.7.1
 ;; - XEmacs 21.1 (patch 14)
+;;
+;; If you have success or failure with other version of {X}Emacs, please
+;; let the authors know.
 
 ;; Change log:
 ;;
+;; 26/08/2001 - feature request #454122 (single line member comments) done.
+;;            - feature request #454123 (key bindings description) done.
+;;            - clean up template code to make it easier to add new templates
+;;              and to catch bad settings.
+;;            - clean up documentation to be more standards conforming.
+;;            - version 1.2.0
 ;; 23/08/2001 - fix bug #454563... missing @endlink in fontification,
 ;;              fix @b, @em, @c, @p and @link fontification.
 ;;            - make fontification regexps easier to read.
@@ -139,7 +149,7 @@
 (require 'w3-cus)
 (require 'tempo)
 
-(defconst doxymacs-version "1.1.4"
+(defconst doxymacs-version "1.2.0"
   "Doxymacs version number")
 
 (defun doxymacs-version ()
@@ -149,18 +159,18 @@
   
 
 (defgroup doxymacs nil
-  "Find documentation created by Doxygen, and create Doxygen comments"
+  "Find documentation created by Doxygen, and create Doxygen comments."
   :group 'tools)
 
 (defcustom doxymacs-doxygen-root
   ""
-  "*Root for doxygen documentation (URL)."
+  "*Root of Doxygen generated documentation (URL)."
   :type 'string
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-tags
   ""
-  "*File name or URL that contains doxygen tags."
+  "*File name or URL that contains Doxygen generated XML tags."
   :type 'string
   :group 'doxymacs)
 
@@ -168,7 +178,10 @@
   "JavaDoc"
   "*The style of comments to insert into code.
 See http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks for examples
-of the two styles."
+of the two styles.
+
+Must be one of \"JavaDoc\" or \"Qt\". Setting this variable to anything 
+else will generate errors."
   :type '(radio (const :tag "JavaDoc" "JavaDoc") (const :tag "Qt" "Qt"))  
   :group 'doxymacs)
 
@@ -189,57 +202,43 @@ Set to non-nil to use the external XML parser."
   :type 'string
   :group 'doxymacs)
 
-;; here's a hack... a one-size-fits-all set user template func.
-;; maybe there's a better way of doing this?
-(defun doxymacs-set-user-template (symbol value)
-  (let* ((symbol-name (prin1-to-string symbol))
-	 (template-name (concat "user-"
-				(substring symbol-name 
-					   (length "doxymacs-")
-					   (- 0 (length "-template")))))
-	 (func-name (car 
-		     (read-from-string 
-		      (concat "tempo-template-" template-name)))))
-    (if value
-	(tempo-define-template template-name value)
-      (fmakunbound func-name))))
 
 (defcustom doxymacs-blank-multiline-comment-template
   nil
-  "*A tempo template to insert when calling doxymacs-insert-blank-multiline-comment.  
+  "*A tempo template to insert for `doxymacs-insert-blank-multiline-comment'.
 If nil, then a default template based on the current style as indicated
-by doxymacs-doxygen-style will be used.  For help with tempo templates,
-see http://www.lysator.liu.se/~davidk/elisp/"
+by `doxymacs-doxygen-style' will be used.  
+
+For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
-  :set 'doxymacs-set-user-template
   :group 'doxymacs)
 
 (defcustom doxymacs-blank-singleline-comment-template
   nil
-  "*A tempo template to insert when calling doxymacs-insert-blank-singleline-comment.  
+  "*A tempo template to insert for `doxymacs-insert-blank-singleline-comment'.
 If nil, then a default template based on the current style as indicated
-by doxymacs-doxygen-style will be used.  For help with tempo templates,
-see http://www.lysator.liu.se/~davidk/elisp/"
+by `doxymacs-doxygen-style' will be used.  
+
+For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
-  :set 'doxymacs-set-user-template
   :group 'doxymacs)
 
 (defcustom doxymacs-file-comment-template
   nil
-  "*A tempo template to insert when calling doxymacs-insert-file-comment.  
+  "*A tempo template to insert for `doxymacs-insert-file-comment'.  
 If nil, then a default template based on the current style as indicated
-by doxymacs-doxygen-style will be used.  For help with tempo templates,
-see http://www.lysator.liu.se/~davidk/elisp/"
+by `doxymacs-doxygen-style' will be used.  
+
+For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
-  :set 'doxymacs-set-user-template
   :group 'doxymacs)
 
 (defcustom doxymacs-function-comment-template
   nil
-  "*A tempo template to insert when calling doxymacs-insert-function-comment.  
+  "*A tempo template to insert for `doxymacs-insert-function-comment'.  
 If nil, then a default template based on the current style as
-indicated by doxymacs-doxygen-style will be used.  Note that the
-function doxymacs-find-next-func is available to you... it returns
+indicated by `doxymacs-doxygen-style' will be used.  Note that the
+function `doxymacs-find-next-func' is available to you... it returns
 an assoc list with the function's name, argument list (BUG: may be
 incorrect for parameters that require parentheses), and return
 value:
@@ -248,14 +247,35 @@ value:
 (cdr (assoc 'args (doxymacs-find-next-func))) is a list of arguments.
 (cdr (assoc 'return (doxymacs-find-next-func))) is the return type (string).
 
-The argument list is a list of strings.  For help with tempo templates,
-see http://www.lysator.liu.se/~davidk/elisp/"
+The argument list is a list of strings.  
+
+For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
   :type 'list
-  :set 'doxymacs-set-user-template
   :group 'doxymacs)
 
+(defcustom doxymacs-member-comment-start
+  nil
+  "*String to insert to start a new member comment.
+If nil, use a default one based on the current style as indicated by
+`doxymacs-doxygen-style'."
+  :type '(choice (const :tag "None" nil)
+		 string)
+  :group 'doxymacs)
+
+(defcustom doxymacs-member-comment-end
+  nil
+  "*String to insert to end a new member comment.
+If nil, use a default one based on the current style as indicated by
+`doxymacs-doxygen-style'.
+
+Should be an empty string if comments are terminated by end-of-line."
+  :type '(choice (const :tag "None" nil)
+		 string)
+  :group 'doxymacs)
+
+
 (defvar doxymacs-tags-buffer nil
-  "The buffer with our doxytags")
+  "The buffer with our doxytags.")
 
 ;; The structure of this list has been chosen for ease of use in the
 ;; completion functions.  The structure is as follows:
@@ -263,10 +283,10 @@ see http://www.lysator.liu.se/~davidk/elisp/"
 ;;   (symbol-2 . ((description-2a . url-2a)))
 ;;   ... )
 (defvar doxymacs-completion-list nil
-  "The list with doxytags completions")
+  "The list with doxytags completions.")
 
 (defvar doxymacs-completion-buffer "*Completions*"
-  "The buffer used for displaying multiple completions")
+  "The buffer used for displaying multiple completions.")
 
 
 
@@ -279,7 +299,7 @@ see http://www.lysator.liu.se/~davidk/elisp/"
 
 (defun doxymacs-mode (&optional arg)
   ;; All of the following text shows up in the "mode help" (C-h m)
-  "Minor mode for using/creating Doxygen comments.
+  "Minor mode for using/creating Doxygen documentation.
 To submit a problem report, request a feature or get support, please
 visit doxymacs' homepage at http://doxymacs.sourceforge.net/.
 
@@ -317,6 +337,8 @@ Key bindings:
   'doxymacs-insert-blank-multiline-comment)
 (define-key doxymacs-mode-map "\C-cds"
   'doxymacs-insert-blank-singleline-comment)
+(define-key doxymacs-mode-map "\C-cd;"
+  'doxymacs-insert-member-comment)
 
 
 ;;;###autoload
@@ -332,7 +354,7 @@ Key bindings:
 ;; This stuff has to do with fontification
 ;; Thanks to Alec Panovici for the idea.
 
-(defvar doxymacs-doxygen-keywords
+(defconst doxymacs-doxygen-keywords
   (list
    (list
     ;; One shot keywords that take no arguments
@@ -408,7 +430,7 @@ Key bindings:
     '(4 font-lock-string-face prepend))))
 
 (defun doxymacs-font-lock ()
-  "Turn on font-lock for Doxygen keywords"
+  "Turn on font-lock for Doxygen keywords."
   ;; FIXME How do I turn *off* font-lock for Doxygen keywords?
   (interactive)
   (let ((old (if (eq (car-safe font-lock-keywords) t)
@@ -422,9 +444,8 @@ Key bindings:
 ;;These functions have to do with looking stuff up in doxygen generated
 ;;documentation
 
-;;This loads the tags file generated by doxygen into the buffer *doxytags*.  
 (defun doxymacs-load-tags ()
-  "Loads a tags file"
+  "Loads a Doxygen generated XML tags file into the buffer *doxytags*."
   (if (or (eq doxymacs-tags-buffer nil)
 	  (eq (buffer-live-p doxymacs-tags-buffer) nil))
       (progn
@@ -448,7 +469,7 @@ Key bindings:
 	  (set-buffer currbuff)))))
 
 (defun doxymacs-add-to-completion-list (symbol desc url)
-  "Add a symbol to our completion list, along with its description and URL"
+  "Add a symbol to our completion list, along with its description and URL."
   (let ((check (assoc symbol doxymacs-completion-list)))
     (if check
 	;; There is already a symbol with the same name in the list
@@ -463,16 +484,18 @@ Key bindings:
 		  doxymacs-completion-list)))))
 
 (defun doxymacs-fill-completion-list-with-external-parser ()
-  "Use external parser to parse XML file and get the completion list"
-  (doxymacs-load-tags)
-  (let ((currbuff (current-buffer)))
+  "Use external parser to parse Doxygen XML tags file and get the
+completion list."  
+  (doxymacs-load-tags) 
+  (let ((currbuff
+	 (current-buffer)))
     (set-buffer doxymacs-tags-buffer)
     (goto-char (point-min))
     (setq doxymacs-completion-list nil)
     (message (concat 
 	      "Executing external process " 
 	      doxymacs-external-xml-parser-executable
-	     "..."))
+	      "..."))
     (let ((status (call-process-region 
 		   (point-min) (point-max) 
 		   doxymacs-external-xml-parser-executable
@@ -493,12 +516,13 @@ Key bindings:
 
 
 (defun doxymacs-xml-progress-callback (amount-done)
+  "Let the user know how far along the XML parsing is."
   (message (concat "Parsing " doxymacs-doxygen-tags "... " 
 		   (format "%0.1f" amount-done) "%%")))
 
 (defun doxymacs-fill-completion-list-with-internal-parser ()
   "Load and parse the tags from the *doxytags* buffer, constructing our 
-doxymacs-completion-list from it using the internal XML file parser"
+`doxymacs-completion-list' from it using the internal XML file parser."
   (doxymacs-load-tags)
   (let ((currbuff (current-buffer)))
     (set-buffer doxymacs-tags-buffer)
@@ -565,7 +589,7 @@ doxymacs-completion-list from it using the internal XML file parser"
 	(setq children (cdr children))))))
 
 (defun doxymacs-display-url (url)
-  "Displays the given match"
+  "Displays the given match."
   (browse-url (concat doxymacs-doxygen-root "/" url)))
 
 ;; GNU Emacs doesn't have symbol-near-point apparently
@@ -593,7 +617,7 @@ doxymacs-completion-list from it using the internal XML file parser"
 	  nil))))
 
 (defun doxymacs-lookup (symbol)
-  "Look up the symbol under the cursor in doxygen"
+  "Look up the symbol under the cursor in Doxygen generated documentation."
   (interactive 
    (save-excursion
      (if (eq doxymacs-completion-list nil)
@@ -610,7 +634,7 @@ doxymacs-completion-list from it using the internal XML file parser"
         (doxymacs-display-url url))))
 
 (defun doxymacs-display-completions (initial collection &optional pred)
-  "Display available completions"
+  "Display available completions."
   (let ((matches (all-completions initial collection pred)))
     ;; FIXME - Is this the proper way of doing this? Seems to work, but...
     (set-buffer (format " *Minibuf-%d*"
@@ -622,7 +646,7 @@ doxymacs-completion-list from it using the internal XML file parser"
       (display-completion-list (sort matches 'string-lessp)))))
 
 (defun doxymacs-symbol-completion (initial collection &optional pred)
-  "Do completion for given symbol"
+  "Do completion for given symbol."
   (let ((completion (try-completion initial collection pred)))
     (cond ((eq completion t)
            ;; Only one completion found.  Validate it.
@@ -657,7 +681,7 @@ the completion or nil if canceled by the user."
       (cdar new-collection))))
 
 (defun doxymacs-description-completion (initial collection &optional pred)
-  "Do completion for given description"
+  "Do completion for given description."
   (doxymacs-display-completions initial collection pred)
   (let ((completion (completing-read "Select: " collection pred nil initial)))
     (delete-window (get-buffer-window doxymacs-completion-buffer))
@@ -667,7 +691,7 @@ the completion or nil if canceled by the user."
 
 ;;This is mostly a convenience function for the user
 (defun doxymacs-rescan-tags ()
-  "Rescan the tags file"
+  "Rescan the Doxygen XML tags file in `doxymacs-doxygen-tags'."
   (interactive)
   (if (buffer-live-p doxymacs-tags-buffer)
       (kill-buffer doxymacs-tags-buffer))
@@ -686,32 +710,27 @@ the completion or nil if canceled by the user."
 ;; should be.
 (if (not (fboundp 'deactivate-mark))
     (defsubst deactivate-mark ()
-      (zmacs-deactivate-region))) ;; Is this correct?
+      (zmacs-deactivate-region)))	; Is this correct?
 ;; Also need a hack for mark-active
 (if (not (boundp 'mark-active))
-    (defvar mark-active nil)) ;; Is this correct? Probably not.
+    (defvar mark-active nil))		; Is this correct? Probably not.
 
 
 ;; Default templates
 
-(tempo-define-template
- "JavaDoc-blank-multiline-comment"
+(defconst doxymacs-JavaDoc-blank-multiline-comment-template
  '("/**" > n "* " p > n "* " > n "*/" > n))
 
-(tempo-define-template 
- "Qt-blank-multiline-comment"
+(defconst doxymacs-Qt-blank-multiline-comment-template
  '("//! " p > n "/*! " > n > n "*/" > n))
 
-(tempo-define-template
- "JavaDoc-blank-singleline-comment"
+(defconst doxymacs-JavaDoc-blank-singleline-comment-template
  '("/// " > p))
 
-(tempo-define-template
- "Qt-blank-singleline-comment"
+(defconst doxymacs-Qt-blank-singleline-comment-template
  '("//! " > p))
 
-(tempo-define-template
- "JavaDoc-file-comment"
+(defconst doxymacs-JavaDoc-file-comment-template
  '("/**" > n 
    " * @file   "  
    (if (buffer-file-name) 
@@ -728,8 +747,7 @@ the completion or nil if canceled by the user."
    " * " p > n
    " */" > n))
 
-(tempo-define-template
- "Qt-file-comment"
+(defconst doxymacs-Qt-file-comment-template
  '("/*!" > n
    " \\file   "
    (if (buffer-file-name) 
@@ -747,25 +765,23 @@ the completion or nil if canceled by the user."
    "*/" > n))
 
 
-;; Need to pass in style directly instead of looking at 
-;; doxymacs-doxygen-style since user might call the tempo-template-
-;; functions directly
-(defun doxymacs-parm-tempo-element (parms style)
-  "Inserts tempo elements for the given parms in the given style"
+(defun doxymacs-parm-tempo-element (parms)
+  "Inserts tempo elements for the given parms in the given style."
   (if parms
       (let ((prompt (concat "Parameter " (car parms) ": ")))
 	(cond
-	 ((string= style "JavaDoc")
+	 ((string= doxymacs-doxygen-style "JavaDoc")
 	  (list 'l " * @param " (car parms) " " (list 'p prompt) '> 'n
-		(doxymacs-parm-tempo-element (cdr parms) style)))
-	 ((string= style "Qt")
+		(doxymacs-parm-tempo-element (cdr parms))))
+	 ((string= doxymacs-doxygen-style "Qt")
 	  (list 'l " \\param " (car parms) " " (list 'p prompt) '> 'n
-		(doxymacs-parm-tempo-element (cdr parms) style)))))
+		(doxymacs-parm-tempo-element (cdr parms))))
+	 (t
+	  (doxymacs-invalid-style))))
     nil))
 
 
-(tempo-define-template
- "JavaDoc-function-comment"
+(defconst doxymacs-JavaDoc-function-comment-template
  '((let ((next-func (doxymacs-find-next-func)))
      (if next-func
 	 (list
@@ -773,19 +789,17 @@ the completion or nil if canceled by the user."
 	  "/** " '> 'n
 	  " * " 'p '> 'n
 	  " * " '> 'n
-	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)) "JavaDoc")
+	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)))
 	  (unless 
 	      (string-match "^[ \t\n]*void[ \t\n]*$" 
 			    (cdr (assoc 'return next-func)))
 	    '(l " * " > n " * @return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
-	 (beep)
+	 (error "Can't find next function declaration.")
 	 nil)))))
 
-
-(tempo-define-template
- "Qt-function-comment"
+(defconst doxymacs-Qt-function-comment-template
  '((let ((next-func (doxymacs-find-next-func)))
      (if next-func
 	 (list
@@ -800,63 +814,148 @@ the completion or nil if canceled by the user."
 	    '(l " " > n "  \\return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
-	 (beep)
+	 (error "Can't find next function declaraton.")
 	 nil)))))
 
 
-;; Wrapper functions for the above... these check to see if the user
-;; has his own template for the particular comment that is going to be
-;; inserted and calls it if it is defined... otherwise, calls the default
-;; template depending on the currently set style.
+(defun doxymacs-invalid-style ()
+  "Warn the user that he has set `doxymacs-doxygen-style' to an invalid
+style."  
+  (error (concat
+	  "Invalid `doxymacs-doxygen-style': " 
+	  doxymacs-doxygen-style
+	  ": must be one of \"JavaDoc\" or \"Qt\"")))
+
+;; This should make it easier to add new templates and cut down
+;; on copy-and-paste programming.
+(defun doxymacs-call-template (template-name)
+  "Insert the given template."
+  (let* ((user-template-name (concat "doxymacs-" template-name "-template"))
+	 (user-template (car (read-from-string user-template-name)))
+	 (default-template-name (concat "doxymacs-"
+					doxymacs-doxygen-style "-"
+					template-name "-template"))
+	 (default-template (car (read-from-string default-template-name))))
+    (cond 
+     ((and (boundp user-template)	; Make sure it is a non-nil list
+	   (listp (eval user-template)) 
+	   (eval user-template))
+      ;; Use the user's template
+      (tempo-insert-template user-template tempo-insert-region))
+     ((and (boundp default-template)
+	   (listp (eval default-template))
+	   (eval default-template))
+      ;; Use the default template, based on the current style
+      (tempo-insert-template default-template tempo-insert-region))
+     (t
+      ;; Most likely, `doxymacs-doxygen-style' has been set wrong.
+      (doxymacs-invalid-style)))))
 
 (defun doxymacs-insert-blank-multiline-comment ()
-  "Inserts a multi-line blank doxygen comment at the current point"
+  "Inserts a multi-line blank Doxygen comment at the current point."
   (interactive "*")
-  (if (fboundp 'tempo-template-user-blank-multiline-comment)
-      ;; Use the user's template
-      (tempo-template-user-blank-multiline-comment)
-    (cond
-     ((string= doxymacs-doxygen-style "JavaDoc")
-      (tempo-template-JavaDoc-blank-multiline-comment))
-     ((string= doxymacs-doxygen-style "Qt")
-      (tempo-template-Qt-blank-multiline-comment)))))
+  (doxymacs-call-template "blank-multiline-comment"))
     
 (defun doxymacs-insert-blank-singleline-comment ()
-  "Inserts a single-line blank doxygen comment at current point"
+  "Inserts a single-line blank Doxygen comment at current point."
   (interactive "*")
-  (if (fboundp 'tempo-template-user-blank-singleline-comment)
-      ;; Use the user's template
-      (tempo-template-user-blank-singleline-comment)
-    (cond
-     ((string= doxymacs-doxygen-style "JavaDoc")
-      (tempo-template-JavaDoc-blank-singleline-comment))
-     ((string= doxymacs-doxygen-style "Qt")
-      (tempo-template-Qt-blank-singleline-comment)))))
+  (doxymacs-call-template "blank-singleline-comment"))
 
 (defun doxymacs-insert-file-comment ()
-  "Inserts doxygen documentation for the current file at current point"
+  "Inserts Doxygen documentation for the current file at current point."
   (interactive "*")
-  (if (fboundp 'tempo-template-user-file-comment)
-      ;; Use the user's template
-      (tempo-template-user-file-comment)
-    (cond
-     ((string= doxymacs-doxygen-style "JavaDoc")
-      (tempo-template-JavaDoc-file-comment))
-     ((string= doxymacs-doxygen-style "Qt")
-      (tempo-template-Qt-file-comment)))))
+  (doxymacs-call-template "file-comment"))
 
 (defun doxymacs-insert-function-comment ()
-  "Inserts doxygen documentation for the next function declaration at 
-current point"
+  "Inserts Doxygen documentation for the next function declaration at 
+current point."
   (interactive "*")
-  (if (fboundp 'tempo-template-user-function-comment)
-      ;; Use the user's template
-      (tempo-template-user-function-comment)
-    (cond
-     ((string= doxymacs-doxygen-style "JavaDoc")
-      (tempo-template-JavaDoc-function-comment))
-     ((string= doxymacs-doxygen-style "Qt")
-      (tempo-template-Qt-function-comment)))))
+  (doxymacs-call-template "function-comment"))
+
+;; FIXME
+;; The following was borrowed from "simple.el".
+;; If anyone knows of a better/simpler way of doing this, please let me know.
+(defconst doxymacs-comment-indent-function
+  (lambda (skip)
+    (save-excursion
+      (beginning-of-line)
+      (let ((eol (save-excursion (end-of-line) (point))))
+	(and skip
+	     (re-search-forward skip eol t)
+	     (setq eol (match-beginning 0)))
+	(goto-char eol)
+	(skip-chars-backward " \t")
+	(max comment-column (1+ (current-column))))))
+  "Function to compute desired indentation for a comment.
+This function is called with skip and with point at the beginning of
+the comment's starting delimiter.")
+
+(defun doxymacs-insert-member-comment ()
+  "Inserts Doxygen documentation for the member on the current line in
+the column given by `comment-column' (much like \\[indent-for-comment])."
+  (interactive "*")
+  (let* ((empty (save-excursion (beginning-of-line)
+				(looking-at "[ \t]*$")))
+	 (starter (or doxymacs-member-comment-start
+		      (cond
+		       ((string= doxymacs-doxygen-style "JavaDoc")
+			"/**< ")
+		       ((string= doxymacs-doxygen-style "Qt")
+			"/*!< ")
+		       (t
+			(doxymacs-invalid-style)))))
+	 (skip (concat (regexp-quote starter) "*"))
+	 (ender (or doxymacs-member-comment-end
+		    (cond
+		       ((string= doxymacs-doxygen-style "JavaDoc")
+			" */")
+		       ((string= doxymacs-doxygen-style "Qt")
+			" */")
+		       (t
+			(doxymacs-invalid-style))))))
+    (if empty
+	;; Insert a blank single-line comment on empty lines
+	(doxymacs-insert-blank-singleline-comment)
+      (if (null starter)
+	  (error "No Doxygen member comment syntax defined")
+	(let* ((eolpos (save-excursion (end-of-line) (point)))
+	       cpos indent begpos)
+	  (beginning-of-line)
+	  (if (re-search-forward skip eolpos 'move)
+	      (progn (setq cpos (point-marker))
+		     ;; Find the start of the comment delimiter.
+		     ;; If there were paren-pairs in skip,
+		     ;; position at the end of the first pair.
+		     (if (match-end 1)
+			 (goto-char (match-end 1))
+		       ;; If skip matched a string with
+		       ;; internal whitespace (not final whitespace) then
+		       ;; the delimiter start at the end of that
+		       ;; whitespace.  Otherwise, it starts at the
+		       ;; beginning of what was matched.
+		       (skip-syntax-backward " " (match-beginning 0))
+		       (skip-syntax-backward "^ " (match-beginning 0)))))
+	  (setq begpos (point))
+	  ;; Compute desired indent.
+	  (cond
+	   ((= (current-column) 0)
+	    (goto-char begpos))
+	   ((= (current-column)
+	       (setq indent (funcall doxymacs-comment-indent-function skip)))
+	    (goto-char begpos))
+	   (t
+	    ;; If that's different from current, change it.
+	    (skip-chars-backward " \t")
+	    (delete-region (point) begpos)
+	    (indent-to indent)))
+	  ;; An existing comment?
+	  (if cpos
+	      (progn (goto-char cpos)
+		     (set-marker cpos nil))
+	    ;; No, insert one.
+	    (insert starter)
+	    (save-excursion
+	      (insert ender))))))))
 
 
 ;; These are helper functions that search for the next function
@@ -864,7 +963,7 @@ current point"
 ;; argument list.  Used for documenting functions.
 
 (defun doxymacs-extract-args-list (args-string)
-  "Extracts the arguments from the given list (given as a string)"
+  "Extracts the arguments from the given list (given as a string)."
   (save-excursion
     (cond
      ((string-match "^[ \t\n]*$" args-string) nil)
@@ -876,15 +975,15 @@ current point"
 ;;for "void blah(int i, const char *fla[FOO] = NULL)", this function
 ;;thinks NULL is the second argument.
 (defun doxymacs-extract-args-list-helper (args-list)
-  "Recursively get names of arguments"
+  "Recursively get names of arguments."
   (save-excursion
     (if args-list
       (if (string-match 
 	   (concat
-	    "\\([a-zA-Z0-9_]+\\)[ \t\n]*" ; arg name
+	    "\\([a-zA-Z0-9_]+\\)[ \t\n]*"                ; arg name
 	    "\\(\\[[ \t\n]*[a-zA-Z0-9_]*[ \t\n]*\\]\\)*" ; opt. array bounds
-	    "\\(=[ \t\n]*.+[ \t\n]*\\)?" ; optional assignment
-	    "[ \t\n]*$" ; end
+	    "\\(=[ \t\n]*.+[ \t\n]*\\)?"                 ; optional assignment
+	    "[ \t\n]*$"			                 ; end
 	    )
 	   (car args-list))
 	  (cons
@@ -901,7 +1000,13 @@ current point"
 ;; - int f(int (*daytab)[5], int x);
 ;; Of course, these kinds of things can't be done by regexps alone.
 (defun doxymacs-find-next-func ()
-  "Returns a list describing next function declaration, or nil if not found"
+  "Returns a list describing next function declaration, or nil if not found.
+
+(cdr (assoc 'func (doxymacs-find-next-func))) is the function name (string).
+(cdr (assoc 'args (doxymacs-find-next-func))) is a list of arguments.
+(cdr (assoc 'return (doxymacs-find-next-func))) is the return type (string).
+
+The argument list is a list of strings."
   (interactive)
   (save-excursion
     (if (re-search-forward

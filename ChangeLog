@@ -1,5 +1,15 @@
-$Id: ChangeLog,v 1.22 2001/08/24 04:04:21 ryants Exp $
+$Id: ChangeLog,v 1.23 2001/08/26 23:38:50 ryants Exp $
 
+2001-08-26 Ryan T. Sammartino <ryants at home dot com> (1.2.0)
+	* lisp/doxymacs.el: implement feature request #454122 (single line
+	member comments) and feature request #454123 (key bindings
+	description in mode help).  Clean up template code to make it
+	easier to add new templates and catch bad settings.  Clean up
+	documentation to be more standards conforming.
+	* INSTALL: documentation update.
+	* README: if people have success/failure with untested {X}Emacs
+	versions, let the authors know.
+	
 2001-08-23 Ryan T. Sammartino <ryants at home dot com> (1.1.4)
 	* lisp/doxymacs.el: fix bug #454563... missing @endlink in
 	fontification; fix @b, @em, @c, @p, and @link fontification.  Also

@@ -23,6 +23,9 @@ Doxymacs has been tested on and works with:
  - GNU Emacs 20.7.1
  - XEmacs 21.1 (patch 14)
 
+If you have success or failure with other versions of {X}Emacs, please
+let the authors know.
+
 See COPYING for the full text of the license under which is this work
 is being made available.
 
@@ -41,4 +44,4 @@ Ryan T. Sammartino
 http://members.home.net/ryants/
 ryants at home dot com
 
-$Id: README,v 1.5 2001/05/27 19:07:51 ryants Exp $
+$Id: README,v 1.6 2001/08/26 23:38:50 ryants Exp $

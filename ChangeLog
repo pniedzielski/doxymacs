@@ -1,4 +1,13 @@
-$Id: ChangeLog,v 1.12 2001/05/10 03:00:39 ryants Exp $
+$Id: ChangeLog,v 1.13 2001/05/12 22:41:11 ryants Exp $
+
+2001-05-12 Ryan T. Sammartino <ryants@home.com> (0.1.2)
+	* lisp/doxymacs.el: bug fixes for GNU Emacs: symbol-near-point and
+	user-mail-address
+	* lisp/xml-parse.el: make sure progress-function is bound before
+	calling.
+	* TODO: removed "test on other version of {X}Emacs" item.
+	* README: let people know on which versions of {X}Emacs this has been
+	tested on.
 
 2001-05-09 Ryan T. Sammartino <ryants@home.com> (0.1.1)
 	* lisp/doxymacs.el: change C-? to C-c d ?, add progress info while

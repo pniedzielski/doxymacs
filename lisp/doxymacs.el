@@ -4,9 +4,8 @@
 ;;
 ;; Author: Ryan T. Sammartino <ryants@home.com>
 ;;      Kris Verbeeck <kris.verbeeck@advalvas.be>
-;; Contributor: Andreas Fuchs
 ;; Created: 24/03/2001
-;; Version: 0.2.0
+;; Version: 0.2.1
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -27,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.34 2001/05/26 22:42:55 ryants Exp $
+;; $Id: doxymacs.el,v 1.35 2001/05/27 01:03:32 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -60,6 +59,12 @@
 
 ;; Change log:
 ;;
+;; 26/05/2001 - fix bug #427351 (thinks "void" is a parameter) and bug
+;;              #427350 (can't document constructors/destructors), and
+;;              generally made the whole doxymacs-find-next-func function
+;;              much more robust.  Small update to default styles when
+;;              inserting functions that return "void"
+;;            - version 0.2.1
 ;; 21/05/2001 - now able to optionally use an "external" XML parser to speed
 ;;              things up.
 ;;            - version 0.2.0
@@ -246,7 +251,7 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
         (if (null arg)
             ;; Toggle mode
             (not doxymacs-mode)
-          ;; Enable/Disbale according to arg
+          ;; Enable/Disable according to arg
           (> (prefix-numeric-value arg) 0))))
 
 (defvar doxymacs-mode-map (make-sparse-keymap) 
@@ -628,10 +633,10 @@ the completion or nil if canceled by the user."
 	  " * " 'p '> 'n
 	  " * " '> 'n
 	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)) "JavaDoc")
-	  " * " '> 'n
 	  (unless 
-	      (string-match "^\\s-*void\\s-*$" (cdr (assoc 'return next-func)))
-	    '(l " * @return " (p "Returns: ") > n))
+	      (string-match "^[ \t\n]*void[ \t\n]*$" 
+			    (cdr (assoc 'return next-func)))
+	    '(l " * " > n " * @return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
 	 (beep)
@@ -648,10 +653,10 @@ the completion or nil if canceled by the user."
 	  "/*! " '> 'n
 	  " " '> 'n
 	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)) "Qt")
-	  " " '> 'n
 	  (unless
-	      (string-match "^\\s-*void\\s-*$" (cdr (assoc 'return next-func)))
-	    '(l "  \\return " (p "Returns: ") > n))
+	      (string-match "^[ \t\n]*void[ \t\n]*$" 
+			    (cdr (assoc 'return next-func)))
+	    '(l " " > n "  \\return " (p "Returns: ") > n))
 	  " */" '>)
        (progn
 	 (beep)
@@ -721,21 +726,24 @@ current point"
   "Extracts the arguments from the given list (given as a string)"
   (save-excursion
     (cond
-     ((string= args-string "") nil)
-     ((string-match "^\\s-*void\\s-*$" args-string) nil)
+     ((string-match "^[ \t\n]*$" args-string) nil)
+     ((string-match "^[ \t\n]*void[ \t\n]*$" args-string) nil)
      (t
       (doxymacs-extract-args-list-helper (split-string args-string ","))))))
 
+;;FIXME
+;;for "void blah(int i, const char *fla[FOO] = NULL)", this function
+;;thinks NULL is the second argument.
 (defun doxymacs-extract-args-list-helper (args-list)
   "Recursively get names of arguments"
   (save-excursion
     (if args-list
       (if (string-match 
 	   (concat
-	    "\\([a-zA-Z0-9_]+\\)\\s-*" ; arg name
-	    "\\(?:\\[\\s-*\\s_*\\s-*\\]\\)*" ; optional array bounds
-	    "\\(?:=\\s-*.+\\s-*\\)?" ;optional assignment
-	    "\\s-*$" ; end
+	    "\\([a-zA-Z0-9_]+\\)[ \t\n]*" ; arg name
+	    "\\(?:\\[[ \t\n]*[a-zA-Z0-9_]*[ \t\n]*\\]\\)*" ; opt. array bounds
+	    "\\(?:=[ \t\n]*.+[ \t\n]*\\)?" ; optional assignment
+	    "[ \t\n]*$" ; end
 	    )
 	   (car args-list))
 	  (cons
@@ -746,36 +754,60 @@ current point"
 	 (doxymacs-extract-args-list-helper (cdr args-list))))
       nil)))
 
-
 ;; FIXME
 ;; This gets confused by the following examples:
 ;; - void qsort(int (*comp)(void *, void *), int left, int right);
 ;; - int f(int (*daytab)[5], int x);
-;; - Anything that doesn't declare its return value
-;; - Also gets the names of certain C++ operator-style declerations wrong
+;; Of course, these kinds of things can't be done by regexp's along.
 (defun doxymacs-find-next-func ()
   "Returns a list describing next function declaration, or nil if not found"
   (interactive)
   (save-excursion
     (if (re-search-forward
 	 (concat 
-	  ;;I stole the following from func-menu.el
-	  "\\(\\(template\\s-+<[^>]+>\\s-+\\)?"   ; template formals
-	  "\\([a-zA-Z0-9_*&<,>:]+\\s-+\\)?"       ; type specs
-	  "\\([a-zA-Z0-9_*&<,>\"]+\\s-+\\)?"
-	  "\\([a-zA-Z0-9_*&<,>]+\\)\\s-+\\)"      ; return type
-	  "\\(\\([a-zA-Z0-9_&~:<,>*]\\|\\(\\s +::\\s +\\)\\)+\\)"
-	  "\\(o?perator\\s *.[^(]*\\)?\\(\\s-\\|\n\\)*(" ; name
-	  "\\([^)]*\\))" ; arg list
+	  ;; return type
+	  "\\(\\(?:const[ \t\n]+\\)?[a-zA-Z0-9_]+[ \t\n*&]+\\)?"
+
+	  ;; name
+	  "\\(\\(?:[a-zA-Z0-9_~:<,>*&]\\|\\(?:[ \t\n]+::[ \t\n]+\\)\\)+"
+	  "\\(?:o?perator[ \t\n]*.[^(]*\\)?\\)[ \t\n]*(" 
+
+	  ;; arg list
+	  "\\([^)]*\\))"
 	  ) nil t)
-	(list (cons 'func (buffer-substring (match-beginning 6)
-					    (match-end 6)))
-	      (save-match-data 
-		(cons 'args (doxymacs-extract-args-list
-			     (buffer-substring (match-beginning 11)
-					       (match-end 11)))))
-	      (cons 'return (buffer-substring (match-beginning 5)
-					      (match-end 5))))
-      nil)))
+
+	(let* ((func (buffer-substring (match-beginning 2) (match-end 2)))
+	       (args (buffer-substring (match-beginning 3) (match-end 3)))
+	       (ret (cond
+		     ;; Return type specified
+		     ((match-beginning 1)
+		      (buffer-substring (match-beginning 1) (match-end 1)))
+		     ;;Constructor/destructor
+		     ((string-match 
+		       "^\\([a-zA-Z0-9_<,>:*&]+\\)[ \t\n]*::[ \t\n]*~?\\1$"
+		       func) "void")
+		     ;;Constructor in class decl.
+		     ((save-match-data
+			(re-search-backward 
+			 (concat 
+			  "class[ \t\n]+" (regexp-quote func) "[ \t\n]*{")
+			 nil t))
+		      "void")
+		     ;;Destructor in class decl.
+		     ((save-match-data
+			(and (string-match "^~\\([a-zA-Z0-9_]+\\)$" func)
+			     (save-match-data
+			       (re-search-backward
+				(concat
+				 "class[ \t\n]+" (regexp-quote
+						  (match-string 1 func))
+				 "[ \t\n]*{") nil t))))
+		      "void")
+		     ;;Default
+		     (t "int"))))
+	  (list (cons 'func func)
+		(cons 'args (doxymacs-extract-args-list args))
+		(cons 'return ret)))
+    nil)))
 
 ;;; doxymacs.el ends here

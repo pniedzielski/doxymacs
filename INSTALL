@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.5 2001/05/23 04:52:01 ryants Exp $
+$Id: INSTALL,v 1.6 2001/05/27 01:03:32 ryants Exp $
 
 - Put lisp/doxymacs.el and lisp/xml-parse.el somewhere in your {X}Emacs 
   load-path.
@@ -14,7 +14,9 @@ $Id: INSTALL,v 1.5 2001/05/23 04:52:01 ryants Exp $
   With an 11 MB XML tag file, the internal process takes 20 minutes
   on a PIII 800 with 1 GB of RAM, whereas the external process takes 12
   seconds.
-- Put (require 'doxymacs) in your .emacs
+- Put (require 'doxymacs) in your .emacs (or, to have doxymacs-mode invoked
+  automatically when in C/C++ mode, put 
+  (add-hook 'c-mode-common-hook 'doxymacs-mode) in your .emacs)
 - Invoke doxymacs-mode with M-x doxymacs-mode
 - Default key bindings are:
   - C-c d ? will look up documentation for the symbol under the point.

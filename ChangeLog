@@ -1,4 +1,13 @@
-$Id: ChangeLog,v 1.14 2001/05/23 04:52:01 ryants Exp $
+$Id: ChangeLog,v 1.15 2001/05/27 01:03:32 ryants Exp $
+
+2001-05-26 Ryan T. Sammartino <ryants@home.com> (0.2.1)
+	* lisp/doxymacs.el: fix bug #427351 "thinks "void" is a parameter"
+	and bug #427350 "can't document constructors/destructors", and
+	generally made the whole doxymacs-find-next-func function much
+	more robust.  Small update to default styles when inserting
+	functions that return "void"
+	* INSTALL: a tip on automatically going into doxymacs-mode
+	whenever in C/C++ mode
 
 2001-05-21 Ryan T. Sammartino <ryants@home.com> (0.2.0)
 	* lisp/doxymacs.el: now can optionally use the external XML parser

@@ -1,14 +1,14 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl $Id: configure.ac,v 1.5 2003/01/12 09:03:15 ryants Exp $
-AC_INIT(doxymacs, 1.4.0, http://sourceforge.net/projects/doxymacs)
+dnl $Id: configure.ac,v 1.6 2003/01/26 01:49:55 ryants Exp $
+AC_INIT(doxymacs, 1.5.0, http://sourceforge.net/projects/doxymacs)
 
 AC_PREREQ(2.57)
 
-AC_REVISION($Revision: 1.5 $)
+AC_REVISION($Revision: 1.6 $)
 
 AC_CONFIG_SRCDIR(c/doxymacs_parser.c)
 
-AM_INIT_AUTOMAKE(doxymacs, 1.4.0)
+AM_INIT_AUTOMAKE(doxymacs, 1.5.0)
 
 AC_PREFIX_DEFAULT(${HOME})
 
@@ -52,6 +52,7 @@ AC_SUBST(DOXYMACS_PARSER)
 AC_ARG_VAR(EMACS, [How to invoke emacs (e.g. EMACS=xemacs to use XEmacs).])
 AC_ARG_VAR(EMACSLOADPATH, [Default load-path for EMACS.])
 
-AC_CONFIG_FILES([Makefile c/Makefile lisp/Makefile lisp/doxymacs.el])
+AC_CONFIG_FILES([Makefile c/Makefile lisp/Makefile lisp/doxymacs.el
+                 no-autoconf/Makefile])
 
 AC_OUTPUT

@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.8 2003/01/26 01:13:48 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.9 2003/01/26 01:49:56 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -61,6 +61,10 @@
 ;;   packages.  To byte compile with XEmacs, set the variable EMACS:
 ;;
 ;;    $ EMACS=xemacs make
+;;
+;;   If you would rather not byte compile the .el files at all, then do:
+;;
+;;    $ make ELCFILES=
 ;;
 ;; - Customise the variable doxymacs-doxygen-dirs.
 ;;
@@ -111,6 +115,9 @@
 
 ;; Change log:
 ;;
+;; 25/01/2003 - remove hard coded version number from comments.
+;;            - add instructions to avoid byte compiling files.
+;;            - version 1.5.0
 ;; 11/01/2003 - feature #665470: C++ style.
 ;;            - fix bug #665099: missing @var fontification.
 ;;            - fix bug #665372: @example not fontified properly.

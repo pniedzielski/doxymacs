@@ -1,3 +1,12 @@
+2003-01-25  Ryan T. Sammartino  <ryants@shaw.ca>
+
+	* INSTALL: add instructions on avoiding byte compiling and
+	configuring.
+
+	* configure.ac: set version to 1.5.0.
+
+	* no-autoconf/Makefile.am: new file.
+
 2003-01-20  Georg Drenkhahn <georg-d at users dot sourceforge dot net>
 
 	* lisp/doxymacs.el.in (doxymacs-doxygen-keywords): patch 667164:

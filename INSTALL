@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.14 2003/01/07 07:01:27 ryants Exp $
+$Id: INSTALL,v 1.15 2003/01/26 01:49:55 ryants Exp $
 
 Doxymacs depends on the following packages:
 
@@ -29,6 +29,15 @@ Be sure these are properly configured and installed before proceeding.
   packages.  To byte compile with XEmacs, set the variable EMACS:
 
    $ EMACS=xemacs make
+
+  If you would rather not byte compile the .el files at all, then do:
+
+   $ make ELCFILES=
+   $ make install ELCFILES=
+
+  If you do not want to run or cannot run configure then some pre-baked
+  .el files are available in the no-autoconf/ directory; simply copy
+  these to somewhere in your load-path.
 
 - Customise the variable doxymacs-doxygen-dirs.
   Doxymacs customisation can be done from the Options | Customize menu,

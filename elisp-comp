@@ -45,7 +45,7 @@ else
    cp $* $tempdir
    cd $tempdir
 
-   echo "(setq load-path (cons nil (cons \"..\" load-path)))" > script
+   echo "(setq load-path (cons \"..\" load-path))" > script
    $EMACS -batch -q -l script -f batch-byte-compile *.el
    mv *.elc ..
 

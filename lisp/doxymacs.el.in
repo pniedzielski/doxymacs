@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.6 2003/01/26 01:11:36 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.7 2003/01/26 01:12:35 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -259,8 +259,7 @@ file:///home/me/project/bar/doc/ and the XML tags file is at
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-style
-;;  "@DOXYMACS_DEFAULT_STYLE@"
-  "C++"
+  "@DOXYMACS_DEFAULT_STYLE@"
   "The style of comments to insert into code.
 See http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks for examples
 of the various styles.

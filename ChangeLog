@@ -1,4 +1,8 @@
-$Id: ChangeLog,v 1.28 2001/11/20 06:59:12 ryants Exp $
+$Id: ChangeLog,v 1.29 2002/04/02 06:34:34 ryants Exp $
+
+2002-04-01 Ryan T. Sammartino <ryants at shaw dot ca>
+	* lisp/doxymacs.el, README: make note of the fact that doxymacs
+	seems to work with GNU Emacs 21.2.1 and XEmacs 21.4 (patch 6)
 
 2001-11-19 Ryan T. Sammartino <ryants at shaw dot ca>
 	* lisp/doxymacs.el, README: make note of the fact that doxymacs

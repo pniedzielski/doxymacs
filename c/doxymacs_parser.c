@@ -25,7 +25,7 @@
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
  *
- * $Id: doxymacs_parser.c,v 1.5 2001/11/02 05:40:15 ryants Exp $
+ * $Id: doxymacs_parser.c,v 1.6 2002/04/02 06:34:35 ryants Exp $
  *
  */
 
@@ -89,10 +89,10 @@ inline void AddToHash(completion_list *cl)
     hash_entry **cur = &symbol_hash[h];
 
     hash_entry *new = (hash_entry *)malloc(sizeof(hash_entry));
-    
+
     new->cl = cl;
     new->next = *cur;
-    
+
     *cur = new;
 }
 
@@ -172,16 +172,16 @@ inline completion_list *LookUpSymbol(const char *symbol)
 {
     unsigned int h = hash(symbol);
     hash_entry *cur = symbol_hash[h];
-        
+
     while (cur)
     {
         completion_list *cl = cur->cl;
-        
+
         if (!strcmp(cl->symbol, symbol))
         {
             return cl;
         }
-        
+
         cur = cur->next;
     }
 
@@ -191,7 +191,7 @@ inline completion_list *LookUpSymbol(const char *symbol)
 inline desc_url_list *LookUpDesc(completion_list *entry, const char *desc)
 {
     desc_url_list *cur = entry->descs;
-    
+
     while (cur)
     {
         if (!strcmp(cur->desc, desc))
@@ -207,7 +207,7 @@ inline desc_url_list *LookUpDesc(completion_list *entry, const char *desc)
 
 /* Add the given name, description and url to our completion list */
 
-inline int AddToCompletionList(const char *name, 
+inline int AddToCompletionList(const char *name,
                                const char *desc, const char *url)
 {
     completion_list *check;
@@ -221,7 +221,7 @@ inline int AddToCompletionList(const char *name,
         {
             /* If there is not yet a symbol with this desc, add it. */
             /* FIXME: what to do if there is already a symbol?? */
-            desc_url_list *new_desc = 
+            desc_url_list *new_desc =
                 (desc_url_list *)malloc(sizeof(desc_url_list));
 
             if (!new_desc)
@@ -239,7 +239,7 @@ inline int AddToCompletionList(const char *name,
     }
     else
     {
-        completion_list *new_entry = 
+        completion_list *new_entry =
             (completion_list *)malloc(sizeof(completion_list));
 
         if (!new_entry)
@@ -390,7 +390,7 @@ inline int OutputCompletionList(void)
 
         cur = cur->next;
     }
-    
+
     printf(")\n");
 
     return 0;
@@ -422,12 +422,12 @@ inline void FreeCompletionList(void)
 
         free(tmp_cl->symbol);
         free(tmp_cl);
-    }    
+    }
 }
 
 /* Add the members of a compound to the completion list */
 
-inline int AddCompoundMembers(xmlNodePtr compound, 
+inline int AddCompoundMembers(xmlNodePtr compound,
                               const char *name, const char *url)
 {
     xmlNodePtr child = compound->xmlChildrenNode;
@@ -456,18 +456,18 @@ inline int AddCompoundMembers(xmlNodePtr compound,
                                                   2);
                 char *member_desc = (char *)malloc(strlen(name) +
                                                    strlen(member_name) +
-                                                   (member_args ? 
+                                                   (member_args ?
                                                     strlen(member_args) : 0) +
                                                    3);
 
                 if (member_url && member_desc && member_name_copy)
                 {
                     sprintf(member_url, "%s#%s", url, member_anchor);
-                    sprintf(member_desc, 
-                            "%s::%s%s", 
+                    sprintf(member_desc,
+                            "%s::%s%s",
                             name, member_name, member_args ? member_args : "");
-                    
-                    if (AddToCompletionList(member_name_copy, 
+
+                    if (AddToCompletionList(member_name_copy,
                                             member_desc, member_url) < 0)
                     {
                         ret = -1;
@@ -476,7 +476,7 @@ inline int AddCompoundMembers(xmlNodePtr compound,
                 else
                 {
                     fprintf(stderr, "malloc failed\n");
-                    
+
                     if (member_url)
                     {
                         free(member_url);
@@ -489,14 +489,14 @@ inline int AddCompoundMembers(xmlNodePtr compound,
                     {
                         free(member_name_copy);
                     }
-                    
+
                     ret = -1;
                 }
             }
         }
         child = child->next;
     }
-        
+
     return ret;
 }
 
@@ -510,7 +510,7 @@ int main(int argc, char *argv[])
     char buff[BUFF_SIZE];
 
     LIBXML_TEST_VERSION;
-    
+
     comp_list = NULL;
     memset(symbol_hash, 0, sizeof(symbol_hash));
 
@@ -526,7 +526,7 @@ int main(int argc, char *argv[])
             goto abort;
         }
 
-        while ((res = fread(buff, 1, BUFF_SIZE, stdin)) > 0) 
+        while ((res = fread(buff, 1, BUFF_SIZE, stdin)) > 0)
         {
             if (xmlParseChunk(ctxt, buff, res, 0) != 0)
             {
@@ -562,7 +562,7 @@ int main(int argc, char *argv[])
         goto abort;
     }
 
-    if (xmlStrcmp(cur->name, (const xmlChar *) "tagfile")) 
+    if (xmlStrcmp(cur->name, (const xmlChar *) "tagfile"))
     {
         fprintf(stderr, "Invalid Doxygen tag file, root node != tagfile\n");
         ret = -1;
@@ -590,7 +590,7 @@ int main(int argc, char *argv[])
 
             compound_desc = (char *)malloc(strlen(compound_kind) +
                                            strlen(compound_name) + 3);
-            
+
             if (!compound_desc)
             {
                 fprintf(stderr, "malloc failed\n");
@@ -637,7 +637,7 @@ int main(int argc, char *argv[])
 
         cur = cur->next;
     }
-        
+
     if (OutputCompletionList() < 0)
     {
         ret = -1;

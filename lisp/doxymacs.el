@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.53 2001/11/20 06:59:12 ryants Exp $
+;; $Id: doxymacs.el,v 1.54 2002/04/02 06:34:35 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -68,13 +68,19 @@
 ;;   - C-c d @ will insert grouping comments around the current region.
 ;;
 ;; Doxymacs has been tested on and works with:
-;; - GNU Emacs 20.7.1
-;; - GNU Emacs 21.1.1
-;; - XEmacs 21.1 (patch 14)
-;; - XEmacs 21.4 (patch 4, 5)
+;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1
+;; - XEmacs 21.1 (patch 14), 21.4 (patch 4, 5, 6)
 ;;
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
+;;
+;; Doxymacs depends on the following packages:
+;;
+;; - W3    http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
+;; - tempo http://www.lysator.liu.se/~davidk/elisp/
+;;
+;; The external XML parser requires libxml2 version 2.3.4 or greater which
+;; can be obtained from http://www.libxml.org/.
 
 ;; Change log:
 ;;

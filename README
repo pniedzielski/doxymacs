@@ -20,10 +20,8 @@ doxymacs is an e-lisp package for making doxygen usage easier under XEmacs.
 doxymacs homepage: http://doxymacs.sourceforge.net/
 
 Doxymacs has been tested on and works with:
- - GNU Emacs 21.1.1
- - GNU Emacs 20.7.1
- - XEmacs 21.1 (patch 14)
- - XEmacs 21.4 (patch 4, 5)
+ - GNU Emacs 20.7.1, 21.1.1, 21.2.1
+ - XEmacs 21.1 (patch 14), 21.4 (patch 4, 5, 6)
 
 If you have success or failure with other versions of {X}Emacs, please
 let the authors know.
@@ -46,4 +44,4 @@ Ryan T. Sammartino
 http://members.shaw.ca/ryants/
 ryants at shaw dot ca
 
-$Id: README,v 1.9 2001/11/20 06:59:12 ryants Exp $
+$Id: README,v 1.10 2002/04/02 06:34:34 ryants Exp $

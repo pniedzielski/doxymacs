@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.22 2001/04/30 01:52:37 ryants Exp $
+;; $Id: doxymacs.el,v 1.23 2001/04/30 04:41:46 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -153,10 +153,12 @@ doxymacs-completion-list from it"
     (set-buffer doxymacs-tags-buffer)
     (goto-char (point-min))
     (setq doxymacs-completion-list nil)
-    (let ((xml (read-xml)))
+    (let ((xml (read-xml))) ;; Parse the XML file
       (let ((compound-list (xml-tag-children xml)))
 	(if (not (string= (xml-tag-name xml) "tagfile"))
 	    (error (concat "Invalid tag file: " doxymacs-doxygen-tags))
+	  ;; Go through the compounds, adding them and their members to the
+	  ;; completion list.
 	  (while compound-list
 	    (let* ((curr-compound (car compound-list))
 		   (compound-name (cadr (xml-tag-child curr-compound "name")))
@@ -185,9 +187,11 @@ doxymacs-completion-list from it"
   "Get the members of the given compound"
   (let ((children (xml-tag-children compound))
 	(members nil))
+    ;; Run through the children looking for ones with the "member" tag
     (while children
       (let* ((curr-child (car children)))
 	(if (string= (xml-tag-name curr-child) "member")
+	    ;; Found a member.  Throw it on the list.
 	    (setq members (cons curr-child members)))
 	(setq children (cdr children))))
     members))
@@ -200,6 +204,7 @@ doxymacs-completion-list from it"
 
 (defun doxymacs-add-compound-member (member compound-name compound-url)
   "Add a single member of the given compound"
+  ;; Get all the juicy info out of the XML tags for this member.
   (let* ((member-name (cadr (xml-tag-child member "name")))
 	 (member-anchor (cadr (xml-tag-child member "anchor")))
 	 (member-url (concat compound-url "#" member-anchor))
@@ -299,7 +304,7 @@ the completion or nil if canceled by the user."
     (cons "//! \n/*!\n \n*/\n" 1)))
 
 (defun doxymacs-insert-blank-multiline-comment ()
-  "Inserts a mult-line blank doxygen comment at the current point"
+  "Inserts a multi-line blank doxygen comment at the current point"
   (interactive "*")
   (let ((comment (doxymacs-blank-multiline-comment)))
     (save-excursion 
@@ -413,7 +418,7 @@ the completion or nil if canceled by the user."
 ;;   important bits are the arguments and the return value... those need
 ;;   to be correct for sure.
 (defun doxymacs-find-next-func ()
-  "Returns a list describing next function devlaration, or nil if not found"
+  "Returns a list describing next function declaration, or nil if not found"
   (interactive)
   (save-excursion    
     (if (re-search-forward

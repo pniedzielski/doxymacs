@@ -5,7 +5,7 @@
 ;; Author: Ryan T. Sammartino <ryants at home dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.1.0
+;; Version: 1.1.1
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.
@@ -26,7 +26,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el,v 1.40 2001/06/13 06:02:36 ryants Exp $
+;; $Id: doxymacs.el,v 1.41 2001/06/21 02:00:12 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -71,6 +71,9 @@
 
 ;; Change log:
 ;;
+;; 20/06/2001 - fix bug #432837  missing @see keyword
+;;            - fix bug #432836  Font lock for @ingroup not correct
+;;            - version 1.1.1
 ;; 12/06/2001 - add font lock keywords for Doxygen keywords
 ;;            - version 1.1.0
 ;; 06/06/2001 - fix bug #427660 (mouse selection problems).
@@ -302,7 +305,7 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
 ;; Thanks to Alec Panovici
 
 (defvar doxymacs-doxygen-keywords
-  '(("\\([@\\\\]\\(brief\\|li\\|\\(end\\)?code\\|sa\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn\\|hideinitializer\\|showinitializer\\|interface\\|internal\\|nosubgrouping\\|author\\|date\\|endif\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par\\|addindex\\|line\\|skip\\|skipline\\|until\\)\\)\\>"
+  '(("\\([@\\\\]\\(brief\\|li\\|\\(end\\)?code\\|sa\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn\\|hideinitializer\\|showinitializer\\|interface\\|internal\\|nosubgrouping\\|author\\|date\\|endif\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par\\|addindex\\|line\\|skip\\|skipline\\|until\\|see\\)\\)\\>"
      0 font-lock-keyword-face prepend)
     ("\\([@\\\\]\\(attention\\|warning\\|todo\\|bug\\)\\)\\>"
      0 font-lock-warning-face prepend)
@@ -324,7 +327,7 @@ With a prefix argument ARG, turn doxymacs minor mode on iff ARG is positive."
     ("\\([@\\\\]e\\(m\\)?\\)\\s-+\\(\\sw+\\)"
      (1 font-lock-keyword-face prepend)
      (3 'italic prepend))
-    ("\\([@\\\\]ingroup\\)\\s-+\\(\\(\\sw+\\s-+\\)+\\)$"
+    ("\\([@\\\\]ingroup\\)\\s-+\\(\\(\\sw+\\s-*\\)+\\)\\s-*$"
      (1 font-lock-keyword-face prepend)
      (2 font-lock-string-face prepend))
     ("\\([@\\\\]image\\)\\s-+\\(\\sw+\\)\\s-+\\(\\sw+\\)"

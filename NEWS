@@ -1,4 +1,8 @@
-$Id: NEWS,v 1.6 2001/06/13 06:02:36 ryants Exp $
+$Id: NEWS,v 1.7 2001/06/21 02:00:12 ryants Exp $
+
+20/06/2001 Version 1.1.1 released.
+	Fix bug #432837 missing @see keyword and fix bug #432836 Font
+	lock for @ingroup not correct.
 
 12/06/2001 Version 1.1.0 released.
 	New feature: font lock for Doxygen keywords.

@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.4 2003/01/12 05:41:28 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.5 2003/01/21 07:36:47 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -527,7 +527,7 @@ Key bindings:
     '(3 font-lock-type-face prepend))
    ;; keywords that take a function name as an argument
    (list
-    "\\([@\\\\]retval\\)\\s-+\\(\\sw+\\)"
+    "\\([@\\\\]retval\\)\\s-+\\([^ \t\n]+\\)"
     '(1 font-lock-keyword-face prepend)
     '(2 font-lock-function-name-face prepend))
    ;; bold

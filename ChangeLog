@@ -1,3 +1,8 @@
+2003-01-20  Georg Drenkhahn <georg-d at users dot sourceforge dot net>
+
+	* lisp/doxymacs.el.in (doxymacs-doxygen-keywords): patch 667164:
+	fix retval fontification
+
 2003-01-12  Ryan T. Sammartino  <ryants@shaw.ca>
 
 	* configure.ac: add "C++" to help string for --with-default-style.

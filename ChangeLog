@@ -10,6 +10,8 @@
 
 	* lisp/doxymacs.el.in (doxymacs-doxygen-keywords): patch #1102042:
 	handle @param[in], etc.
+	(doxymacs-font-lock): patch #1024026: use font-lock-add-keywords,
+	if available
 
 	* aclocal/libxml.m4: update from libxml source
 

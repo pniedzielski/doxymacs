@@ -1,6 +1,6 @@
 ;; doxymacs.el
 ;;
-;; $Id: doxymacs.el,v 1.6 2001/04/01 00:59:47 ryants Exp $
+;; $Id: doxymacs.el,v 1.7 2001/04/01 04:39:10 ryants Exp $
 ;;
 ;; ELisp package for making doxygen related stuff easier.
 ;;
@@ -142,9 +142,13 @@
      (let ((symbol (read-string "Look up: " (symbol-near-point) nil)))
 	 (list symbol))))
   (let ((matches (doxymacs-get-matches symbol)))
-    (if (eq (length matches) 1)
-	(doxymacs-display-match (car matches))
-      (let ((choice (doxymacs-choose-match symbol matches)))
-	(if (eq choice nil)
-	    (beep) ;; This might be annoying, but seems to be a standard
-	  (doxymacs-display-match choice))))))
+    (if (eq (length matches) 0)
+	(progn
+	  (beep)
+	  (message (concat "Symbol " symbol " not found")))
+      (if (eq (length matches) 1)
+	  (doxymacs-display-match (car matches))
+	(let ((choice (doxymacs-choose-match symbol matches)))
+	  (if (eq choice nil)
+	      (beep) ;; This might be annoying, but seems to be a standard
+	    (doxymacs-display-match choice)))))))

@@ -2,7 +2,7 @@
 ;;; doxymacs.el --- ELisp package for making doxygen related stuff easier.
 ;;
 ;;
-;; Copyright (C) 2001, 2002, 2003 Ryan T. Sammartino
+;; Copyright (C) 2001, 2002, 2003, 2005 Ryan T. Sammartino
 ;;
 ;; Author: Ryan T. Sammartino <ryants at shaw dot ca>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.14 2005/04/13 04:53:32 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.15 2005/04/13 05:06:16 ryants Exp $
 
 ;; Commentary:
 ;;

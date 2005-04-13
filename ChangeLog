@@ -1,3 +1,20 @@
+2005-04-12  Ryan T. Sammartino <ryan.sammartino@gmail.com>
+
+	* lisp/doxymacs.el.in: bug #990123
+	(doxymacs-group-comment-start), (doxymacs-group-comment-end): New
+	strings for grouping comments.
+	(doxymacs-insert-grouping-comments): Use new strings instead of
+	old templates.
+	(doxymacs-group-begin-comment-template),
+	(doxymacs-group-end-comment-template),
+	(doxymacs-JavaDoc-group-begin-comment-template),
+	(doxymacs-JavaDoc-group-end-comment-template),
+	(doxymacs-Qt-group-begin-comment-template),
+	(doxymacs-Qt-group-end-comment-template),
+	(doxymacs-C++-group-begin-comment-template),
+	(doxymacs-C++-group-end-comment-template): Remove old templates
+	for grouping comments.
+
 2005-04-01  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
 
 	* AUTHORS, README: update contact info.

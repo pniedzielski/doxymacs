@@ -14,6 +14,7 @@
 	(doxymacs-C++-group-begin-comment-template),
 	(doxymacs-C++-group-end-comment-template): Remove old templates
 	for grouping comments.
+	(doxymacs-doxygen-keywords): New doxygen keywords.
 
 2005-04-01  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
 

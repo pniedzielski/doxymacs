@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.12 2005/04/13 04:26:37 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.13 2005/04/13 04:50:39 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -227,7 +227,6 @@
 (require 'custom)
 (require 'xml-parse)
 (require 'url)
-(require 'w3-cus)
 (require 'tempo)
 
 (defconst doxymacs-version "@VERSION@"

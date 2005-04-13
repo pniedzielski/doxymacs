@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.13 2005/04/13 04:50:39 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.14 2005/04/13 04:53:32 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -107,8 +107,8 @@
 ;;   - C-c d @ will insert grouping comments around the current region.
 ;;
 ;; Doxymacs has been tested on and works with:
-;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.2.92.1
-;; - XEmacs 21.1 (patch 14), 21.4 (patches 4-10)
+;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.2.92.1, 21.3.2
+;; - XEmacs 21.1 (patch 14), 21.4 (patches 4-15)
 ;;
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.

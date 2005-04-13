@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.15 2005/04/13 05:06:16 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.16 2005/04/13 06:28:34 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -116,6 +116,7 @@
 ;; Change log:
 ;;
 ;; 12/04/2005 - bug #990123: grouping comments do not work.
+;;            - add some missing doxygen keywords.
 ;; 01/04/2005 - patch #1024026: use new font-lock-add-keywords function if
 ;;              available.
 ;; 31/03/2005 - patch #1102042: handle @param[in] etc. constructs
@@ -508,13 +509,18 @@ Key bindings:
     ;; One shot keywords that take no arguments
     (concat "\\([@\\\\]\\(brief\\|li\\|\\(end\\)?code\\|sa"
 	    "\\|note\\|\\(end\\)?verbatim\\|return\\|arg\\|fn"
-	    "\\|hideinitializer\\|showinitializer\\|interface"
+	    "\\|hideinitializer\\|showinitializer"
+	    ;; FIXME
+	    ;; How do I get & # < > % to work?
+	    ;;"\\|\\\\&\\|\\$\\|\\#\\|<\\|>\\|\\%"
+	    "\\|\\$"
 	    "\\|internal\\|nosubgrouping\\|author\\|date\\|endif"
 	    "\\|invariant\\|post\\|pre\\|remarks\\|since\\|test\\|version"
 	    "\\|\\(end\\)?htmlonly\\|\\(end\\)?latexonly\\|f\\$\\|file"
+	    "\\|\\(end\\)?xmlonly\\|\\(end\\)?manonly\\|property"
 	    "\\|mainpage\\|name\\|overload\\|typedef\\|deprecated\\|par"
 	    "\\|addindex\\|line\\|skip\\|skipline\\|until\\|see"
-	    "\\|endlink\\)\\)\\>")
+	    "\\|endlink\\|callgraph\\|endcond\\|else\\)\\)\\>")
     '(0 font-lock-keyword-face prepend))
    ;; attention, warning, etc. given a different font
    (list
@@ -523,14 +529,14 @@ Key bindings:
    ;; keywords that take a variable name as an argument
    (list
     (concat "\\([@\\\\]\\(param\\(?:\\[\\(?:in\\|out\\|in,out\\)\\]\\)?"
-	    "\\|a\\|if\\|namespace\\|relates"
+	    "\\|a\\|namespace\\|relates\\(also\\)?"
 	    "\\|var\\|def\\)\\)\\s-+\\(\\sw+\\)")
     '(1 font-lock-keyword-face prepend)
-    '(3 font-lock-variable-name-face prepend))
+    '(4 font-lock-variable-name-face prepend))
    ;; keywords that take a type name as an argument
    (list
-    (concat "\\([@\\\\]\\(class\\|struct\\|union\\|exception"
-	    "\\|throw\\)\\)\\s-+\\(\\sw+\\)")
+    (concat "\\([@\\\\]\\(class\\|struct\\|union\\|exception\\|enum"
+	    "\\|throw\\|interface\\|protocol\\)\\)\\s-+\\(\\(\\sw\\|:\\)+\\)")
     '(1 font-lock-keyword-face prepend)
     '(3 font-lock-type-face prepend))
    ;; keywords that take a function name as an argument
@@ -560,12 +566,24 @@ Key bindings:
     '(2 font-lock-string-face prepend))
    ;; one argument that can contain arbitrary non-whitespace stuff
    (list
-    "\\([@\\\\]\\(link\\|copydoc\\)\\)\\s-+\\([^ \t\n]+\\)"
+    (concat "\\([@\\\\]\\(link\\|copydoc\\|xrefitem"
+	    "\\|if\\(not\\)?\\|elseif\\)\\)"
+	    "\\s-+\\([^ \t\n]+\\)")
     '(1 font-lock-keyword-face prepend)
-    '(3 font-lock-string-face prepend))
+    '(4 font-lock-string-face prepend))
+   ;; one optional argument that can contain arbitrary non-whitespace stuff
+   (list
+    "\\([@\\\\]\\(cond\\|dir\\)\\(\\s-+[^ \t\n]+\\)?\\)"
+    '(1 font-lock-keyword-face prepend)
+    '(3 font-lock-string-face prepend t))
+   ;; one optional argument with no space between
+   (list
+    "\\([@\\\\]\\(~\\)\\([^ \t\n]+\\)?\\)"
+    '(1 font-lock-keyword-face prepend)
+    '(3 font-lock-string-face prepend t))
    ;; one argument that has to be a filename
    (list
-    (concat "\\([@\\\\]\\(example\\|\\(dont\\)?include"
+    (concat "\\([@\\\\]\\(example\\|\\(dont\\)?include\\|includelineno"
 	    "\\|htmlinclude\\|verbinclude\\)\\)\\s-+"
 	    "\\(\"?[~:\\/a-zA-Z0-9_. ]+\"?\\)")
     '(1 font-lock-keyword-face prepend)

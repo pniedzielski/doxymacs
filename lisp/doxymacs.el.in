@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.16 2005/04/13 06:28:34 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.17 2005/04/14 05:38:40 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -115,6 +115,8 @@
 
 ;; Change log:
 ;;
+;; 13/04/2005 - feature request #868413: ability to customize the browser
+;;              doxymacs uses to display documentation.
 ;; 12/04/2005 - bug #990123: grouping comments do not work.
 ;;            - add some missing doxygen keywords.
 ;; 01/04/2005 - patch #1024026: use new font-lock-add-keywords function if
@@ -307,6 +309,13 @@ Set to non-nil to use the external XML parser."
   :type 'string
   :group 'doxymacs)
 
+(defcustom doxymacs-browse-url-function
+  'browse-url
+  "*Function to call to launch a browser to display Doxygen documentation.
+This function should take one argument, a string representing the URL to
+display."
+  :type 'function
+  :group 'doxymacs)
 
 (defcustom doxymacs-blank-multiline-comment-template
   nil
@@ -884,7 +893,7 @@ completion list."
 
 (defun doxymacs-display-url (root url)
   "Displays the given match."
-  (browse-url (concat root "/" url)))
+  (apply doxymacs-browse-url-function (list (concat root "/" url))))
 
 ;; GNU Emacs doesn't have symbol-near-point apparently
 ;; stolen from browse-cltl2.el, and in turn:

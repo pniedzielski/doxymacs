@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.19 2005/04/15 01:43:53 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.20 2005/06/04 16:05:30 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -107,14 +107,15 @@
 ;;   - C-c d @ will insert grouping comments around the current region.
 ;;
 ;; Doxymacs has been tested on and works with:
-;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.2.92.1, 21.3.2
-;; - XEmacs 21.1 (patch 14), 21.4 (patches 4-15)
+;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.2.92.1, 21.3
+;; - XEmacs 21.1 (patch 14), 21.4 (patches 4-17)
 ;;
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
 
 ;; Change log:
 ;;
+;; 04/06/2005 - version 1.6.0
 ;; 14/04/2005 - Use doxymacs-url-exists-p to wrap the various ways of
 ;;              checking whether a URL exists.
 ;;            - Clean up symbol-near-point hack.

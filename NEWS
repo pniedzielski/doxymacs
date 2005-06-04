@@ -1,4 +1,13 @@
-$Id: NEWS,v 1.17 2003/01/26 01:52:29 ryants Exp $
+$Id: NEWS,v 1.18 2005/06/04 16:05:28 ryants Exp $
+
+04/06/2005 Version 1.6.0 released.
+	Many bug fixes for newer versions of {X}emacs.  Some additions to
+	fontification to handle new Doxygen constructs.  Can now customise
+	the browser that doxymacs uses to display documentation.
+
+	NOTE: doxymacs-group-comment-start and doxymacs-group-comment-end
+	are no longer tempo templates but are now just plain strings.
+
 
 25/01/2003 Version 1.5.0 released.
 	New C++ style.  Pre-baked .el files for people who do not have

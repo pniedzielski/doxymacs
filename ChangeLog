@@ -1,9 +1,17 @@
+2005-06-04  Ryan T. Sammartino <ryan.sammartino@gmail.com> (1.6.0)
+
+	* NEWS, README: prepare for new version release.
+
+	* lisp/doxymacs.el.in: minor documentation updates.
+
+
 2005-04-14  Ryan T. Sammartino <ryan.sammartino@gmail.com>
 
 	* lisp/doxymacs.el.in:
 	(doxymacs-url-exists-p): New function.
 	(doxymacs-load-tags): Use new function.
-	(doxymacs-symbol-near-point): New function (to clean up symbol-near-point hack).
+	(doxymacs-symbol-near-point): New function (to clean up
+	symbol-near-point hack).
 	(doxymacs-lookup): Use new function.
 
 2005-04-13  Ryan T. Sammartino <ryan.sammartino@gmail.com>

@@ -1,13 +1,13 @@
 /*
  * doxymacs_parser.c
  * Copyright (C) 2001 Ryan T. Sammartino
- * <ryants at shaw dot ca>
+ * <ryan.sammartino at gmail dot com>
  *
  * A utility program used by doxymacs to speed up building the look up
  * completion list from a Doxygen XML file.
  *
- * This file requires libxml version 2.3.4 or greater, which you can get from
- * http://www.libxml.org/
+ * This file requires libxml version 2.6.13 or greater, which you can
+ * get from http://www.libxml.org/
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
  *
- * $Id: doxymacs_parser.c,v 1.10 2002/12/10 05:38:23 ryants Exp $
+ * $Id: doxymacs_parser.c,v 1.11 2005/06/04 16:22:10 ryants Exp $
  *
  */
 

@@ -4,6 +4,8 @@
 
 	* lisp/doxymacs.el.in: minor documentation updates.
 
+	* c/doxymacs_parser.c: minor documentation updates.
+
 
 2005-04-14  Ryan T. Sammartino <ryan.sammartino@gmail.com>
 
@@ -22,8 +24,8 @@
 2005-04-12  Ryan T. Sammartino <ryan.sammartino@gmail.com>
 
 	* lisp/doxymacs.el.in: bug #990123
-	(doxymacs-group-comment-start), (doxymacs-group-comment-end): New
-	strings for grouping comments.
+	(doxymacs-group-comment-start),
+	(doxymacs-group-comment-end): New strings for grouping comments.
 	(doxymacs-insert-grouping-comments): Use new strings instead of
 	old templates.
 	(doxymacs-group-begin-comment-template),

@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.20 2005/06/04 16:05:30 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.21 2005/10/06 21:34:08 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -303,7 +303,7 @@ must be one of \"@\" or \"\\\"."
 For smallish tag files, you are better off with the internal parser.
 For larger tag files, you are better off with the external one.
 Set to non-nil to use the external XML parser."
-  :type '(chioce (const :tag "Yes" t)
+  :type '(choice (const :tag "Yes" t)
 		 (const :tag "No" nil))
   :group 'doxymacs)
 

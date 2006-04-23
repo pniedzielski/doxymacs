@@ -25,7 +25,7 @@
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
  *
- * $Id: doxymacs_parser.c,v 1.11 2005/06/04 16:22:10 ryants Exp $
+ * $Id: doxymacs_parser.c,v 1.12 2006/04/23 00:05:33 ryants Exp $
  *
  */
 
@@ -128,7 +128,7 @@ inline char *XMLTagChild(xmlNodePtr node, const char *name)
             xmlNodePtr cur_child = cur->xmlChildrenNode;
             if (cur_child)
             {
-                return cur_child->content;
+                return (char *)cur_child->content;
             }
             else
             {

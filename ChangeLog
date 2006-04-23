@@ -5,6 +5,7 @@
 	* lisp/doxymacs.el.in:
 	(doxymacs-mode): Feature #1338245: Add tokens to filladapt 
 	to match doxygen markup.
+	* example/doc/*: Update to use doxygen 1.4.4 output.
 
 2005-06-04  Ryan T. Sammartino <ryan.sammartino@gmail.com> (1.6.0)
 

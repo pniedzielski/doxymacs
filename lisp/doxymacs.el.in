@@ -4,7 +4,7 @@
 ;;
 ;; Copyright (C) 2001, 2002, 2003, 2005 Ryan T. Sammartino
 ;;
-;; Author: Ryan T. Sammartino <ryants at shaw dot ca>
+;; Author: Ryan T. Sammartino <ryan.sammartino at gmail dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
 ;; Version: @VERSION@
@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.22 2006/04/23 00:06:05 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.23 2006/04/23 01:20:15 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -107,7 +107,7 @@
 ;;   - C-c d @ will insert grouping comments around the current region.
 ;;
 ;; Doxymacs has been tested on and works with:
-;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.2.92.1, 21.3
+;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.2.92.1, 21.3, 21.4.1
 ;; - XEmacs 21.1 (patch 14), 21.4 (patches 4-17)
 ;;
 ;; If you have success or failure with other version of {X}Emacs, please

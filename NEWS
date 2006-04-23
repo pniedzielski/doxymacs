@@ -1,4 +1,10 @@
-$Id: NEWS,v 1.18 2005/06/04 16:05:28 ryants Exp $
+$Id: NEWS,v 1.19 2006/04/23 01:20:15 ryants Exp $
+
+22/04/2006 Version 1.7.0 released.
+	Fix bug #1459026: compile warning with gcc 4.0.
+	Feature request #1338245: make filladapt mode doxygen aware
+	of @param to nicely indent parameter lists.
+	Update the example HTML files with doxygen 1.4.4.
 
 04/06/2005 Version 1.6.0 released.
 	Many bug fixes for newer versions of {X}emacs.  Some additions to

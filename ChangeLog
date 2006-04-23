@@ -2,10 +2,11 @@
 
 	* doxymacs_parser.c:
 	Bug #1459026: Fix compile warning with gcc 4.0.
-	* lisp/doxymacs.el.in:
+	* lisp/doxymacs.el.in: minor documentation updates.
 	(doxymacs-mode): Feature #1338245: Add tokens to filladapt 
 	to match doxygen markup.
 	* example/doc/*: Update to use doxygen 1.4.4 output.
+	* NEWS, README, configure.ac: prepare for new version release.
 
 2005-06-04  Ryan T. Sammartino <ryan.sammartino@gmail.com> (1.6.0)
 

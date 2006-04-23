@@ -1,3 +1,11 @@
+2006-04-22  Ryan T. Sammartino <ryan.sammartino@gmail.com>
+
+	* doxymacs_parser.c:
+	Bug #1459026: Fix compile warning with gcc 4.0.
+	* lisp/doxymacs.el.in:
+	(doxymacs-mode): Feature #1338245: Add tokens to filladapt 
+	to match doxygen markup.
+
 2005-06-04  Ryan T. Sammartino <ryan.sammartino@gmail.com> (1.6.0)
 
 	* NEWS, README: prepare for new version release.

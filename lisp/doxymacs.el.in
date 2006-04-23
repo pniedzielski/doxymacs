@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.21 2005/10/06 21:34:08 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.22 2006/04/23 00:06:05 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -115,6 +115,8 @@
 
 ;; Change log:
 ;;
+;; 22/04/2006 - feature #1338245: Add tokens to filladapt to match 
+;;              doxygen markup.
 ;; 04/06/2005 - version 1.6.0
 ;; 14/04/2005 - Use doxymacs-url-exists-p to wrap the various ways of
 ;;              checking whether a URL exists.
@@ -477,7 +479,15 @@ Key bindings:
             ;; Toggle mode
             (not doxymacs-mode)
           ;; Enable/Disable according to arg
-          (> (prefix-numeric-value arg) 0))))
+          (> (prefix-numeric-value arg) 0)))
+  (when doxymacs-mode
+    (when (boundp 'filladapt-token-table)
+      ;; add tokens to filladapt to match doxygen markup
+      (let ((bullet-regexp "[@\\]\\(param\\(?:\\[\\(?:in\\|out\\|in,out\\)\\]\\)?\\s-+\\sw+\\|return\\)"))
+	(unless (assoc bullet-regexp filladapt-token-table)
+	  (setq filladapt-token-table
+		(append filladapt-token-table
+			(list (list bullet-regexp 'bullet)))))))))
 
 ;; Keymap
 

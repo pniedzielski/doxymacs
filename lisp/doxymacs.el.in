@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.23 2006/04/23 01:20:15 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.24 2007/02/02 23:24:03 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -117,6 +117,7 @@
 ;;
 ;; 22/04/2006 - feature #1338245: Add tokens to filladapt to match 
 ;;              doxygen markup.
+;;            - version 1.7.0
 ;; 04/06/2005 - version 1.6.0
 ;; 14/04/2005 - Use doxymacs-url-exists-p to wrap the various ways of
 ;;              checking whether a URL exists.
@@ -483,7 +484,7 @@ Key bindings:
   (when doxymacs-mode
     (when (boundp 'filladapt-token-table)
       ;; add tokens to filladapt to match doxygen markup
-      (let ((bullet-regexp "[@\\]\\(param\\(?:\\[\\(?:in\\|out\\|in,out\\)\\]\\)?\\s-+\\sw+\\|return\\)"))
+      (let ((bullet-regexp "[@\\]\\(param\\(?:\\s-*\\[\\(?:in\\|out\\|in,out\\)\\]\\)?\\s-+\\sw+\\|return\\)"))
 	(unless (assoc bullet-regexp filladapt-token-table)
 	  (setq filladapt-token-table
 		(append filladapt-token-table
@@ -551,7 +552,7 @@ Key bindings:
     '(0 font-lock-warning-face prepend))
    ;; keywords that take a variable name as an argument
    (list
-    (concat "\\([@\\\\]\\(param\\(?:\\[\\(?:in\\|out\\|in,out\\)\\]\\)?"
+    (concat "\\([@\\\\]\\(param\\(?:\\s-*\\[\\(?:in\\|out\\|in,out\\)\\]\\)?"
 	    "\\|a\\|namespace\\|relates\\(also\\)?"
 	    "\\|var\\|def\\)\\)\\s-+\\(\\sw+\\)")
     '(1 font-lock-keyword-face prepend)

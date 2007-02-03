@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.24 2007/02/02 23:24:03 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.25 2007/02/03 00:19:15 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -115,6 +115,9 @@
 
 ;; Change log:
 ;;
+;; 02/02/2007 - bug #1490021: Allow spaces in @param [in] documentation.
+;;              bug #1496399: Allow for different ways of user-mail-address
+;;              to be defined.
 ;; 22/04/2006 - feature #1338245: Add tokens to filladapt to match 
 ;;              doxygen markup.
 ;;            - version 1.7.0
@@ -1112,6 +1115,14 @@ the completion or nil if canceled by the user."
    ((string= doxymacs-doxygen-style "C++") "@")
    (t "@")))
 
+(defun doxymacs-user-mail-address ()
+  "Return the user's email address"
+  (or
+   (and (and (fboundp 'user-mail-address) (user-mail-address))
+	(list 'l " <" (user-mail-address) ">"))
+   (and (and (boundp 'user-mail-address) user-mail-address)
+	(list 'l " <" user-mail-address ">"))))
+
 (defconst doxymacs-JavaDoc-file-comment-template
  '("/**" > n
    " * " (doxymacs-doxygen-command-char) "file   "
@@ -1119,8 +1130,7 @@ the completion or nil if canceled by the user."
        (file-name-nondirectory (buffer-file-name))
      "") > n
    " * " (doxymacs-doxygen-command-char) "author " (user-full-name)
-   (if (fboundp 'user-mail-address)
-       (list 'l " <" (user-mail-address) ">"))
+   (doxymacs-user-mail-address)
    > n
    " * " (doxymacs-doxygen-command-char) "date   " (current-time-string) > n
    " * " > n
@@ -1137,8 +1147,7 @@ the completion or nil if canceled by the user."
        (file-name-nondirectory (buffer-file-name))
      "") > n
    " " (doxymacs-doxygen-command-char) "author " (user-full-name)
-   (if (fboundp 'user-mail-address)
-       (list 'l " <" (user-mail-address) ">"))
+   (doxymacs-user-mail-address)
    > n
    " " (doxymacs-doxygen-command-char) "date   " (current-time-string) > n
    " " > n
@@ -1155,8 +1164,7 @@ the completion or nil if canceled by the user."
        (file-name-nondirectory (buffer-file-name))
      "") > n
    "/// " (doxymacs-doxygen-command-char) "author " (user-full-name)
-   (if (fboundp 'user-mail-address)
-       (list 'l " <" (user-mail-address) ">"))
+   (doxymacs-user-mail-address)
    > n
    "/// " (doxymacs-doxygen-command-char) "date   " (current-time-string) > n
    "/// " > n

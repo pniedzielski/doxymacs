@@ -1,4 +1,8 @@
-$Id: NEWS,v 1.19 2006/04/23 01:20:15 ryants Exp $
+$Id: NEWS,v 1.20 2007/06/10 13:17:24 ryants Exp $
+
+10/06/2007 Version 1.8.0 released.
+	Fix bug #1490021: Allow spaces in @param [in] style documentation.
+	Fix bug #1496399: Use better way to get user's e-mail address.
 
 22/04/2006 Version 1.7.0 released.
 	Fix bug #1459026: compile warning with gcc 4.0.

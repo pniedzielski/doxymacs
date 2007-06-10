@@ -2,7 +2,7 @@
 ;;; doxymacs.el --- ELisp package for making doxygen related stuff easier.
 ;;
 ;;
-;; Copyright (C) 2001, 2002, 2003, 2005 Ryan T. Sammartino
+;; Copyright (C) 2001-2007 Ryan T. Sammartino
 ;;
 ;; Author: Ryan T. Sammartino <ryan.sammartino at gmail dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
@@ -28,7 +28,7 @@
 ;;
 ;; Doxymacs homepage: http://doxymacs.sourceforge.net/
 ;;
-;; $Id: doxymacs.el.in,v 1.25 2007/02/03 00:19:15 ryants Exp $
+;; $Id: doxymacs.el.in,v 1.26 2007/06/10 13:17:24 ryants Exp $
 
 ;; Commentary:
 ;;
@@ -115,6 +115,7 @@
 
 ;; Change log:
 ;;
+;; 10/06/2007 - version 1.8.0 
 ;; 02/02/2007 - bug #1490021: Allow spaces in @param [in] documentation.
 ;;              bug #1496399: Allow for different ways of user-mail-address
 ;;              to be defined.

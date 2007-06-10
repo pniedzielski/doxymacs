@@ -1,3 +1,8 @@
+2007-06-10  Ryan T. Sammartino  <ryan.sammartino@gmail.com> (1.8.0)
+	* NEWS, configure.ac: prepare for new version release.
+	* lisp/doxymacs.el.in: documentation update.
+
+
 2007-02-02  Ryan T. Sammartino <ryan.sammartino@gmail.com>
 	* lisp/doxymacs.el.in:
 	(doxymacs-mode, doxymacs-doxygan-keywords): Bug #1490021: 
@@ -9,7 +14,7 @@
 	doxymacs-C++-file-comment-template): Use new function to
 	get user's e-mail address.
 
-2006-04-22  Ryan T. Sammartino <ryan.sammartino@gmail.com>
+2006-04-22  Ryan T. Sammartino <ryan.sammartino@gmail.com> (1.7.0)
 
 	* doxymacs_parser.c:
 	Bug #1459026: Fix compile warning with gcc 4.0.

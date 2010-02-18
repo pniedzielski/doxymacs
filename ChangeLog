@@ -5,7 +5,7 @@
 
 2007-02-02  Ryan T. Sammartino <ryan.sammartino@gmail.com>
 	* lisp/doxymacs.el.in:
-	(doxymacs-mode, doxymacs-doxygan-keywords): Bug #1490021: 
+	(doxymacs-mode, doxymacs-doxygan-keywords): Bug #1490021:
 	Allow spaces in @param [in] style documentation.
 	(doxymacs-user-mail-address): Bug #1496399:
 	New function.
@@ -19,7 +19,7 @@
 	* doxymacs_parser.c:
 	Bug #1459026: Fix compile warning with gcc 4.0.
 	* lisp/doxymacs.el.in: minor documentation updates.
-	(doxymacs-mode): Feature #1338245: Add tokens to filladapt 
+	(doxymacs-mode): Feature #1338245: Add tokens to filladapt
 	to match doxygen markup.
 	* example/doc/*: Update to use doxygen 1.4.4 output.
 	* NEWS, README, configure.ac: prepare for new version release.

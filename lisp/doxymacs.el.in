@@ -113,6 +113,7 @@
 
 ;; Change log:
 ;;
+;; 18/02/2010 - Support new tparam doxygen command.
 ;; 10/06/2007 - version 1.8.0
 ;; 02/02/2007 - bug #1490021: Allow spaces in @param [in] documentation.
 ;;              bug #1496399: Allow for different ways of user-mail-address
@@ -490,6 +491,7 @@ Key bindings:
 				   "\\(param\\(?:\\s-*"
 				   "\\[\\(?:in\\|out\\|in,out\\)\\]\\)?"
 				   "\\s-+\\sw+"
+				   "\\|tparam\\s-+\\sw+"
 				   "\\|return\\|attention\\|note"
 				   "\\|brief\\|li\\|arg\\|remarks"
 				   "\\|invariant\\|post\\|pre"
@@ -563,7 +565,7 @@ Key bindings:
    ;; keywords that take a variable name as an argument
    (list
     (concat "\\([@\\\\]\\(param\\(?:\\s-*\\[\\(?:in\\|out\\|in,out\\)\\]\\)?"
-	    "\\|a\\|namespace\\|relates\\(also\\)?"
+	    "\\|tparam\\|a\\|namespace\\|relates\\(also\\)?"
 	    "\\|var\\|def\\)\\)\\s-+\\(\\sw+\\)")
     '(1 font-lock-keyword-face prepend)
     '(4 font-lock-variable-name-face prepend))

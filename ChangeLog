@@ -1,3 +1,7 @@
+2010-02-18  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
+
+	* lisp/doxymacs.el.in: support new tparam doxygen command.
+
 2007-06-10  Ryan T. Sammartino  <ryan.sammartino@gmail.com> (1.8.0)
 	* NEWS, configure.ac: prepare for new version release.
 	* lisp/doxymacs.el.in: documentation update.

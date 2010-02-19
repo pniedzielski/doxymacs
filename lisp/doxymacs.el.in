@@ -114,6 +114,8 @@
 ;; Change log:
 ;;
 ;; 19/02/2010 - patch #2954452: Add new documentation style C++!.
+;;              bug #1862867: Remove trailing whitespace in JavaDoc function
+;;              template.
 ;; 18/02/2010 - Support new tparam doxygen command.
 ;; 10/06/2007 - version 1.8.0
 ;; 02/02/2007 - bug #1490021: Allow spaces in @param [in] documentation.
@@ -1245,12 +1247,12 @@ the completion or nil if canceled by the user."
 	  'l
 	  "/** " '> 'n
 	  " * " 'p '> 'n
-	  " * " '> 'n
+	  " *" '> 'n
 	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)))
 	  (unless (string-match
                    (regexp-quote (cdr (assoc 'return next-func)))
                    doxymacs-void-types)
-	    '(l " * " > n " * " (doxymacs-doxygen-command-char)
+	    '(l " *" > n " * " (doxymacs-doxygen-command-char)
 		"return " (p "Returns: ") > n))
 	  " */" '>)
        (progn

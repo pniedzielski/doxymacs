@@ -2,6 +2,8 @@
 
 	* lisp/doxymacs.el.in: Patch #2954452: New C++! documentation
 	style (thanks Robert Jørgensgaard Engdahl).
+	(doxymacs-JavaDoc-function-comment-template): Bug #1862867: Remove
+	unnecessary tailing whitespace.
 
 2010-02-18  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
 

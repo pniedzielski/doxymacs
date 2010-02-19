@@ -32,7 +32,7 @@ AC_CHECK_FUNCS(strdup)
 dnl Doxymacs specific configure options
 AC_ARG_WITH(default-style,
   AC_HELP_STRING([--with-default-style=STYLE],
-                 [Default Doxygen style to use.  One of "JavaDoc", "Qt" or "C++".  Default "JavaDoc". ]),
+                 [Default Doxygen style to use.  One of "JavaDoc", "Qt", "C++" or "C++!".  Default "JavaDoc". ]),
   DOXYMACS_DEFAULT_STYLE="$withval", DOXYMACS_DEFAULT_STYLE="JavaDoc")
 
 AC_ARG_WITH(external-xml-parser,

@@ -113,6 +113,7 @@
 
 ;; Change log:
 ;;
+;; 19/02/2010 - patch #2954452: Add new documentation style C++!.
 ;; 18/02/2010 - Support new tparam doxygen command.
 ;; 10/06/2007 - version 1.8.0
 ;; 02/02/2007 - bug #1490021: Allow spaces in @param [in] documentation.
@@ -287,11 +288,12 @@ file:///home/me/project/bar/doc/ and the XML tags file is at
 See http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks for examples
 of the various styles.
 
-Must be one of \"JavaDoc\", \"Qt\" or \"C++\". Setting this variable
+Must be one of \"JavaDoc\", \"Qt\" \"C++\" or \"C++!\". Setting this variable
 to anything else will generate errors."
   :type '(radio (const :tag "JavaDoc" "JavaDoc")
 		(const :tag "Qt" "Qt")
-		(const :tag "C++" "C++"))
+		(const :tag "C++" "C++")
+		(const :tag "C++!" "C++!"))
   :group 'doxymacs)
 
 (defcustom doxymacs-command-character
@@ -1104,6 +1106,10 @@ the completion or nil if canceled by the user."
  '("///" > n "/// " p > n "///" > n)
  "Default C++-style template for a blank multiline doxygen comment.")
 
+(defconst doxymacs-C++!-blank-multiline-comment-template
+ '("//!" > n "//! " p > n "//!" > n)
+ "Default C++!-style template for a blank multiline doxygen comment.")
+
 (defconst doxymacs-JavaDoc-blank-singleline-comment-template
  '("/// " > p)
  "Default JavaDoc-style template for a blank single line doxygen comment.")
@@ -1116,12 +1122,17 @@ the completion or nil if canceled by the user."
  '("/// " > p)
  "Default C++-style template for a blank single line doxygen comment.")
 
+(defconst doxymacs-C++!-blank-singleline-comment-template
+ '("//! " > p)
+ "Default C++!-style template for a blank single line doxygen comment.")
+
 (defun doxymacs-doxygen-command-char ()
   (cond
    (doxymacs-command-character doxymacs-command-character)
    ((string= doxymacs-doxygen-style "JavaDoc") "@")
    ((string= doxymacs-doxygen-style "Qt") "\\")
    ((string= doxymacs-doxygen-style "C++") "@")
+   ((string= doxymacs-doxygen-style "C++!") "\\")
    (t "@")))
 
 (defun doxymacs-user-mail-address ()
@@ -1183,6 +1194,23 @@ the completion or nil if canceled by the user."
    "///" > n)
  "Default C++-style template for file documentation.")
 
+(defconst doxymacs-C++!-file-comment-template
+ '("//!" > n
+   "//! " (doxymacs-doxygen-command-char) "file   "
+   (if (buffer-file-name)
+       (file-name-nondirectory (buffer-file-name))
+     "") > n
+   "//! " (doxymacs-doxygen-command-char) "author " (user-full-name)
+   (doxymacs-user-mail-address)
+   > n
+   "//! " (doxymacs-doxygen-command-char) "date   " (current-time-string) > n
+   "//! " > n
+   "//! " (doxymacs-doxygen-command-char) "brief  " (p "Brief description of this file: ") > n
+   "//! " > n
+   "//! " p > n
+   "//!" > n)
+ "Default C++!-style template for file documentation.")
+
 
 (defun doxymacs-parm-tempo-element (parms)
   "Inserts tempo elements for the given parms in the given style."
@@ -1199,6 +1227,10 @@ the completion or nil if canceled by the user."
 		(doxymacs-parm-tempo-element (cdr parms))))
 	 ((string= doxymacs-doxygen-style "C++")
 	  (list 'l "/// " (doxymacs-doxygen-command-char)
+		"param " (car parms) " " (list 'p prompt) '> 'n
+		(doxymacs-parm-tempo-element (cdr parms))))
+	 ((string= doxymacs-doxygen-style "C++!")
+	  (list 'l "//! " (doxymacs-doxygen-command-char)
 		"param " (car parms) " " (list 'p prompt) '> 'n
 		(doxymacs-parm-tempo-element (cdr parms))))
 	 (t
@@ -1265,13 +1297,32 @@ the completion or nil if canceled by the user."
 	 nil))))
  "Default C++-style template for function documentation.")
 
+(defconst doxymacs-C++!-function-comment-template
+ '((let ((next-func (doxymacs-find-next-func)))
+     (if next-func
+	 (list
+	  'l
+	  "//! " 'p '> 'n
+	  "//!" '> 'n
+	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)))
+	  (unless (string-match
+                   (regexp-quote (cdr (assoc 'return next-func)))
+                   doxymacs-void-types)
+	    '(l "//!" > n "//! " (doxymacs-doxygen-command-char)
+		"return " (p "Returns: ") > n))
+	  "//!" '>)
+       (progn
+	 (error "Can't find next function declaraton.")
+	 nil))))
+ "Default C++!-style template for function documentation.")
+
 (defun doxymacs-invalid-style ()
   "Warn the user that he has set `doxymacs-doxygen-style' to an invalid
 style."
   (error (concat
 	  "Invalid `doxymacs-doxygen-style': "
 	  doxymacs-doxygen-style
-	  ": must be one of \"JavaDoc\", \"Qt\" or \"C++\".")))
+	  ": must be one of \"JavaDoc\", \"Qt\", \"C++\" or \"C++!\".")))
 
 ;; This should make it easier to add new templates and cut down
 ;; on copy-and-paste programming.
@@ -1351,6 +1402,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 			"/*!< ")
 		       ((string= doxymacs-doxygen-style "C++")
 			"///< ")
+		       ((string= doxymacs-doxygen-style "C++!")
+			"//!< ")
 		       (t
 			(doxymacs-invalid-style)))))
 	 (skip (concat (regexp-quote starter) "*"))
@@ -1361,6 +1414,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 		       ((string= doxymacs-doxygen-style "Qt")
 			" */")
 		       ((string= doxymacs-doxygen-style "C++")
+			"")
+		       ((string= doxymacs-doxygen-style "C++!")
 			"")
 		       (t
 			(doxymacs-invalid-style))))))
@@ -1419,6 +1474,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 			"/*@{*/")
 		       ((string= doxymacs-doxygen-style "C++")
 			"/// @{")
+		       ((string= doxymacs-doxygen-style "C++!")
+			"//! @{")
 		       (t
 			(doxymacs-invalid-style)))))
 	 (ender (or doxymacs-group-comment-end
@@ -1429,6 +1486,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 			"/*@}*/")
 		       ((string= doxymacs-doxygen-style "C++")
 			"/// @}")
+		       ((string= doxymacs-doxygen-style "C++!")
+			"//! @}")
 		       (t
 			(doxymacs-invalid-style))))))
     (save-excursion

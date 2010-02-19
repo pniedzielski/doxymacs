@@ -1,3 +1,8 @@
+2010-02-19  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
+
+	* lisp/doxymacs.el.in: Patch #2954452: New C++! documentation
+	style (thanks Robert Jørgensgaard Engdahl).
+
 2010-02-18  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
 
 	* lisp/doxymacs.el.in: support new tparam doxygen command.

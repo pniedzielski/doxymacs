@@ -73,6 +73,8 @@ Be sure these are properly configured and installed before proceeding.
 - Default key bindings are:
   - C-c d ? will look up documentation for the symbol under the point.
   - C-c d r will rescan your Doxygen tags file.
+  - C-c d RET will prompt you for a Doxygen command to enter, and its
+    arguments.
   - C-c d f will insert a Doxygen comment for the next function.
   - C-c d i will insert a Doxygen comment for the current file.
   - C-c d ; will insert a Doxygen comment for the current member.

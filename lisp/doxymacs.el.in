@@ -113,6 +113,7 @@
 
 ;; Change log:
 ;;
+;; 07/03/2010 - feature #1569376: Interactively insert doxygen commands.
 ;; 19/02/2010 - patch #2954452: Add new documentation style C++!.
 ;;              bug #1862867: Remove trailing whitespace in JavaDoc function
 ;;              template.
@@ -516,6 +517,8 @@ Key bindings:
 (define-key doxymacs-mode-map "\C-cdr"
   'doxymacs-rescan-tags)
 
+(define-key doxymacs-mode-map "\C-cd\r"
+  'doxymacs-insert-command)
 (define-key doxymacs-mode-map "\C-cdf"
   'doxymacs-insert-function-comment)
 (define-key doxymacs-mode-map "\C-cdi"
@@ -1092,6 +1095,207 @@ the completion or nil if canceled by the user."
 ;; Also need a hack for mark-active
 (if (not (boundp 'mark-active))
     (defvar mark-active nil))		; Is this correct? Probably not.
+
+;; Inserting commands with completion
+
+(defvar doxymacs-insert-command-history nil)
+
+(defvar doxymacs-commands
+  '(("a" (word "Argument"))
+    ("addindex" (newline "Text to add to LaTeX index"))
+    ("addtogroup" (word "Name of group") (newline optional "Title of group"))
+    ("anchor" (word "Name of anchor"))
+    ("arg" "Argument description")
+    ("attention" "Attention text")
+    ("author" "List of authors")
+    ("b" (word "Word to display in bold"))
+    ("brief" "Brief description")
+    ("bug" "Bug description")
+    ("c" "Word to display as code")
+    ("callgraph")
+    ("callergraph")
+    ("category" (word "Name of category") (optional word "Header file")
+     (optional word "Header name"))
+    ("class" (word "Name of class") (optional word "Header file")
+     (optional word "Header name"))
+    ("code")
+    ("cond" (optional word "Section label"))
+    ("copybrief" (word "Link object"))
+    ("copydetails" (word "Link object"))
+    ("copydoc" (word "Link object"))
+    ("date" "Date description")
+    ("def" (word "#define macro name"))
+    ("defgroup" (word "Name of group") (newline "Group title"))
+    ("deprecated" "Deprecated description")
+    ("details" "Detailed description")
+    ("dir" (word optional "Path fragment"))
+    ("dontinclude" (word "File name"))
+    ("dot")
+    ("dotfile" (word "File name") (optional "Caption (must be in quotes)"))
+    ("e" (word "Word to display in italics"))
+    ("else")
+    ("elseif" (word "Section label"))
+    ("em" (word "Word to display in italics"))
+    ("endcode")
+    ("endcond")
+    ("enddot")
+    ("endhtmlonly")
+    ("endif")
+    ("endlatexonly")
+    ("endlink")
+    ("endmanonly")
+    ("endmsc")
+    ("endverbatim")
+    ("endxmlonly")
+    ("enum" (word "Enumeration name"))
+    ("example" (word "File name"))
+    ("exception" (word "Exception object") "Exception description")
+    ("extends" (word "Name"))
+    ("f$")
+    ("f[")
+    ("f]")
+    ("f{" "Environment")
+    ("f}")
+    ("file" (optional word "File name"))
+    ("fn" (newline "Function declaration"))
+    ("headerfile" (word "Header file") (optional word) "Header name")
+    ("hideinitializer")
+    ("htmlinclude" (word "File name"))
+    ("htmlonly")
+    ("if" (word "Section label"))
+    ("ifnot" (word "Section label"))
+    ("image" (word "Format") (word "File name")
+     (optional "Caption (must be in quotes)") (optional "Size indication"))
+    ("implements" (word "Name"))
+    ("include" (word "File name"))
+    ("includelineno" (word "File name"))
+    ("ingroup" (word "Group name"))
+    ("internal")
+    ("invariant" "Invariant description")
+    ("interface" (word "Name") (optional word "Header file")
+     (optional word "Header Name"))
+    ("latexonly")
+    ("li" "Item description")
+    ("line" (newline "Line pattern"))
+    ("link" (word "Link object"))
+    ("mainpage" (newline optional "Title"))
+    ("manonly")
+    ("memberof" (word "Name"))
+    ("msc")
+    ("n")
+    ("name" (newline "Header"))
+    ("namespace" (word "Name"))
+    ("nosubgrouping")
+    ("note" "Text of note")
+    ("overload" (newline optional "Function declaration"))
+    ("p" (word "Word to display as a parameter"))
+    ("package" (word "Name"))
+    ("page" (word "Name") (newline "Title"))
+    ("par" (newline optional "Title") "Paragraph text")
+    ("paragraph" (word "Paragraph name") (newline "Paragraph title"))
+    ("param" (word "Parameter") "Parameter description")
+    ("param[in]" (word "Parameter") "Parameter description")
+    ("param[out]" (word "Parameter") "Parameter description")
+    ("param[in,out]" (word "Parameter") "Parameter description")
+    ("post" "Post-condition description")
+    ("pre" "Pre-condition description")
+    ("private")
+    ("privatesection")
+    ("property" (newline "Qualified property name"))
+    ("protected")
+    ("protectedsection")
+    ("protocol" (word "Name") (optional word "Header file")
+     (optional word "Header name"))
+    ("public")
+    ("publicsection")
+    ("ref" (word "Name") (newline optional "Text"))
+    ("relates" (word "Name"))
+    ("relatesalso" (word "Name"))
+    ("remarks" "Remarks text")
+    ("return" "Description of return value")
+    ("retval" (word "Return value") "Description")
+    ("sa" "References")
+    ("section" (word "Section name") (newline "Section title"))
+    ("see" "References")
+    ("showinitializer")
+    ("since" "Text")
+    ("skip" (newline "Pattern"))
+    ("skipline" (newline "Pattern"))
+    ("struct" (word "Name") (optional word "Header file")
+     (optional word "Header name"))
+    ("subpage" (word "Name") (newline optional "Text"))
+    ("subsection" (word "Name") (newline optional "Title"))
+    ("subsubsection" (word "Name") (newline optional "Title"))
+    ("test" "Paragraph describing test case")
+    ("throw" (word "Exception object") "Exception description")
+    ("todo" "Paragraph describing what needs to be done")
+    ("tparam" (word "Template parameter") "Description")
+    ("typedef" (newline "Typedef declaration"))
+    ("union" (word "Name") (optional word "Header file")
+     (optional word "Header name"))
+    ("until" (newline "Pattern"))
+    ("var" (newline "Variable declaration"))
+    ("verbatim")
+    ("verbinclude" (word "File name"))
+    ("version" "Version number")
+    ("warning" "Warning message")
+    ("weakgroup" (word "Name") (newline optional "Title"))
+    ("xmlonly")
+    ("xrefitem" (word "Key") "Heading (must be in quotes)"
+     "List title (must be in quotes)" "Text")
+    ("$")
+    ("@")
+    ("\\")
+    ("&")
+    ("~" (optional "Language ID"))
+    ("<")
+    (">")
+    ("#")
+    ("%")
+    ("\""))
+  "Available doxygen commands.  Format is
+
+'((\"command\" args) ...)
+
+where:
+
+ - command is the doxygen command.
+ - args is a list of prompts to display for each argument to the
+   command.  An element of args could also be a list, the last element of which must be a string to use for the prompt, and other elements may be:
+   - newline to indicate a newline should be appended to the user's input.
+   - word to indicate the argument accepts a single word only.
+   - optional to indicate the argument is optional.")
+
+(defun doxymacs-insert-command (cmd)
+  "Insert a doxymacs command with completion."
+  (interactive (list (completing-read
+		      "Insert doxygen command: "
+		      doxymacs-commands
+		      nil nil nil 'doxymacs-insert-command-history)))
+  (insert (concat (doxymacs-doxygen-command-char) cmd))
+  (dolist (arg-prompt (cdr-safe (assoc cmd doxymacs-commands)))
+    (let ((arg (doxymacs-read-arg arg-prompt)))
+      (if (or (= (length arg) 0) (string= "\n" arg))
+	  ;; If nothing is entered no point in prompting for the rest of
+	  ;; the args.
+	  (return)
+	(insert (concat " " arg))))))
+
+(defun doxymacs-read-arg (arg)
+  (let* ((newline (and (listp arg) (memq 'newline arg)))
+	 (word (and (listp arg) (memq 'word arg)))
+	 (optional (and (listp arg) (memq 'optional arg)))
+	 (prompt (if (listp arg) (car (last arg)) arg))
+	 (final-prompt (concat prompt
+			       (if optional (concat " (optional)"))
+			       (if word (concat " (word)"))
+			       ": ")))
+    (concat
+     (cond (word
+	    (read-no-blanks-input final-prompt))
+	   (t
+	    (read-string final-prompt)))
+     (if newline "\n"))))
 
 
 ;; Default templates

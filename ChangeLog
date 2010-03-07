@@ -1,3 +1,11 @@
+2010-03-07  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
+
+	* lisp/doxymacs.el.in: Feature #1569376: Insert doxygen commands
+	interactively:
+	(doxymacs-insert-command-history, doxymacs-commands,
+	doxymacs-insert-command, doxymacs-read-arg): New variables and
+	functions for feature #1569376.
+
 2010-02-19  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
 
 	* lisp/doxymacs.el.in: Patch #2954452: New C++! documentation

@@ -1,3 +1,9 @@
+This file contains an old GNU-style ChangeLog for all commits up until
+914d5cc.  This may contain better information than the git commit
+history for these commits.  For later commits, we ask you to please read
+the git commit history, which we make sure is easy-to-read and has
+useful information.
+
 2010-03-07  Ryan T. Sammartino  <ryan.sammartino@gmail.com>
 
 	* lisp/doxymacs.el.in: Feature #1569376: Insert doxygen commands

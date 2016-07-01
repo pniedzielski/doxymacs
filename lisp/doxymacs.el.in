@@ -291,12 +291,13 @@ file:///home/me/project/bar/doc/ and the XML tags file is at
 See http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks for examples
 of the various styles.
 
-Must be one of \"JavaDoc\", \"Qt\" \"C++\" or \"C++!\". Setting this variable
+Must be one of \"JavaDoc\", \"Qt\", \"C++\", \"C++!\" or \"Fortran\". Setting this variable
 to anything else will generate errors."
   :type '(radio (const :tag "JavaDoc" "JavaDoc")
-		(const :tag "Qt" "Qt")
-		(const :tag "C++" "C++")
-		(const :tag "C++!" "C++!"))
+                (const :tag "Qt" "Qt")
+                (const :tag "C++" "C++")
+                (const :tag "C++!" "C++!")
+                (const :tag "Fortran" "Fortran"))
   :group 'doxymacs)
 
 (defcustom doxymacs-command-character
@@ -1300,6 +1301,10 @@ where:
 
 ;; Default templates
 
+(defconst doxymacs-Fortran-blank-multiline-comment-template
+ '("!>" p > n "!!" p > n "!!" > n "!!" > n)
+ "Default Fortran-style template for a blank multiline doxygen comment.")
+
 (defconst doxymacs-JavaDoc-blank-multiline-comment-template
  '("/**" > n "* " p > n "* " > n "*/" > n)
  "Default JavaDoc-style template for a blank multiline doxygen comment.")
@@ -1315,6 +1320,10 @@ where:
 (defconst doxymacs-C++!-blank-multiline-comment-template
  '("//!" > n "//! " p > n "//!" > n)
  "Default C++!-style template for a blank multiline doxygen comment.")
+
+(defconst doxymacs-Fortran-blank-singleline-comment-template
+ '("!> " > p)
+ "Default Fortran-style template for a blank single line doxygen comment.")
 
 (defconst doxymacs-JavaDoc-blank-singleline-comment-template
  '("/// " > p)
@@ -1339,6 +1348,7 @@ where:
    ((string= doxymacs-doxygen-style "Qt") "\\")
    ((string= doxymacs-doxygen-style "C++") "@")
    ((string= doxymacs-doxygen-style "C++!") "\\")
+   ((string= doxymacs-doxygen-style "Fortran") "@")
    (t "@")))
 
 (defun doxymacs-user-mail-address ()
@@ -1348,6 +1358,21 @@ where:
 	(list 'l " <" (user-mail-address) ">"))
    (and (and (boundp 'user-mail-address) user-mail-address)
 	(list 'l " <" user-mail-address ">"))))
+
+(defconst doxymacs-Fortran-file-comment-template
+ '("!> " (doxymacs-doxygen-command-char) "file   "
+   (if (buffer-file-name)
+       (file-name-nondirectory (buffer-file-name))
+     "") > p > n
+   "!! " (doxymacs-doxygen-command-char) "author " (user-full-name)
+   (doxymacs-user-mail-address)
+   > n
+   "!! " (doxymacs-doxygen-command-char) "date   " (current-time-string) > n
+   "!! " > n
+   "!! " (doxymacs-doxygen-command-char) "brief  " (p "Brief description of this file: ") > n
+   "!! " p > n)
+   ;; "!<" > n)
+ "Default Fortran-style template for file documentation.")
 
 (defconst doxymacs-JavaDoc-file-comment-template
  '("/**" > n
@@ -1439,9 +1464,31 @@ where:
 	  (list 'l "//! " (doxymacs-doxygen-command-char)
 		"param " (car parms) " " (list 'p prompt) '> 'n
 		(doxymacs-parm-tempo-element (cdr parms))))
+	 ((string= doxymacs-doxygen-style "Fortran")
+	  (list 'l "!! " (doxymacs-doxygen-command-char)
+		"param " (car parms) " " (list 'p prompt) '> 'n
+		(doxymacs-parm-tempo-element (cdr parms))))
 	 (t
 	  (doxymacs-invalid-style))))
     nil))
+
+(defconst doxymacs-Fortran-function-comment-template
+ '((let ((next-func (doxymacs-find-next-func)))
+     (if next-func
+	 (list
+	  'l
+	  "!> " 'p '> 'n
+	  (doxymacs-parm-tempo-element (cdr (assoc 'args next-func)))
+	  (unless (string-match
+                   (regexp-quote (cdr (assoc 'return next-func)))
+                   doxymacs-void-types)
+	    '(l "!! " > n "!! " (doxymacs-doxygen-command-char)
+		"return " (p "Returns: ") > n)))
+	  ;; "!<" '>)
+       (progn
+	 (error "Can't find next function declaration.")
+	 nil))))
+ "Default Fortran-style template for function documentation.")
 
 
 (defconst doxymacs-JavaDoc-function-comment-template
@@ -1528,7 +1575,7 @@ style."
   (error (concat
 	  "Invalid `doxymacs-doxygen-style': "
 	  doxymacs-doxygen-style
-	  ": must be one of \"JavaDoc\", \"Qt\", \"C++\" or \"C++!\".")))
+	  ": must be one of \"JavaDoc\", \"Qt\", \"C++\", \"C++!\", or \"Fortran\".")))
 
 ;; This should make it easier to add new templates and cut down
 ;; on copy-and-paste programming.
@@ -1610,6 +1657,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 			"///< ")
 		       ((string= doxymacs-doxygen-style "C++!")
 			"//!< ")
+		       ((string= doxymacs-doxygen-style "Fortran")
+			"!< ")
 		       (t
 			(doxymacs-invalid-style)))))
 	 (skip (concat (regexp-quote starter) "*"))
@@ -1622,6 +1671,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 		       ((string= doxymacs-doxygen-style "C++")
 			"")
 		       ((string= doxymacs-doxygen-style "C++!")
+			"")
+		       ((string= doxymacs-doxygen-style "Fortran")
 			"")
 		       (t
 			(doxymacs-invalid-style))))))
@@ -1682,6 +1733,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 			"/// @{")
 		       ((string= doxymacs-doxygen-style "C++!")
 			"//! @{")
+		       ((string= doxymacs-doxygen-style "Fortran")
+			"!> @{")
 		       (t
 			(doxymacs-invalid-style)))))
 	 (ender (or doxymacs-group-comment-end
@@ -1694,6 +1747,8 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 			"/// @}")
 		       ((string= doxymacs-doxygen-style "C++!")
 			"//! @}")
+		       ((string= doxymacs-doxygen-style "Fortran")
+			"!! @}")
 		       (t
 			(doxymacs-invalid-style))))))
     (save-excursion

@@ -96,7 +96,7 @@ inline void AddToHash(completion_list *cl)
 }
 
 /* mmmmm... free hash */
-inline void FreeHash(void)
+static void FreeHash(void)
 {
     unsigned int i;
     for (i = 0; i < HASH_SIZE; i++)
@@ -274,7 +274,7 @@ inline int AddToCompletionList(const char *name,
 }
 
 /* Encode the given string so that {X}Emacs will understand it */
-inline char *Encode(const char *s)
+static char *Encode(const char *s)
 {
     unsigned int extra_len = 0;
     char *c = (char *)s;
@@ -341,7 +341,7 @@ inline char *Encode(const char *s)
 
 /* Output the completion list in a way {X}Emacs can easily read in */
 
-inline int OutputCompletionList(void)
+static int OutputCompletionList(void)
 {
     completion_list *cur = comp_list;
 
@@ -400,7 +400,7 @@ inline int OutputCompletionList(void)
 
 /* Clean up */
 
-inline void FreeCompletionList(void)
+static void FreeCompletionList(void)
 {
     completion_list *cur = comp_list;
 

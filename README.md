@@ -64,4 +64,4 @@ Be sure these are properly configured and installed before proceeding.
 
   Use ./configure --help for help on customising your configuration.
 
-for details see [[INSTALL][INSTALL]]
+for details see [INSTALL](INSTALL)

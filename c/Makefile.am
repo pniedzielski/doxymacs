@@ -7,6 +7,6 @@ doxymacs_parser_SOURCES = doxymacs_parser.c
 
 INCLUDES = $(XML_CPPFLAGS)
 
-AM_CFLAGS = -Wall -Werror -fexpensive-optimizations -fomit-frame-pointer
+AM_CFLAGS = -Wall -Werror -fomit-frame-pointer
 
 doxymacs_parser_LDADD = $(XML_LIBS)

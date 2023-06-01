@@ -79,7 +79,7 @@ inline static unsigned int hash(const char *s)
         h += *s++;
     }
 
-    return abs(h % HASH_SIZE);
+    return h % HASH_SIZE;
 }
 
 inline static void AddToHash(completion_list *cl)

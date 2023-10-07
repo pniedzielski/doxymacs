@@ -111,6 +111,7 @@
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
 
+(shell-command "echo $(pwd)")
 (shell-command "cd ..")
 (shell-command "./bootstrap")
 (shell-command "./configure")

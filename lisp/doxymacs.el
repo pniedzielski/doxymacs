@@ -111,10 +111,11 @@
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
 
-(shell-command "cd .. && ./bootstrap")
-(shell-command "cd .. && ./configure")
-(shell-command "cd .. && make --prefix=/home/lorenz/tmp")
-(shell-command "cd .. && make install")
+(shell-command "cd ..")
+(shell-command "./bootstrap")
+(shell-command "./configure")
+(shell-command "make --prefix=/home/lorenz/tmp")
+(shell-command "make install")
 
 (require 'doxymacs-impl)
 (provide 'doxymacs)

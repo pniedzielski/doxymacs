@@ -1,5 +1,5 @@
 ;;; -*-emacs-lisp-*-
-;;; doxymacs.el --- ELisp package for making doxygen related stuff easier.
+;;; doxymacs-impl.el --- ELisp package for making doxygen related stuff easier.
 ;;
 ;;
 ;; Copyright (C) 2001-2010 Ryan T. Sammartino
@@ -239,7 +239,7 @@
 
 ;; Front matter and variables
 
-(provide 'doxymacs)
+; (provide 'doxymacs)
 
 (require 'custom)
 (require 'xml-parse)
@@ -1940,4 +1940,4 @@ The argument list is a list of strings."
 		(cons 'return (doxymacs-core-string ret))))
     nil)))
 
-;;; doxymacs.el ends here
+;;; doxymacs-impl.el ends here

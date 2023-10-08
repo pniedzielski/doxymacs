@@ -112,11 +112,10 @@
 ;; let the authors know.
 
 (shell-command "pwd" "*Messages*")
-(shell-command "cd .." "*Messages*")
-(shell-command "./bootstrap" "*Messages*")
-(shell-command "./configure" "*Messages*")
-(shell-command "make --prefix=/home/lorenz/tmp" "*Messages*")
-(shell-command "make install" "*Messages*")
+(shell-command "cd .. && ./bootstrap" "*Messages*")
+(shell-command "cd .. && ./configure --prefix=/home/lorenz/tmp" "*Messages*")
+(shell-command "cd .. && make" "*Messages*")
+(shell-command "cd .. && make install" "*Messages*")
 
 (require 'doxymacs-impl)
 (provide 'doxymacs)

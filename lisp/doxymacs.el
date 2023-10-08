@@ -111,12 +111,12 @@
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
 
-(shell-command "echo $(pwd)")
-(shell-command "cd ..")
-(shell-command "./bootstrap")
-(shell-command "./configure")
-(shell-command "make --prefix=/home/lorenz/tmp")
-(shell-command "make install")
+(shell-command "pwd" "*Messages*")
+(shell-command "cd .." "*Messages*")
+(shell-command "./bootstrap" "*Messages*")
+(shell-command "./configure" "*Messages*")
+(shell-command "make --prefix=/home/lorenz/tmp" "*Messages*")
+(shell-command "make install" "*Messages*")
 
 (require 'doxymacs-impl)
 (provide 'doxymacs)

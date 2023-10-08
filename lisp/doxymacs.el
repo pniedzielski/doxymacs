@@ -111,6 +111,11 @@
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
 
+; setting some defaults
+(setq @DOXYMACS_DEFAULT_STYLE@ "JavaDoc")
+(setq @DOXYMACS_USE_EXTERNAL_XML_PARSER@ t)
+
+; build the external xml parser
 (shell-command "pwd" "*Messages*")
 (shell-command "cd .. && ./bootstrap" "*Messages*")
 (shell-command "cd .. && ./configure --prefix=/home/lorenz/tmp" "*Messages*")

@@ -30,8 +30,7 @@ There also exists
   $ make clean
 which removes built files to clean the repository.
 
-Building for XEmacs using this Makefile has not been tested, since
-XEmacs has not been maintained since 2009.
+Building for XEmacs using this Makefile has not been tested. 
 
 - If your tags file is quite large (say, > 1 MB), consider setting
   doxymacs-use-external-xml-parser to t and be sure to set

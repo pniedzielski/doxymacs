@@ -7,7 +7,7 @@
 ;; Author: Ryan T. Sammartino <ryan.sammartino at gmail dot com>
 ;;      Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: 1.8.0
+;; Version: 1.8.1
 ;; Keywords: doxygen documentation
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.

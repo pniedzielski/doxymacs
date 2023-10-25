@@ -55,13 +55,4 @@ Doxymacs depends on the following packages:
 - libxml2 http://www.libxml.org/
 
 Be sure these are properly configured and installed before proceeding.
-
-- Use the configure script to configure doxymacs:
-
-   $ ./configure
-   $ make
-   $ make install
-
-  Use ./configure --help for help on customising your configuration.
-
-for details see [INSTALL](INSTALL)
+For installation instructions, see [INSTALL](INSTALL)

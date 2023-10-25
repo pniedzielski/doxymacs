@@ -38,31 +38,10 @@
 ;;
 ;; Be sure these are properly configured and installed before proceeding.
 ;;
-;; - Use the configure script to configure doxymacs:
-;;
-;;    $ ./configure
-;;    $ make
-;;    $ make install
-;;
-;;   Use ./configure --help for help on customising your configuration.
-;;
-;;   If you get
-;;
-;;   !! File error (("Cannot open load file" "url"))
-;;
-;;   (or something similar) then set the variable EMACSLOADPATH before
-;;   doing make:
-;;
-;;    $ EMACSLOADPATH=... make
-;;
-;;   where ... is a colon separated list of directories to search for
-;;   packages.  To byte compile with XEmacs, set the variable EMACS:
-;;
-;;    $ EMACS=xemacs make
-;;
-;;   If you would rather not byte compile the .el files at all, then do:
-;;
-;;    $ make ELCFILES=
+;; View the INSTALL file for further installation instructions.
+;; 
+;; When installing through non-gnu elpa, you may want to consider building
+;; the external xml parser yourself and tell doxymacs to use it.
 ;;
 ;; - Customise the variable doxymacs-doxygen-dirs.
 ;;
@@ -235,7 +214,8 @@
 ;;
 ;; - better end-user documentation
 ;; - fix all FIXMEs (of course)
-;; - other stuff?
+;; - other stuff? -> Yes, example: @throws declaration if throw keyword is found
+;;                   inside function
 
 ;; Front matter and variables
 

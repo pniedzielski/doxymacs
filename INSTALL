@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.15 2003/01/26 01:49:55 ryants Exp $
+$Id: INSTALL,v 1.16 2023/10/24 22:08:30 L0ren2 Exp $
 
 Doxymacs depends on the following packages:
 
@@ -8,46 +8,35 @@ Doxymacs depends on the following packages:
 
 Be sure these are properly configured and installed before proceeding.
 
-- Use the configure script to configure doxymacs:
+- The project can be used as is, but you can use the Makefile provided
+to compile the *.el files into *.elc and the doxymacs_parser.c into a
+binary executable.
 
-   $ ./configure
-   $ make
-   $ make install
+To use as is, execute:
+  $ make install
+To compile only the doxymacs_parser.c, execute:
+  $ make c
+To compile only the emacs lisp files, execute:
+  $ make elisp
+And finally to build all, you can either execute:
+  $ make
+or
+  $ make all
 
-  Use ./configure --help for help on customising your configuration.
+After building, you may install using
+  $ make install
 
-  If you get
+There also exists
+  $ make clean
+which removes built files to clean the repository.
 
-!! File error (("Cannot open load file" "url"))
-
-  (or something similar) then set the variable EMACSLOADPATH before
-  doing make:
-
-   $ EMACSLOADPATH=... make
-
-  where ... is a colon separated list of directories to search for
-  packages.  To byte compile with XEmacs, set the variable EMACS:
-
-   $ EMACS=xemacs make
-
-  If you would rather not byte compile the .el files at all, then do:
-
-   $ make ELCFILES=
-   $ make install ELCFILES=
-
-  If you do not want to run or cannot run configure then some pre-baked
-  .el files are available in the no-autoconf/ directory; simply copy
-  these to somewhere in your load-path.
-
-- Customise the variable doxymacs-doxygen-dirs.
-  Doxymacs customisation can be done from the Options | Customize menu,
-  under Emacs | Programming | Tools | Doxymacs.
+Building for XEmacs using this Makefile has not been tested. 
 
 - If your tags file is quite large (say, > 1 MB), consider setting
   doxymacs-use-external-xml-parser to t and be sure to set
   doxymacs-external-xml-parser-executable to the right value (the
   default should usually be fine).  A suitable program is distributed
-  in the directory doxymacs/c/.  With an 11 MB XML tag file, the
+  in the directory doxymacs.  With an 11 MB XML tag file, the
   internal process takes 20 minutes on a PIII 800 with 1 GB of RAM,
   whereas the external process takes 12 seconds.
 
@@ -81,4 +70,3 @@ Be sure these are properly configured and installed before proceeding.
   - C-c d m will insert a blank multi-line Doxygen comment.
   - C-c d s will insert a blank single-line Doxygen comment.
   - C-c d @ will insert grouping comments around the current region.
-

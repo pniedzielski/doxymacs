@@ -1,5 +1,4 @@
 ## Process this file with automake to produce Makefile.in
-# $Id: Makefile.am,v 1.1 2003/01/26 01:49:56 ryants Exp $
 
 # When creating the tarball, create .el files with default values
 # substituted in the .el.in files for people who don't want to run

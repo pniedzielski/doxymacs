@@ -1,5 +1,4 @@
 ## Process this file with automake to produce Makefile.in
-# $Id: Makefile.am,v 1.2 2005/04/01 06:20:06 ryants Exp $
 
 bin_PROGRAMS = doxymacs_parser
 

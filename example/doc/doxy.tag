@@ -1,9 +1,9 @@
-<?xml version='1.0' encoding='ISO-8859-1' standalone='yes' ?>
-<tagfile>
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<tagfile doxygen_version="1.9.8">
   <compound kind="file">
     <name>aclass.h</name>
-    <path>/home/rts/Projects/doxymacs/example/src/</path>
-    <filename>aclass_8h</filename>
+    <path></path>
+    <filename>aclass_8h.html</filename>
     <class kind="class">Foo</class>
     <class kind="struct">blah</class>
     <class kind="struct">baz</class>
@@ -16,6 +16,7 @@
       <arglist></arglist>
     </member>
     <member kind="enumeration">
+      <type></type>
       <name>_blah</name>
       <anchorfile>aclass_8h.html</anchorfile>
       <anchor>aff7431c1e83d4cf5f4810ed8e9dc2e7e</anchor>
@@ -31,13 +32,6 @@
       <name>Foo</name>
       <anchorfile>aclass_8h.html</anchorfile>
       <anchor>aff7431c1e83d4cf5f4810ed8e9dc2e7eaca2a3a2b2da8e517565fb654a86639b6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>foobazbar</name>
-      <anchorfile>namespaceNameSpaceTest.html</anchorfile>
-      <anchor>a5f0fd9588d8e6d4aaf2ff4ad20d7e60b</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -74,9 +68,22 @@
     <name>Foo</name>
     <filename>classFoo.html</filename>
     <member kind="enumeration">
+      <type></type>
       <name>blah_blah</name>
       <anchorfile>classFoo.html</anchorfile>
       <anchor>a9fbd006a5c0ff9ddb4f02a950d4e862c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BAZ</name>
+      <anchorfile>classFoo.html</anchorfile>
+      <anchor>a9fbd006a5c0ff9ddb4f02a950d4e862ca551af527291c62badc07f5731648c7ed</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BAZ2</name>
+      <anchorfile>classFoo.html</anchorfile>
+      <anchor>a9fbd006a5c0ff9ddb4f02a950d4e862cacba6ac26da56f9234ebf45f6398cb9c0</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
@@ -102,8 +109,8 @@
       <type></type>
       <name>GetBlah</name>
       <anchorfile>classFoo.html</anchorfile>
-      <anchor>a1d524237312eaafba8838e9c354df460</anchor>
-      <arglist>(void) const </arglist>
+      <anchor>ad7da9db5562ae0402cbd8e634ff33fec</anchor>
+      <arglist>(void) const</arglist>
     </member>
     <member kind="function" protection="private">
       <type></type>

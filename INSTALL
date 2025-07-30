@@ -3,7 +3,6 @@ $Id: INSTALL,v 1.15 2003/01/26 01:49:55 ryants Exp $
 Doxymacs depends on the following packages:
 
 - W3      http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
-- tempo   http://www.lysator.liu.se/~davidk/elisp/
 - libxml2 http://www.libxml.org/
 
 Be sure these are properly configured and installed before proceeding.

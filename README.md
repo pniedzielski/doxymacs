@@ -51,7 +51,6 @@ GNU General Public License for more details.
 Doxymacs depends on the following packages:
 
 - W3      http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
-- tempo   http://www.lysator.liu.se/~davidk/elisp/
 - libxml2 http://www.libxml.org/
 
 Be sure these are properly configured and installed before proceeding.

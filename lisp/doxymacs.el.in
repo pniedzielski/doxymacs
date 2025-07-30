@@ -33,7 +33,6 @@
 ;; Doxymacs depends on the following packages:
 ;;
 ;; - W3      http://www.cs.indiana.edu/usr/local/www/elisp/w3/docs.html
-;; - tempo   http://www.lysator.liu.se/~davidk/elisp/
 ;; - libxml2 http://www.libxml.org/
 ;;
 ;; Be sure these are properly configured and installed before proceeding.
@@ -339,7 +338,7 @@ display."
 If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
-For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
+For help with tempo templates, see `tempo-define-template'."
   :type 'list
   :group 'doxymacs)
 
@@ -349,7 +348,7 @@ For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
 If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
-For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
+For help with tempo templates, see `tempo-define-template'."
   :type 'list
   :group 'doxymacs)
 
@@ -359,7 +358,7 @@ For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
 If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
-For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
+For help with tempo templates, see `tempo-define-template'."
   :type 'list
   :group 'doxymacs)
 
@@ -379,7 +378,7 @@ value:
 
 The argument list is a list of strings.
 
-For help with tempo templates, see http://www.lysator.liu.se/~davidk/elisp/"
+For help with tempo templates, see `tempo-define-template'."
   :type 'list
   :group 'doxymacs)
 

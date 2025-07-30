@@ -1,4 +1,3 @@
-// $Id: aclass.h,v 1.3 2005/04/01 06:05:06 ryants Exp $
 // This is just some silly sample file to test out doxymacs with.
 #ifndef _ACLASS_H_
 #define _ACLASS_H_

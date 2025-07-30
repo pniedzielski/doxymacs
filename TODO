@@ -1,5 +1,3 @@
-$Id: TODO,v 1.15 2003/01/06 00:45:30 ryants Exp $
-
 lisp/doxymacs.el.in:
  - fix all FIXMEs (of course)
  - automatic testing (DejaGnu).

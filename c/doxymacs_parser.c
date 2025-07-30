@@ -24,9 +24,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * Doxymacs homepage: http://doxymacs.sourceforge.net/
- *
- * $Id: doxymacs_parser.c,v 1.12 2006/04/23 00:05:33 ryants Exp $
- *
  */
 
 #include <stdlib.h>

@@ -1892,28 +1892,37 @@ and new-line characters cut off."
       (substring s (match-beginning 1) (match-end 1))
     s))
 
-(defun doxymacs--get-throws ()
-  "returns the occurences of thrown exceptions"
+(defun doxymacs--eol-is-semicolon-p ()
+  "Check if last character in line is a semicolon."
   (save-excursion
-    (let* ((func-end (progn (re-search-forward "{" nil t)
-                            (backward-char 1)
-                            (forward-list)
-                            (point)))
-           (func-beg (progn (backward-list)
-                            (point)))
-           (throws
-            (cl-loop while (re-search-forward "throw " func-end t)
-                     collect
-                     (buffer-substring-no-properties (point)
-                                                     (progn
-                                                       (re-search-forward "[({=;]")
-                                                       (- (point) 1))))))
-      (mapcar (lambda (str)
-                (let ((s (if (string-search "new " str)
-                             (substring str 4)
-                           str)))
-                  (string-trim s " +" " +")))
-              throws))))
+    (let ((eol (line-end-position)))
+      (string= (buffer-substring-no-properties (- eol 1) eol) ";"))))
+
+(defun doxymacs--get-throws-implementation (func-end)
+  "Extract all thrown exceptions inside function body until FUNC-END."
+  (let ((throws (cl-loop while (re-search-forward "throw " func-end t)
+                         collect
+                         (buffer-substring-no-properties
+                          (point) (progn
+                                    (re-search-forward "[({=;]")
+                                    (- (point) 1))))))
+    (mapcar (lambda (str)
+              (let ((s (if (string-search "new " str)
+                           (substring str 4)
+                         str)))
+                (string-trim s " +" " +")))
+            throws)))
+
+(defun doxymacs--get-throws ()
+  "Return the occurences of thrown exceptions."
+  (unless (doxymacs--eol-is-semicolon-p)
+    (save-excursion
+      (let ((func-end (progn (re-search-forward "{" nil t)
+                              (backward-char 1)
+                              (forward-list)
+                              (point))))
+        (backward-list)
+        (doxymacs--get-throws-implementation func-end)))))
 
 (defun doxymacs-find-next-func ()
   "Returns a list describing next function declaration, or nil if not found.

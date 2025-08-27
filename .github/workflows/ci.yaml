@@ -1,0 +1,33 @@
+name: Tests and Linting
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+  gitlint:
+    runs-on: ubuntu-latest
+    name: GitLint
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install gitlint
+        run: |
+          python -m pip install gitlint
+
+      - name: Run gitlint
+        run: |
+          # Lint everything from the base to the latest
+          gitlint --commits "${{ github.event.pull_request.base.sha }}..HEAD" \
+                  -c general.ignore-merge-commits=false                       \
+                  -c general.ignore-fixup-commits=false                       \
+                  -c general.ignore-fixup-amend-commits=false                 \
+                  -c general.ignore-squash-commits=false                      \
+                  -c general.contrib=contrib-disallow-cleanup-commits,contrib-title-conventional-commits,contrib-body-requires-signed-off-by \
+                  -c title-must-not-contain-word.words=wip                    \
+                  -C .gitlint

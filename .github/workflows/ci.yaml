@@ -10,6 +10,58 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    name: Build and Lint Package
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      matrix:
+        emacs_version:
+          - 24.4
+          - 24.5
+          - 25.1
+          - 25.2
+          - 25.3
+          - 26.1
+          - 26.2
+          - 26.3
+          - 27.1
+          - 27.2
+          - 28.1
+          - 28.2
+          - 29.1
+          - 29.2
+          - 29.3
+          - 29.4
+          - 30.1
+          - 30.2
+          - release-snapshot
+        experimental: [false]
+        include:
+          - emacs_version: snapshot
+            experimental: true
+
+    steps:
+      - uses: purcell/setup-emacs@master
+        with:
+          version: ${{ matrix.emacs_version }}
+
+      - name: Install autotools and compiler
+        run: |
+          sudo apt install \
+              build-essential autoconf automake libtool autotools-dev
+
+      - uses: actions/checkout@v5
+
+      - name: Generate the package
+        run: |
+          ./bootstrap && ./configure && make
+
+      - name: Run checks and lint
+        uses: leotaku/elisp-check@v1.4.1
+        with:
+          file: lisp/*.el
+
   gitlint:
     runs-on: ubuntu-latest
     name: GitLint

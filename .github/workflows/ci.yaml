@@ -3,7 +3,7 @@ name: Tests and Linting
 on:
   pull_request:
     branches:
-      - main
+      - master
 
 concurrency:
   group: ci-${{ github.ref }}-1

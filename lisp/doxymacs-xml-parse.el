@@ -1,4 +1,4 @@
-;;; xml-parse.el --- Code to efficiently read/write XML data with Elisp   -*- mode: emacs-lisp; lexical-binding: nil -*-
+;;; doxymacs-xml-parse.el --- Code to efficiently read/write XML data with Elisp   -*- mode: emacs-lisp; lexical-binding: nil -*-
 
 ;; Copyright (C) 2025 Patrick M. Niedzielski.
 ;; Copyright (C) 2001 John Wiegley.
@@ -9,7 +9,7 @@
 ;; Keywords: convenience languages lisp xml parse data
 ;; URL: http://www.gci-net.com/~johnw/emacs.html
 
-;; This file is NOT (yet) part of GNU Emacs.
+;; This file is NOT part of GNU Emacs.
 
 ;; This is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
@@ -28,14 +28,16 @@
 
 ;;; Commentary:
 ;;
+;; This is a vendored version of John Wiegley's xml-parse.el.
+;;
 ;; XML is yet another way of expressing recursive, attributed data
 ;; structures -- something which Lisp has had the capacity to do for
 ;; decades.
 ;;
-;; The approach taken by xml-parse.el is to read XML data into Lisp
-;; structures, and allow those same Lisp structures to be written out
-;; as XML.  It should facilitate the manipulation and use of XML by
-;; Elisp programs.
+;; The approach taken by doxymacs-xml-parse.el is to read XML data
+;; into Lisp structures, and allow those same Lisp structures to be
+;; written out as XML.  It should facilitate the manipulation and use
+;; of XML by Elisp programs.
 
 ;; NOTE: This is not a validating parser, and makes no attempt to read
 ;; DTDs.  See psgml.el if you need that kind of power.
@@ -43,11 +45,11 @@
 ;; Also, tags beginning with <? or <! are not parsed, but merely
 ;; included in the resulting data structure as separate string
 ;; entries.  These may be tested for using the function
-;; `xml-tag-special-p'.  If present, they are treated just like normal
-;; text, and will be inserted along with everything else.  If they
-;; occur *before* the opening tag of an XML tree, they will not appear
-;; in the parsed data, since such "pre-tags" are not the child of any
-;; tag.
+;; `doxymacs-xml-parse--xml-tag-special-p'.  If present, they are
+;; treated just like normal text, and will be inserted along with
+;; everything else.  If they occur *before* the opening tag of an XML
+;; tree, they will not appear in the parsed data, since such
+;; "pre-tags" are not the child of any tag.
 
 ;; Here is the format of the Lisp data structure used:
 ;;
@@ -60,7 +62,8 @@
 ;;
 ;; After the TAG, there can be zero or more child structures, which
 ;; are either literal strings, or the same "TAG CHILD..." structure as
-;; the parent.  See `insert-xml' for an EBNF grammar of this layout.
+;; the parent.  See `doxymacs-xml-parse--insert-xml' for an EBNF
+;; grammar of this layout.
 
 ;; EXAMPLE: Given the following DocBook XML data:
 ;;
@@ -103,19 +106,24 @@
 ;; done modifying it, you can write it back out (complete with proper
 ;; indentation and newlines) using:
 ;;
-;;   (insert-xml <DATA> t)
+;;   (doxymacs-xml-parse-insert-xml <DATA> t)
 ;;
-;; See the documentation for `read-xml' and `insert-xml' for more
-;; information.
+;; See the documentation for `doxymacs-xml-parse-read-xml' and
+;; `doxymacs-xml-parse-insert-xml' for more information.
 ;;
 ;; There are also a set of helper functions for accessing parts of a
 ;; parsed tag:
 ;;
-;;   xml-tag-name       get the name of a tag
-;;   xml-tag-attrlist   returns a tag's attribute alist
-;;   xml-tag-attr       lookup a specific tag attribute
-;;   xml-tag-children   returns a tag's child list
-;;   xml-tag-child      lookup a specific child tag by name
+;;   doxymacs-xml-parse--xml-tag-name
+;;       get the name of a tag
+;;   doxymacs-xml-parse--xml-tag-attrlist
+;;       returns a tag's attribute alist
+;;   doxymacs-xml-parse--xml-tag-attr
+;;       lookup a specific tag attribute
+;;   doxymacs-xml-parse--xml-tag-children
+;;       returns a tag's child list
+;;   doxymacs-xml-parse--xml-tag-child
+;;       lookup a specific child tag by name
 ;;
 ;; Also, the attribute list and child lists can be searched using
 ;; `assoc', since they roughly have the same format as an alist.
@@ -123,57 +131,59 @@
 ;;; Code:
 
 ;;;###autoload
-(defun read-xml (&optional progress-callback)
+(defun doxymacs-xml-parse-read-xml (&optional progress-callback)
   "Parse XML data at point into a Lisp structure.
-See `insert-xml' for a description of the format of this structure.
-Point is left at the end of the XML structure read."
-  (cdr (xml-parse-read progress-callback)))
+See `doxymacs-xml-parse-insert-xml' for a description of the format of
+this structure.  Point is left at the end of the XML structure read."
+  (cdr (doxymacs-xml-parse--xml-parse-read progress-callback)))
 
-(defsubst xml-tag-with-attributes-p (tag)
+(defsubst doxymacs-xml-parse--xml-tag-with-attributes-p (tag)
   "Does the TAG have attributes or not?"
   (listp (car tag)))
 
-(defsubst xml-tag-name (tag)
+(defsubst doxymacs-xml-parse--xml-tag-name (tag)
   "Return the name of an xml-parse'd XML TAG."
-  (cond ((xml-tag-text-p tag)
+  (cond ((doxymacs-xml-parse--xml-tag-text-p tag)
          (car tag))
-        ((xml-tag-with-attributes-p tag)
+        ((doxymacs-xml-parse--xml-tag-with-attributes-p tag)
          (caar tag))
         (t (car tag))))
 
-(defun xml-tag-text-p (tag)
+(defun doxymacs-xml-parse--xml-tag-text-p (tag)
   "Is the given TAG really just a text entry?"
   (stringp tag))
 
-(defsubst xml-tag-special-p (tag)
+(defsubst doxymacs-xml-parse--xml-tag-special-p (tag)
   "Return the name of an xml-parse'd XML TAG."
-  (and (xml-tag-text-p tag)
+  (and (doxymacs-xml-parse--xml-tag-text-p tag)
        (eq (aref tag 0) ?\<)))
 
-(defsubst xml-tag-attrlist (tag)
+(defsubst doxymacs-xml-parse--xml-tag-attrlist (tag)
   "Return the attribute list of an xml-parse'd XML TAG."
   (and (not (stringp (car tag)))
        (cdar tag)))
 
-(defsubst xml-tag-attr (tag attr)
+(defsubst doxymacs-xml-parse--xml-tag-attr (tag attr)
   "Return a specific ATTR of an xml-parse'd XML TAG."
-  (cdr (assoc attr (xml-tag-attrlist tag))))
+  (cdr (assoc attr (doxymacs-xml-parse--xml-tag-attrlist tag))))
 
-(defsubst xml-tag-children (tag)
+(defsubst doxymacs-xml-parse--xml-tag-children (tag)
   "Return the list of child tags of an xml-parse'd XML TAG."
   (cdr tag))
 
-(defun xml-tag-child (tag name)
+(defun doxymacs-xml-parse--xml-tag-child (tag name)
   "Return the first child matching NAME, of an xml-parse'd XML TAG."
   (catch 'found
-    (let ((children (xml-tag-children tag)))
+    (let ((children (doxymacs-xml-parse--xml-tag-children tag)))
       (while children
-        (if (string= name (xml-tag-name (car children)))
+        (if (string= name (doxymacs-xml-parse--xml-tag-name
+                           (car children)))
             (throw 'found (car children)))
         (setq children (cdr children))))))
 
 ;;;###autoload
-(defun insert-xml (data &optional add-newlines public system depth ret-depth)
+(defun doxymacs-xml-parse-insert-xml (data &optional add-newlines
+                                      public system depth ret-depth)
   "Insert DATA, a recursive Lisp structure, at point as XML.
 DATA has the form:
 
@@ -220,8 +230,10 @@ indentation."
           (and add-newlines add-nl
                (not (stringp (car data)))
                (insert ?\n))
-          (setq add-nl (insert-xml (car data) add-newlines
-                                   nil nil (1+ (or depth 0)))
+          (setq add-nl
+                (doxymacs-xml-parse-insert-xml (car data) add-newlines
+                                               nil nil
+                                               (1+ (or depth 0)))
                 data (cdr data)))
         (when add-nl
           (and add-newlines (insert ?\n))
@@ -230,19 +242,19 @@ indentation."
       t)))
 
 ;;;###autoload
-(defun xml-reformat-tags ()
+(defun doxymacs-xml-parse-xml-reformat-tags ()
   "If point is on the open bracket of an XML tag, reformat that tree.
 Note that this only works if the opening tag starts at column 0."
   (interactive)
   (save-excursion
-    (let* ((beg (point)) (tags (read-xml)))
+    (let* ((beg (point)) (tags (doxymacs-xml-parse-read-xml)))
       (delete-region beg (point))
-      (insert-xml tags t))))
+      (doxymacs-xml-parse-insert-xml tags t))))
 
 ;;; Internal Functions
 
 
-(defun xml-parse-profile ()
+(defun doxymacs-xml-parse--xml-parse-profile ()
   (interactive)
   (let ((elp-function-list
          '(buffer-substring-no-properties
@@ -255,16 +267,16 @@ Note that this only works if the opening tag starts at column 0."
            match-end
            point
            re-search-forward
-           read-xml
-           xml-parse-read
+           doxymacs-xml-parse-read-xml
+           doxymacs-xml-parse--xml-parse-read
            search-forward
            string=
            stringp
            substring
-           xml-parse-concat)))
+           doxymacs-xml-parse--xml-parse-concat)))
     (elp-instrument-list)))
 
-(defsubst xml-parse-skip-tag ()
+(defsubst doxymacs-xml-parse--xml-parse-skip-tag ()
   (cond
    ((eq (char-after) ??)
     (search-forward "?>"))
@@ -283,7 +295,7 @@ Note that this only works if the opening tag starts at column 0."
               (setq depth (1- depth))))
           (search-forward ">"))))))
 
-(defsubst xml-parse-add-non-ws (text lst)
+(defsubst doxymacs-xml-parse--xml-parse-add-non-ws (text lst)
   (let ((i 0) (l (length text)) non-ws)
     (while (< i l)
       (unless (memq (aref text i) '(?\n ?\t ? ))
@@ -294,30 +306,30 @@ Note that this only works if the opening tag starts at column 0."
       (setcdr lst (list text))
       (cdr lst))))
 
-(defsubst xml-parse-concat (beg end lst)
+(defsubst doxymacs-xml-parse--xml-parse-concat (beg end lst)
   "Add the string from BEG to END to LST, ignoring pure whitespace."
   (save-excursion
     (goto-char beg)
     (while (search-forward "<" end t)
-      (setq lst (xml-parse-add-non-ws
+      (setq lst (doxymacs-xml-parse--xml-parse-add-non-ws
                  (buffer-substring-no-properties beg (1- (point))) lst)
             beg (1- (point)))
-      (xml-parse-skip-tag)
-      (setq lst (xml-parse-add-non-ws
+      (doxymacs-xml-parse--xml-parse-skip-tag)
+      (setq lst (doxymacs-xml-parse--xml-parse-add-non-ws
                  (buffer-substring-no-properties beg (point)) lst)
             beg (point)))
     (if (/= beg end)
-        (setq lst (xml-parse-add-non-ws
+        (setq lst (doxymacs-xml-parse--xml-parse-add-non-ws
                    (buffer-substring-no-properties beg end) lst)))
     lst))
 
-(defun xml-parse-read (&optional progress-callback)
+(defun doxymacs-xml-parse--xml-parse-read (&optional progress-callback)
   (let ((beg (search-forward "<" nil t)) after)
     (if progress-callback
         (funcall progress-callback 
                  (* (/ (float (point)) (float (point-max))) 100)))
     (while (and beg (memq (setq after (char-after)) '(?! ??)))
-      (xml-parse-skip-tag)
+      (doxymacs-xml-parse--xml-parse-skip-tag)
       (setq beg (search-forward "<" nil t)))
     (when beg
       (if (eq after ?/)
@@ -359,17 +371,20 @@ Note that this only works if the opening tag starts at column 0."
                  (list tag)
                (setq tag (list tag))
                (let ((data-beg (point)) (tag-end (last tag)))
-                 (while (and (setq data (xml-parse-read progress-callback))
+                 (while (and (setq data
+                                   (doxymacs-xml-parse--xml-parse-read
+                                    progress-callback))
                              (not (stringp (cdr data))))
-                   (setq tag-end (xml-parse-concat data-beg (car data)
-                                                   tag-end)
+                   (setq tag-end (doxymacs-xml-parse--xml-parse-concat
+                                  data-beg (car data)
+                                  tag-end)
                          data-beg (point))
                    (setcdr tag-end (list (cdr data)))
                    (setq tag-end (cdr tag-end)))
-                 (xml-parse-concat data-beg (or (car data)
-                                                (point-max)) tag-end)
+                 (doxymacs-xml-parse--xml-parse-concat
+                  data-beg (or (car data) (point-max)) tag-end)
                  tag)))))))))
 
-(provide 'xml-parse)
+(provide 'doxymacs-xml-parse)
 
-;;; xml-parse.el ends here
+;;; doxymacs-xml-parse.el ends here

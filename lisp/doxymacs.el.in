@@ -230,9 +230,10 @@
 (provide 'doxymacs)
 
 (require 'custom)
-(require 'xml-parse)
 (require 'url)
 (require 'tempo)
+
+(require 'doxymacs-xml-parse)
 
 (defconst doxymacs-version "@VERSION@"
   "Doxymacs version number")
@@ -840,20 +841,23 @@ completion list."
     (set-buffer tags-buffer)
     (goto-char (point-min))
     (setq doxymacs-current-completion-list nil)
-    (let ((xml (read-xml 'doxymacs-xml-progress-callback))) ;Parse the file
-      (let* ((compound-list (xml-tag-children xml))
+    (let ((xml (doxymacs-xml-parse-read-xml 'doxymacs-xml-progress-callback)))
+                                        ; Parse this file
+      (let* ((compound-list (doxymacs-xml-parse--xml-tag-children xml))
              (num-compounds (length compound-list))
              (curr-compound-num 0))
-        (if (not (string= (xml-tag-name xml) "tagfile"))
+        (if (not (string= (doxymacs-xml-parse--xml-tag-name xml) "tagfile"))
             (error (concat "Invalid tag file: " (doxymacs-filename-to-xml f)))
           ;; Go through the compounds, adding them and their members to the
           ;; completion list.
           (while compound-list
             (let* ((curr-compound (car compound-list))
-                   (compound-name (cadr (xml-tag-child curr-compound "name")))
-                   (compound-kind (xml-tag-attr curr-compound "kind"))
-                   (compound-url (cadr
-                                  (xml-tag-child curr-compound "filename")))
+                   (compound-name (cadr (doxymacs-xml-parse--xml-tag-child
+                                         curr-compound "name")))
+                   (compound-kind (doxymacs-xml-parse--xml-tag-attr
+                                   curr-compound "kind"))
+                   (compound-url (cadr (doxymacs-xml-parse--xml-tag-child
+                                        curr-compound "filename")))
                    (compound-desc (concat compound-kind " " compound-name)))
               ;; Work around apparent bug in Doxygen 1.2.18
               (if (not (string-match "\\.html$" compound-url))
@@ -894,17 +898,21 @@ completion list."
 
 (defun doxymacs-add-compound-members (compound compound-name compound-url)
   "Get the members of the given compound"
-  (let ((children (xml-tag-children compound)))
+  (let ((children (doxymacs-xml-parse--xml-tag-children compound)))
     ;; Run through the children looking for ones with the "member" tag
     (while children
       (let* ((curr-child (car children)))
-        (if (string= (xml-tag-name curr-child) "member")
+        (if (string= (doxymacs-xml-parse--xml-tag-name curr-child) "member")
             ;; Found a member.  Throw it on the list.
-            (let* ((member-name (cadr (xml-tag-child curr-child "name")))
-                   (member-anchor (cadr (xml-tag-child curr-child "anchor")))
+            (let* ((member-name (cadr (doxymacs-xml-parse--xml-tag-child
+                                       curr-child "name")))
+                   (member-anchor (cadr (doxymacs-xml-parse--xml-tag-child
+                                         curr-child "anchor")))
                    (member-url (concat compound-url "#" member-anchor))
-                   (member-args (if (cdr (xml-tag-child curr-child "arglist"))
-                                    (cadr (xml-tag-child curr-child "arglist"))
+                   (member-args (if (cdr (doxymacs-xml-parse--xml-tag-child
+                                          curr-child "arglist"))
+                                    (cadr (doxymacs-xml-parse--xml-tag-child
+                                           curr-child "arglist"))
                                   ""))
                    (member-desc (concat compound-name "::"
                                         member-name member-args)))

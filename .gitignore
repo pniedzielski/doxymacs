@@ -20,7 +20,7 @@ lisp/doxymacs.elc
 lisp/elc-stamp
 lisp/Makefile
 lisp/Makefile.in
-lisp/xml-parse.elc
+lisp/doxymacs-xml-parse.elc
 Makefile
 Makefile.in
 missing

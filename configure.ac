@@ -1,5 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(doxymacs, 1.8.0, http://sourceforge.net/projects/doxymacs)
+AC_INIT([Doxymacs],
+        [1.8.0],
+        [patrick+doxymacs@pniedzielski.net],
+        [doxymacs],
+        [https://pniedzielski.github.io/doxymacs/])
 
 AC_PREREQ(2.57)
 

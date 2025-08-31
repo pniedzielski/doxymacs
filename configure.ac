@@ -7,8 +7,6 @@ AC_INIT([Doxymacs],
 
 AC_PREREQ(2.57)
 
-AC_REVISION($Revision: 1.11 $)
-
 AC_CONFIG_SRCDIR(c/doxymacs_parser.c)
 
 AM_INIT_AUTOMAKE(doxymacs, 1.8.0)

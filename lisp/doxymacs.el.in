@@ -1,6 +1,4 @@
-;;; -*-emacs-lisp-*-
-;;; doxymacs.el --- ELisp package for making doxygen related stuff easier.
-;;
+;;; doxymacs.el --- ELisp package for making doxygen related stuff easier.   -*- mode: emacs-lisp; lexical-binding: nil -*-
 ;;
 ;; Copyright (C) 2001-2010 Ryan T. Sammartino
 ;;

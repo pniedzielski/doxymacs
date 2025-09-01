@@ -1650,8 +1650,8 @@ declarations."
             "([^()]*)\\)?"                               ; or opt. func args
             "[ \t\n]*"                                   ; opt. spaces
             "\\(=[ \t\n]*[^ \t\n]+[ \t\n]*\\)?"          ; optional assignment
-            "[ \t\n]*\\'"                                ; end
-            ) (car args-list))
+            "[ \t\n]*\\'")                               ; end
+            (car args-list))
           (cons
            (cond
             ;; var name in: (*name)
@@ -1724,8 +1724,8 @@ The argument list is a list of strings."
 
           ;; name
           "\\(\\([a-zA-Z0-9_~:<,>*&]\\|\\([ \t\n]+::[ \t\n]+\\)\\)+"
-          "\\(o?perator[ \t\n]*.[^(]*\\)?\\)[ \t\n]*("
-          ) nil t)
+          "\\(o?perator[ \t\n]*.[^(]*\\)?\\)[ \t\n]*(")
+          nil t)
 
         (let* ((func (buffer-substring (match-beginning 3) (match-end 3)))
                (args (buffer-substring (point) (progn

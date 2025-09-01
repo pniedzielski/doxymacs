@@ -1787,7 +1787,7 @@ declarations."
       (with-current-buffer (get-buffer-create "*doxymacs-scratch*")
         (erase-buffer)
         (insert args-string)
-        (beginning-of-buffer)
+        (goto-char (point-min))
         (search-forward "(")
         (prog1
             (let ((depth 1)

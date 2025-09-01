@@ -311,7 +311,7 @@ must be one of \"@\" or \"\\\"."
   :group 'doxymacs)
 
 (defcustom doxymacs-use-external-xml-parser
-  @DOXYMACS_USE_EXTERNAL_XML_PARSER@
+  nil
   "*Use the external (written in C) XML parser or the internal (LISP) parser.
 For smallish tag files, you are better off with the internal parser.
 For larger tag files, you are better off with the external one.

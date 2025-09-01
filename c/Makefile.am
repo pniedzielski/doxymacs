@@ -4,7 +4,7 @@ bin_PROGRAMS = doxymacs_parser
 
 doxymacs_parser_SOURCES = doxymacs_parser.c
 
-INCLUDES = $(XML_CPPFLAGS)
+INCLUDES = $(XML_CFLAGS)
 
 AM_CFLAGS = -Wall -Werror -fomit-frame-pointer
 

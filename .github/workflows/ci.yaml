@@ -64,7 +64,9 @@ jobs:
           ./configure
           echo "::endgroup::"
           echo "::group::Building..."
+          echo "::add-matcher::.github/workflows/problem-matchers/elisp-comp.json"
           make
+          echo "::remove-matcher owner=elisp-comp::"
           echo "::endgroup::"
 
       - name: Run checks and lint

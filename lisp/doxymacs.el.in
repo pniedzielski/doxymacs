@@ -1879,7 +1879,7 @@ and new-line characters cut off."
               (let ((s (if (string-search "new " str)
                            (substring str 4)
                          str)))
-                (string-trim s " +" " +")))
+                (string-trim s)))
             throws)))
 
 (defun doxymacs--get-throws ()

@@ -267,12 +267,12 @@ http://someplace.com/doc/foo/foo.xml, and all the files in
 file:///home/me/project/bar/doc/ and the XML tags file is at
 /home/me/project/bar/doc/bar.xml, then you would set this list to
 
-'((\"^/home/me/project/foo/\"
-\"http://someplace.com/doc/foo/foo.xml\"
-\"http://someplace.com/doc/foo/\")
-(\"^/home/me/project/bar/\"
-\"~/project/bar/doc/bar.xml\"
-\"file:///home/me/project/bar/doc/\"))"
+\='((\"^/home/me/project/foo/\"
+  \"http://someplace.com/doc/foo/foo.xml\"
+  \"http://someplace.com/doc/foo/\")
+ (\"^/home/me/project/bar/\"
+  \"~/project/bar/doc/bar.xml\"
+  \"file:///home/me/project/bar/doc/\"))"
   :type 'list
   :group 'doxymacs)
 
@@ -364,9 +364,9 @@ an assoc list with the function's name, argument list (BUG: may be
 incorrect for parameters that require parentheses), and return
 value:
 
-(cdr (assoc 'func (doxymacs-find-next-func))) is the function name (string).
-(cdr (assoc 'args (doxymacs-find-next-func))) is a list of arguments.
-(cdr (assoc 'return (doxymacs-find-next-func))) is the return type (string).
+(cdr (assoc \='func (doxymacs-find-next-func))) is the function name (string).
+(cdr (assoc \='args (doxymacs-find-next-func))) is a list of arguments.
+(cdr (assoc \='return (doxymacs-find-next-func))) is the return type (string).
 
 The argument list is a list of strings.
 
@@ -423,7 +423,7 @@ by `doxymacs-doxygen-style' will be used."
 
 (defvar doxymacs-tags-buffers nil
   "The buffers with our Doxygen tags; a list of the form
-'((DIR . BUFFER) (...)) where:
+\='((DIR . BUFFER) (...)) where:
 
 DIR is one of the directories from `doxymacs-doxygen-dirs'; and
 BUFFER is the buffer holding the Doxygen tags for that DIR.")
@@ -1204,7 +1204,7 @@ the completion or nil if canceled by the user."
     ("\""))
   "Available doxygen commands.  Format is
 
-'((\"command\" args) ...)
+\='((\"command\" args) ...)
 
 where:
 
@@ -1897,9 +1897,9 @@ and new-line characters cut off."
 (defun doxymacs-find-next-func ()
   "Returns a list describing next function declaration, or nil if not found.
 
-(cdr (assoc 'func (doxymacs-find-next-func))) is the function name (string).
-(cdr (assoc 'args (doxymacs-find-next-func))) is a list of arguments.
-(cdr (assoc 'return (doxymacs-find-next-func))) is the return type (string).
+(cdr (assoc \='func (doxymacs-find-next-func))) is the function name (string).
+(cdr (assoc \='args (doxymacs-find-next-func))) is a list of arguments.
+(cdr (assoc \='return (doxymacs-find-next-func))) is the return type (string).
 
 The argument list is a list of strings."
   (interactive)

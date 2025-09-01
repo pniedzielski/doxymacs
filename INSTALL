@@ -29,10 +29,6 @@ Be sure these are properly configured and installed before proceeding.
    $ make ELCFILES=
    $ make install ELCFILES=
 
-  If you do not want to run or cannot run configure then some pre-baked
-  .el files are available in the no-autoconf/ directory; simply copy
-  these to somewhere in your load-path.
-
 - Customise the variable doxymacs-doxygen-dirs.
   Doxymacs customisation can be done from the Options | Customize menu,
   under Emacs | Programming | Tools | Doxymacs.

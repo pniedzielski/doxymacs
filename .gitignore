@@ -24,5 +24,3 @@ lisp/doxymacs-xml-parse.elc
 Makefile
 Makefile.in
 missing
-no-autoconf/Makefile
-no-autoconf/Makefile.in

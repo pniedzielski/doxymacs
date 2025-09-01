@@ -8,7 +8,7 @@
 ;;         Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
 ;; Version: @VERSION@
-;; Keywords: doxygen documentation
+;; Keywords: c, convenience, tools
 ;; URL: https://pniedzielski.github.io/doxymacs/
 ;;
 ;; This file is NOT part of GNU Emacs or XEmacs.

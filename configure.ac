@@ -28,17 +28,11 @@ dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
 
 dnl Doxymacs specific configure options
-AC_ARG_WITH(default-style,
-  AS_HELP_STRING([--with-default-style=STYLE],
-                 [Default Doxygen style to use.  One of "JavaDoc", "Qt", "C++" or "C++!".  Default "JavaDoc". ]),
-  DOXYMACS_DEFAULT_STYLE="$withval", DOXYMACS_DEFAULT_STYLE="JavaDoc")
-
 AC_ARG_WITH(external-xml-parser,
   AS_HELP_STRING([--with-external-xml-parser],
                  [Use external default xml parser by default.  Default is to use internal xml parser.]),
   DOXYMACS_USE_EXTERNAL_XML_PARSER="t", DOXYMACS_USE_EXTERNAL_XML_PARSER="nil")
 
-AC_SUBST(DOXYMACS_DEFAULT_STYLE)
 AC_SUBST(DOXYMACS_USE_EXTERNAL_XML_PARSER)
 
 dnl Here is a hack to get the REAL bindir without any other

@@ -3,15 +3,15 @@ doxymacs
 
 [![Packaging status](https://repology.org/badge/tiny-repos/emacs:doxymacs.svg)](https://repology.org/project/emacs:doxymacs/versions)
 
-doxymacs is an e-lisp package for making doxygen usage easier under {X}Emacs.
+doxymacs is an e-lisp package for making doxygen usage easier under GNU
+Emacs.
 
 doxymacs homepage: http://doxymacs.sourceforge.net/
 
 Doxymacs has been tested on and works with:
  - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.3, 21.4.1, 23.1.1
- - XEmacs 21.1 (patch 14), 21.4 (patch 4, 5, 6, 17)
 
-If you have success or failure with other versions of {X}Emacs, please
+If you have success or failure with other versions of GNU Emacs, please
 let the authors know.
 
 See COPYING for the full text of the license under which is this work

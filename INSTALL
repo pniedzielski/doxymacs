@@ -22,9 +22,7 @@ Be sure these are properly configured and installed before proceeding.
    $ EMACSLOADPATH=... make
 
   where ... is a colon separated list of directories to search for
-  packages.  To byte compile with XEmacs, set the variable EMACS:
-
-   $ EMACS=xemacs make
+  packages.
 
   If you would rather not byte compile the .el files at all, then do:
 

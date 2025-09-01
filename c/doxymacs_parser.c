@@ -270,7 +270,7 @@ inline static int AddToCompletionList(const char *name,
     return 0;
 }
 
-/* Encode the given string so that {X}Emacs will understand it */
+/* Encode the given string so that Emacs will understand it */
 static char *Encode(const char *s)
 {
     unsigned int extra_len = 0;
@@ -336,7 +336,7 @@ static char *Encode(const char *s)
     }
 }
 
-/* Output the completion list in a way {X}Emacs can easily read in */
+/* Output the completion list in a way Emacs can easily read in */
 
 static int OutputCompletionList(void)
 {

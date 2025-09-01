@@ -1,5 +1,6 @@
 ;;; xml-parse.el --- Code to efficiently read/write XML data with Elisp   -*- mode: emacs-lisp; lexical-binding: nil -*-
 
+;; Copyright (C) 2025 Patrick M. Niedzielski.
 ;; Copyright (C) 2001 John Wiegley.
 
 ;; Author: John Wiegley <johnw@gnu.org>
@@ -239,11 +240,6 @@ Note that this only works if the opening tag starts at column 0."
       (insert-xml tags t))))
 
 ;;; Internal Functions
-
-
-;;; RTS did this 30/04/2001
-(if (featurep 'xemacs)
-    (defalias 'match-string-no-properties 'match-string))
 
 
 (defun xml-parse-profile ()

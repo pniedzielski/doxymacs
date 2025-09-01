@@ -21,9 +21,6 @@ AM_PATH_LISPDIR
 dnl Checks for libraries.
 AM_PATH_XML2(2.6.13)
 
-dnl Checks for header files.
-AC_HEADER_STDC
-
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 

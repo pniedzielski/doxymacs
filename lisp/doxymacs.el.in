@@ -273,7 +273,17 @@ file:///home/me/project/bar/doc/ and the XML tags file is at
  (\"^/home/me/project/bar/\"
   \"~/project/bar/doc/bar.xml\"
   \"file:///home/me/project/bar/doc/\"))"
-  :type 'list
+  :type '(repeat
+          (group
+           (regexp :tag "Directory regexp"
+                   :format "%t: %v %h \n"
+                   :doc "A regular expression that matches a directory.")
+           (file   :tag "Doxygen tag file"
+                   :format "%t: %v %h \n"
+                   :doc "The file name or URL of the corresponding Doxygen XML tags.")
+           (file   :tag "URL of Doxygen documentation"
+                   :format "%t: %v %h \n"
+                   :doc "The URL of the Doxygen documentation that matches that directory.")))
   :group 'doxymacs)
 
 (defcustom doxymacs-doxygen-style
@@ -331,7 +341,7 @@ If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
 For help with tempo templates, see `tempo-define-template'."
-  :type 'list
+  :type 'sexp
   :group 'doxymacs)
 
 (defcustom doxymacs-blank-singleline-comment-template
@@ -341,7 +351,7 @@ If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
 For help with tempo templates, see `tempo-define-template'."
-  :type 'list
+  :type 'sexp
   :group 'doxymacs)
 
 (defcustom doxymacs-file-comment-template
@@ -351,7 +361,7 @@ If nil, then a default template based on the current style as indicated
 by `doxymacs-doxygen-style' will be used.
 
 For help with tempo templates, see `tempo-define-template'."
-  :type 'list
+  :type 'sexp
   :group 'doxymacs)
 
 (defcustom doxymacs-function-comment-template
@@ -371,7 +381,7 @@ value:
 The argument list is a list of strings.
 
 For help with tempo templates, see `tempo-define-template'."
-  :type 'list
+  :type 'sexp
   :group 'doxymacs)
 
 (defcustom doxymacs-void-types

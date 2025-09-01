@@ -9,7 +9,7 @@
 ;; Created: 24/03/2001
 ;; Version: @VERSION@
 ;; Keywords: c, convenience, tools
-;; Package-Requires: ((emacs "24.3") (compat "28.1"))
+;; Package-Requires: ((emacs "24.4") (compat "28.1"))
 ;; URL: https://pniedzielski.github.io/doxymacs/
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -231,8 +231,9 @@
 
 (require 'cl-lib)
 (require 'custom)
-(require 'url)
+(require 'subr-x)
 (require 'tempo)
+(require 'url)
 
 (require 'doxymacs-xml-parse)
 

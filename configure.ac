@@ -9,7 +9,7 @@ AC_PREREQ(2.57)
 
 AC_CONFIG_SRCDIR(c/doxymacs_parser.c)
 
-AM_INIT_AUTOMAKE(doxymacs, 1.8.0)
+AM_INIT_AUTOMAKE([foreign])     dnl Don't worry about missing GNU files.
 
 AC_PREFIX_DEFAULT(${HOME})
 

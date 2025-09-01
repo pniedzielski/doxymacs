@@ -55,7 +55,11 @@ jobs:
 
       - name: Generate the package
         run: |
-          ./bootstrap && ./configure && make
+          echo "::add-matcher::.github/workflows/problem-matchers/autotools.json"
+          ./bootstrap
+          echo "::remove-matcher owner=autotools::"
+          ./configure
+          make
 
       - name: Run checks and lint
         uses: leotaku/elisp-check@v1.4.1

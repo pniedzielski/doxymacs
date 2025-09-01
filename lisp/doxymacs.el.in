@@ -229,6 +229,7 @@
 
 (provide 'doxymacs)
 
+(require 'cl-lib)
 (require 'custom)
 (require 'url)
 (require 'tempo)
@@ -1220,12 +1221,12 @@ command.  An element of args could also be a list, the last element of which mus
                       doxymacs-commands
                       nil nil nil 'doxymacs-insert-command-history)))
   (insert (concat (doxymacs-doxygen-command-char) cmd))
-  (dolist (arg-prompt (cdr-safe (assoc cmd doxymacs-commands)))
+  (cl-dolist (arg-prompt (cdr-safe (assoc cmd doxymacs-commands)))
     (let ((arg (doxymacs-read-arg arg-prompt)))
       (if (or (= (length arg) 0) (string= "\n" arg))
           ;; If nothing is entered no point in prompting for the rest of
           ;; the args.
-          (return)
+          (cl-return)
         (insert (concat " " arg))))))
 
 (defun doxymacs-read-arg (arg)

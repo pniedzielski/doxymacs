@@ -1,4 +1,4 @@
-;;; xml-parse --- code to efficiently read/write XML data with Elisp
+;;; xml-parse --- code to efficiently read/write XML data with Elisp   -*- mode: emacs-lisp; lexical-binding: nil -*-
 
 ;; Copyright (C) 2001 John Wiegley.
 

@@ -1,4 +1,4 @@
-;;; xml-parse --- code to efficiently read/write XML data with Elisp   -*- mode: emacs-lisp; lexical-binding: nil -*-
+;;; xml-parse.el --- code to efficiently read/write XML data with Elisp   -*- mode: emacs-lisp; lexical-binding: nil -*-
 
 ;; Copyright (C) 2001 John Wiegley.
 
@@ -118,6 +118,8 @@
 ;;
 ;; Also, the attribute list and child lists can be searched using
 ;; `assoc', since they roughly have the same format as an alist.
+
+;;; Code:
 
 ;;;###autoload
 (defun read-xml (&optional progress-callback)

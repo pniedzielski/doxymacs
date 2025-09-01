@@ -27,7 +27,7 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-;; Commentary:
+;;; Commentary:
 ;;
 ;; Doxymacs depends on the following packages:
 ;;
@@ -109,7 +109,7 @@
 ;; If you have success or failure with other version of {X}Emacs, please
 ;; let the authors know.
 
-;; Change log:
+;;; Change log:
 ;;
 ;; 07/03/2010 - feature #1569376: Interactively insert doxygen commands.
 ;; 19/02/2010 - patch #2954452: Add new documentation style C++!.
@@ -229,12 +229,14 @@
 ;;            - minor formatting updates
 ;; 24/03/2001 - initial version.  Pretty lame.  Need some help.
 
-;; TODO:
+;;; TODO:
 ;;
 ;; - better end-user documentation
 ;; - fix all FIXMEs (of course)
 ;; - other stuff?
 
+;;; Code:
+
 ;; Front matter and variables
 
 (provide 'doxymacs)

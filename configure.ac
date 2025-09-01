@@ -50,7 +50,6 @@ AC_SUBST(DOXYMACS_PARSER)
 AC_ARG_VAR(EMACS, [How to invoke emacs (e.g. EMACS=emacs).])
 AC_ARG_VAR(EMACSLOADPATH, [Default load-path for EMACS.])
 
-AC_CONFIG_FILES([Makefile c/Makefile lisp/Makefile lisp/doxymacs.el
-                 no-autoconf/Makefile])
+AC_CONFIG_FILES([Makefile c/Makefile lisp/Makefile lisp/doxymacs.el])
 
 AC_OUTPUT

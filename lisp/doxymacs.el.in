@@ -282,8 +282,8 @@ file:///home/me/project/bar/doc/ and the XML tags file is at
 See http://www.stack.nl/~dimitri/doxygen/docblocks.html#docblocks for examples
 of the various styles.
 
-Must be one of \"JavaDoc\", \"Qt\", \"C++\", \"C++!\" or \"Fortran\". Setting this variable
-to anything else will generate errors."
+Must be one of \"JavaDoc\", \"Qt\", \"C++\", \"C++!\" or \"Fortran\". Setting
+this variable to anything else will generate errors."
   :type '(radio (const :tag "JavaDoc" "JavaDoc")
                 (const :tag "Qt" "Qt")
                 (const :tag "C++" "C++")
@@ -1209,11 +1209,12 @@ the completion or nil if canceled by the user."
 where:
 
 - command is the doxygen command.
-- args is a list of prompts to display for each argument to the
-command.  An element of args could also be a list, the last element of which must be a string to use for the prompt, and other elements may be:
-- newline to indicate a newline should be appended to the user's input.
-- word to indicate the argument accepts a single word only.
-- optional to indicate the argument is optional.")
+- args is a list of prompts to display for each argument to the command.  An
+  element of args could also be a list, the last element of which must be a
+  string to use for the prompt, and other elements may be:
+  - newline to indicate a newline should be appended to the user's input.
+  - word to indicate the argument accepts a single word only.
+  - optional to indicate the argument is optional.")
 
 (defun doxymacs-insert-command (cmd)
   "Insert a doxymacs command with completion."

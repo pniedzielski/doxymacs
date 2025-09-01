@@ -47,7 +47,7 @@ AC_CONFIG_COMMANDS_PRE([abs_bindir=${bindir} ; while echo ${abs_bindir} | grep '
 
 AC_SUBST(DOXYMACS_PARSER)
 
-AC_ARG_VAR(EMACS, [How to invoke emacs (e.g. EMACS=xemacs to use XEmacs).])
+AC_ARG_VAR(EMACS, [How to invoke emacs (e.g. EMACS=emacs).])
 AC_ARG_VAR(EMACSLOADPATH, [Default load-path for EMACS.])
 
 AC_CONFIG_FILES([Makefile c/Makefile lisp/Makefile lisp/doxymacs.el

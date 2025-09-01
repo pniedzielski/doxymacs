@@ -12,7 +12,7 @@
 ;; Package-Requires: ((emacs "24.3") (compat "28.1"))
 ;; URL: https://pniedzielski.github.io/doxymacs/
 ;;
-;; This file is NOT part of GNU Emacs or XEmacs.
+;; This file is NOT part of GNU Emacs.
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License
@@ -55,9 +55,7 @@
 ;;    $ EMACSLOADPATH=... make
 ;;
 ;;   where ... is a colon separated list of directories to search for
-;;   packages.  To byte compile with XEmacs, set the variable EMACS:
-;;
-;;    $ EMACS=xemacs make
+;;   packages.
 ;;
 ;;   If you would rather not byte compile the .el files at all, then do:
 ;;
@@ -105,9 +103,8 @@
 ;;
 ;; Doxymacs has been tested on and works with:
 ;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.2.92.1, 21.3, 21.4.1, 23.1.1
-;; - XEmacs 21.1 (patch 14), 21.4 (patches 4-17)
 ;;
-;; If you have success or failure with other version of {X}Emacs, please
+;; If you have success or failure with other version of GNU Emacs, please
 ;; let the authors know.
 
 ;;; Change log:
@@ -1019,10 +1016,7 @@ completion list."
   (let ((matches (all-completions initial collection pred)))
     ;; FIXME - Is this the proper way of doing this? Seems to work, but...
     (set-buffer (format " *Minibuf-%d*"
-                        ;; Here's a kludge.
-                        (if (featurep 'xemacs)
-                            (minibuffer-depth)
-                          (1+ (minibuffer-depth)))))
+                        (1+ (minibuffer-depth))))
     (with-output-to-temp-buffer doxymacs-completion-buffer
       (display-completion-list (sort matches 'string-lessp)))))
 
@@ -1084,19 +1078,6 @@ the completion or nil if canceled by the user."
 
 
 ;; These functions have to do with inserting doxygen commands in code
-
-;; FIXME
-;; So, in the source code for XEmacs 21.1.14, they commented out the
-;; definition of deactivate-mark for some reason... and the tempo package
-;; needs it.  So, here is a placeholder just to get it to stop
-;; complaining. This is a hack, since I don't know what the proper fix
-;; should be.
-(if (not (fboundp 'deactivate-mark))
-    (defsubst deactivate-mark ()
-      (zmacs-deactivate-region)))      ; Is this correct?
-;; Also need a hack for mark-active
-(if (not (boundp 'mark-active))
-    (defvar mark-active nil))          ; Is this correct? Probably not.
 
 ;; Inserting commands with completion
 

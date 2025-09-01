@@ -577,12 +577,12 @@ to comp-list."
                         (kill-buffer new-buffer)
                         (set-buffer currbuff)
                         (error (concat
-                                "Tag file " xml " not found."))))))
+                                "Tag file " xml " not found"))))))
                 (set-buffer currbuff))))
       ;; Couldn't find this file in doxymacs-doxygen-dirs
       (error (concat "File " (buffer-file-name)
                      " does not match any directories in"
-                     " doxymacs-doxygen-dirs.")))))
+                     " doxymacs-doxygen-dirs")))))
 
 (defun doxymacs-add-to-completion-list (symbol desc url)
   "Add a symbol to our completion list, along with its description and URL."
@@ -769,7 +769,7 @@ completion list."
    (let* ((f (buffer-file-name))
           (completion-list (doxymacs-filename-to-completion-list f)))
      (if (eq f nil)
-         (error "Current buffer has no file name associated with it.")
+         (error "Current buffer has no file name associated with it")
        (progn
          (save-excursion
            (if (eq completion-list nil)
@@ -1277,7 +1277,7 @@ where:
                  "return " (p "Returns: ") > n)))
         ;; "!<" '>)
         (progn
-          (error "Can't find next function declaration.")
+          (error "Can't find next function declaration")
           nil))))
   "Default Fortran-style template for function documentation.")
 
@@ -1299,7 +1299,7 @@ where:
                  "return " (p "Returns: ") > n))
            " */" '>)
         (progn
-          (error "Can't find next function declaration.")
+          (error "Can't find next function declaration")
           nil))))
   "Default JavaDoc-style template for function documentation.")
 
@@ -1320,7 +1320,7 @@ where:
                  "return " (p "Returns: ") > n))
            " */" '>)
         (progn
-          (error "Can't find next function declaraton.")
+          (error "Can't find next function declaration")
           nil))))
   "Default Qt-style template for function documentation.")
 
@@ -1340,7 +1340,7 @@ where:
                  "return " (p "Returns: ") > n))
            "///" '>)
         (progn
-          (error "Can't find next function declaraton.")
+          (error "Can't find next function declaration")
           nil))))
   "Default C++-style template for function documentation.")
 
@@ -1360,7 +1360,7 @@ where:
                  "return " (p "Returns: ") > n))
            "//!" '>)
         (progn
-          (error "Can't find next function declaraton.")
+          (error "Can't find next function declaration")
           nil))))
   "Default C++!-style template for function documentation.")
 
@@ -1370,7 +1370,7 @@ style."
   (error (concat
           "Invalid `doxymacs-doxygen-style': "
           doxymacs-doxygen-style
-          ": must be one of \"JavaDoc\", \"Qt\", \"C++\", \"C++!\", or \"Fortran\".")))
+          ": must be one of \"JavaDoc\", \"Qt\", \"C++\", \"C++!\", or \"Fortran\"")))
 
 ;; This should make it easier to add new templates and cut down
 ;; on copy-and-paste programming.

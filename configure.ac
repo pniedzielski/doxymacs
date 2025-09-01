@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
+AC_PREREQ([2.72])
+
 AC_INIT([Doxymacs],
         [1.8.0],
         [patrick+doxymacs@pniedzielski.net],
         [doxymacs],
         [https://pniedzielski.github.io/doxymacs/])
-
-AC_PREREQ(2.57)
 
 AC_CONFIG_SRCDIR(c/doxymacs_parser.c)
 
@@ -29,12 +29,12 @@ AC_CHECK_FUNCS(strdup)
 
 dnl Doxymacs specific configure options
 AC_ARG_WITH(default-style,
-  AC_HELP_STRING([--with-default-style=STYLE],
+  AS_HELP_STRING([--with-default-style=STYLE],
                  [Default Doxygen style to use.  One of "JavaDoc", "Qt", "C++" or "C++!".  Default "JavaDoc". ]),
   DOXYMACS_DEFAULT_STYLE="$withval", DOXYMACS_DEFAULT_STYLE="JavaDoc")
 
 AC_ARG_WITH(external-xml-parser,
-  AC_HELP_STRING([--with-external-xml-parser],
+  AS_HELP_STRING([--with-external-xml-parser],
                  [Use external default xml parser by default.  Default is to use internal xml parser.]),
   DOXYMACS_USE_EXTERNAL_XML_PARSER="t", DOXYMACS_USE_EXTERNAL_XML_PARSER="nil")
 

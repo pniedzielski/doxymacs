@@ -27,12 +27,6 @@ AC_C_CONST
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
 
-dnl Here is a hack to get the REAL bindir without any other
-dnl embedded variables.
-AC_CONFIG_COMMANDS_PRE([abs_bindir=${bindir} ; while echo ${abs_bindir} | grep '${[[A-Za-z0-9_]]\+}' > /dev/null ; do abs_bindir=`eval echo ${abs_bindir}` ; done ; DOXYMACS_PARSER=${abs_bindir}/doxymacs_parser${EXEEXT}])
-
-AC_SUBST(DOXYMACS_PARSER)
-
 AC_ARG_VAR(EMACS, [How to invoke emacs (e.g. EMACS=emacs).])
 AC_ARG_VAR(EMACSLOADPATH, [Default load-path for EMACS.])
 

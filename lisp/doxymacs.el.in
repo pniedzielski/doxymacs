@@ -1877,7 +1877,7 @@ and new-line characters cut off."
                                     (re-search-forward "[({=;]")
                                     (- (point) 1))))))
     (mapcar (lambda (str)
-              (let ((s (if (string-search "new " str)
+              (let ((s (if (string-match "^new " str)
                            (substring str 4)
                          str)))
                 (string-trim s)))

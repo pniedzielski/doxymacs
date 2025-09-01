@@ -50,6 +50,7 @@ GNU General Public License for more details.
 
 Doxymacs depends on the following packages:
 
+- pkg-config https://www.freedesktop.org/wiki/Software/pkg-config/
 - libxml2 http://www.libxml.org/
 
 Be sure these are properly configured and installed before proceeding.

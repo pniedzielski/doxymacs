@@ -19,7 +19,7 @@ AC_PROG_INSTALL
 AM_PATH_LISPDIR
 
 dnl Checks for libraries.
-AM_PATH_XML2(2.6.13)
+PKG_CHECK_MODULES(XML, [libxml-2.0 >= 2.6.13])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

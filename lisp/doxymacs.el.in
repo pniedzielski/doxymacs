@@ -1784,9 +1784,7 @@ declarations."
      ;; parenthesis first then comma. there must exist a closing parenthesis
      (t
       ;; cut off the (...) part
-      (save-excursion
-        ;; create temporary buffer
-        (set-buffer (get-buffer-create "*doxymacs-scratch*"))
+      (with-current-buffer (get-buffer-create "*doxymacs-scratch*")
         (erase-buffer)
         (insert args-string)
         (beginning-of-buffer)

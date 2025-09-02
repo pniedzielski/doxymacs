@@ -1118,6 +1118,8 @@ where:
   "Default C++!-style template for a blank single line doxygen comment.")
 
 (defun doxymacs-doxygen-command-char ()
+  "Return the Doxygen command character to use.
+This character depends on the value of `doxymacs-doxygen-style'."
   (cond
    (doxymacs-command-character doxymacs-command-character)
    ((string= doxymacs-doxygen-style "JavaDoc") "@")

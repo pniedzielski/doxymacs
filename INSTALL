@@ -1,47 +1,11 @@
-Doxymacs depends on the following packages:
+Doxymacs does not depend on any external packages by default; you can use it
+with any Emacsen.  To use doxymacs:
 
-- libxml2 http://www.libxml.org/
-
-Be sure these are properly configured and installed before proceeding.
-
-- Use the configure script to configure doxymacs:
-
-   $ ./configure
-   $ make
-   $ make install
-
-  Use ./configure --help for help on customising your configuration.
-
-  If you get
-
-!! File error (("Cannot open load file" "url"))
-
-  (or something similar) then set the variable EMACSLOADPATH before
-  doing make:
-
-   $ EMACSLOADPATH=... make
-
-  where ... is a colon separated list of directories to search for
-  packages.
-
-  If you would rather not byte compile the .el files at all, then do:
-
-   $ make ELCFILES=
-   $ make install ELCFILES=
+- Put (require 'doxymacs) in your .emacs
 
 - Customise the variable doxymacs-doxygen-dirs.
   Doxymacs customisation can be done from the Options | Customize menu,
   under Emacs | Programming | Tools | Doxymacs.
-
-- If your tags file is quite large (say, > 1 MB), consider setting
-  doxymacs-use-external-xml-parser to t and be sure to set
-  doxymacs-external-xml-parser-executable to the right value (the
-  default should usually be fine).  A suitable program is distributed
-  in the directory doxymacs/c/.  With an 11 MB XML tag file, the
-  internal process takes 20 minutes on a PIII 800 with 1 GB of RAM,
-  whereas the external process takes 12 seconds.
-
-- Put (require 'doxymacs) in your .emacs
 
 - Invoke doxymacs-mode with M-x doxymacs-mode. To have doxymacs-mode invoked
   automatically when in C/C++ mode, put 
@@ -71,4 +35,31 @@ Be sure these are properly configured and installed before proceeding.
   - C-c d m will insert a blank multi-line Doxygen comment.
   - C-c d s will insert a blank single-line Doxygen comment.
   - C-c d @ will insert grouping comments around the current region.
+
+Doxymacs comes with an external parser for Doxygen tags files written in C.  If
+your tags file is quite large (say, > 1 MB), you may find the external parser
+to be more performant.  The external parser depends on the following packages:
+
+- autotools https://www.gnu.org/software/autoconf/
+- pkg-config https://www.freedesktop.org/wiki/Software/pkg-config/
+- libxml2 http://www.libxml.org/
+
+Be sure these are properly configured and installed before proceeding.
+
+- Use the bootstrap script to generate the parser’s build system, if
+  `c/configure` does not already exist
+
+   $ cd c
+   $ ./bootstrap
+
+- Use the configure script to configure the external parser:
+
+   $ cd c
+   $ ./configure
+   $ make
+
+- Set doxymacs-use-external-xml-parser to t and be sure to set
+  doxymacs-external-xml-parser-executable to the path of the compiled external
+  parser.  With an 11 MB XML tag file, the internal process takes 20 minutes on
+  a PIII 800 with 1 GB of RAM, whereas the external process takes 12 seconds.
 

@@ -226,7 +226,8 @@ If nil, use a default one based on the current style as indicated by
 If nil, use a default one based on the current style as indicated by
 `doxymacs-doxygen-style'.
 
-Should be an empty string if comments are terminated by end-of-line."
+Should be an empty string if comments are terminated by the end of the
+line."
   :type '(choice (const :tag "None" nil)
                  string)
   :group 'doxymacs)

@@ -134,7 +134,9 @@
 (defun doxymacs-xml-parse-read-xml (&optional progress-callback)
   "Parse XML data at point into a Lisp structure.
 See `doxymacs-xml-parse-insert-xml' for a description of the format of
-this structure.  Point is left at the end of the XML structure read."
+this structure.  If PROGRESS-CALLBACK is specified, it will be invoked
+occasionally with the percentage of the parsing that has been completed.
+Point is left at the end of the XML structure read."
   (cdr (doxymacs-xml-parse--xml-parse-read progress-callback)))
 
 (defsubst doxymacs-xml-parse--xml-tag-with-attributes-p (tag)

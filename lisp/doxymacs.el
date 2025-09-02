@@ -447,51 +447,49 @@ variable `doxymacs-doxygen-dirs'."
 ;; Utility functions to look up filenames in the various association lists
 ;; we have
 
-(defun doxymacs-filename-to-element (f a)
-  "Lookup filename in one of our association lists and return associated
-element"
+(defun doxymacs-filename-to-element (filename a)
+  "Lookup FILENAME in one of our association lists A."
   (catch 'done
     (while a
-      (if (string-match (caar a) f)
+      (if (string-match (caar a) filename)
           (throw 'done
                  (cdar a))
         (setq a (cdr a))))))
 
-(defun doxymacs-filename-to-xml (f)
-  "Lookup filename in `doxymacs-doxygen-dirs' and return associated XML tags
-file."
-  (let ((xml-url (doxymacs-filename-to-element f doxymacs-doxygen-dirs)))
+(defun doxymacs-filename-to-xml (filename)
+  "Retrieve the XML tags file in `doxymacs-doxygen-dirs' using FILENAME."
+  (let ((xml-url (doxymacs-filename-to-element filename
+                                               doxymacs-doxygen-dirs)))
     (if xml-url
         (car xml-url))))
 
-(defun doxymacs-filename-to-url (f)
-  "Lookup filename in `doxymacs-doxygen-dirs' and return associated Doxygen
-documentation URL root."
-  (let ((xml-url (doxymacs-filename-to-element f doxymacs-doxygen-dirs)))
+(defun doxymacs-filename-to-url (filename)
+  "Retrieve the documentation URL in `doxymacs-doxygen-dirs' using FILENAME."
+  (let ((xml-url (doxymacs-filename-to-element filename
+                                               doxymacs-doxygen-dirs)))
     (if xml-url
         (cadr xml-url))))
 
-(defun doxymacs-filename-to-buffer (f)
-  "Lookup filename in `doxymacs-tags-buffers' and return associated buffer."
-  (doxymacs-filename-to-element f doxymacs-tags-buffers))
+(defun doxymacs-filename-to-buffer (filename)
+  "Retrieve a buffer in `doxymacs-tags-buffers' using FILENAME."
+  (doxymacs-filename-to-element filename doxymacs-tags-buffers))
 
-(defun doxymacs-filename-to-completion-list (f)
-  "Lookup filename in `doxymacs-completion-lists' and return associated
-completion list."
-  (doxymacs-filename-to-element f doxymacs-completion-lists))
+(defun doxymacs-filename-to-completion-list (filename)
+  "Retrieve a completion list in `doxymacs-completion-lists' using FILENAME."
+  (doxymacs-filename-to-element filename doxymacs-completion-lists))
 
-(defun doxymacs-filename-to-dir (f)
-  "Lookup filename in `doxymacs-doxygen-dirs' and return associated dir."
+(defun doxymacs-filename-to-dir (filename)
+  "Retrieve a directory in `doxymacs-doxygen-dirs' using FILENAME."
   (catch 'done
     (let ((dirs doxymacs-doxygen-dirs))
       (while dirs
-        (if (string-match (caar dirs) f)
+        (if (string-match (caar dirs) filename)
             (throw 'done
                    (caar dirs))
           (setq dirs (cdr dirs)))))))
 
 (defun doxymacs-set-dir-element (dir l e)
-  "Set the element associated with dir in l to e."
+  "Set the element associated with DIR in list L to E."
   (catch 'done
     (while l
       (let ((pair (car l)))
@@ -501,14 +499,12 @@ completion list."
           (setq l (cdr l)))))))
 
 (defun doxymacs-set-tags-buffer (dir buffer)
-  "Set the buffer associated with dir in `doxymacs-tags-buffers' to the given
-buffer."
+  "Set the BUFFER associated with DIR in `doxymacs-tags-buffers'."
   (doxymacs-set-dir-element dir doxymacs-tags-buffers buffer))
 
-(defun doxymacs-set-completion-list (dir comp-list)
-  "Set the completion list associated with dir in `doxymcas-completion-lists'
-to comp-list."
-  (doxymacs-set-dir-element dir doxymacs-completion-lists comp-list))
+(defun doxymacs-set-completion-list (dir completion-list)
+  "Set the COMPLETION-LIST associated with DIR in `doxymacs-completion-lists'."
+  (doxymacs-set-dir-element dir doxymacs-completion-lists completion-list))
 
 (defun doxymacs-url-exists-p (url)
   "Return t iff the URL exists."
@@ -543,11 +539,11 @@ to comp-list."
      (t (error (concat "Scheme " type " not supported for URL " url))))
     exists))
 
-(defun doxymacs-load-tags (f)
-  "Loads a Doxygen generated XML tags file into the buffer *doxytags*."
-  (let* ((tags-buffer (doxymacs-filename-to-buffer f))
-         (dir (doxymacs-filename-to-dir f))
-         (xml (doxymacs-filename-to-xml f)))
+(defun doxymacs-load-tags (file)
+  "Loads a Doxygen generated XML tags FILE into the buffer *doxytags*."
+  (let* ((tags-buffer (doxymacs-filename-to-buffer file))
+         (dir (doxymacs-filename-to-dir file))
+         (xml (doxymacs-filename-to-xml file)))
     (if (and xml dir)
         (if (or (eq tags-buffer nil)
                 (eq (buffer-live-p tags-buffer) nil))
@@ -584,29 +580,28 @@ to comp-list."
                      " does not match any directories in"
                      " doxymacs-doxygen-dirs")))))
 
-(defun doxymacs-add-to-completion-list (symbol desc url)
-  "Add a symbol to our completion list, along with its description and URL."
+(defun doxymacs-add-to-completion-list (symbol description url)
+  "Add a SYMBOL to our completion list, along with its DESCRIPTION and URL."
   (let ((check (assoc symbol doxymacs-current-completion-list)))
     (if check
         ;; There is already a symbol with the same name in the list
-        (if (not (assoc desc (cdr check)))
+        (if (not (assoc description (cdr check)))
             ;; If there is not yet a symbol with this desc, add it
             ;; FIXME: what to do if there is already a symbol??
-            (setcdr check (cons (cons desc url)
+            (setcdr check (cons (cons description url)
                                 (cdr check))))
       ;; There is not yet a symbol with this name in the list
       (setq doxymacs-current-completion-list
-            (cons (cons symbol (list (cons desc url)))
+            (cons (cons symbol (list (cons description url)))
                   doxymacs-current-completion-list)))))
 
-(defun doxymacs-fill-completion-list-with-external-parser (f)
-  "Use external parser to parse Doxygen XML tags file and get the
-completion list."
-  (doxymacs-load-tags f)
+(defun doxymacs-fill-completion-list-with-external-parser (file)
+  "Use external parser get the completion list from a Doxygen XML tags FILE."
+  (doxymacs-load-tags file)
   (let ((currbuff (current-buffer))
-        (dir (doxymacs-filename-to-dir f))
-        (comp-list (doxymacs-filename-to-completion-list f))
-        (tags-buffer (doxymacs-filename-to-buffer f)))
+        (dir (doxymacs-filename-to-dir file))
+        (comp-list (doxymacs-filename-to-completion-list file))
+        (tags-buffer (doxymacs-filename-to-buffer file)))
     (set-buffer tags-buffer)
     (goto-char (point-min))
     (doxymacs-set-completion-list dir nil)
@@ -638,20 +633,22 @@ completion list."
           (switch-to-buffer tags-buffer)
           (message (concat
                     "There were problems parsing "
-                    (doxymacs-filename-to-xml f) ".")))))))
+                    (doxymacs-filename-to-xml file) ".")))))))
 
 
 (defun doxymacs-xml-progress-callback (amount-done)
-  "Let the user know how far along the XML parsing is."
+  "Let the user know how far along the XML parsing is.
+This prints a message with the AMOUNT-DONE."
   (message (concat "Parsing ... " (format "%0.1f" amount-done) "%%")))
 
-(defun doxymacs-fill-completion-list-with-internal-parser (f)
-  "Load and parse the tags from the *doxytags* buffer, constructing our
-`doxymacs-completion-list' from it using the internal XML file parser."
-  (doxymacs-load-tags f)
+(defun doxymacs-fill-completion-list-with-internal-parser (file)
+  "Use internal parser get the completion list from a Doxygen XML tags FILE.
+This loads and parses the tags from the *doxytags* buffer, constructing
+our `doxymacs-completion-list'."
+  (doxymacs-load-tags file)
   (let ((currbuff (current-buffer))
-        (dir (doxymacs-filename-to-dir f))
-        (tags-buffer (doxymacs-filename-to-buffer f)))
+        (dir (doxymacs-filename-to-dir file))
+        (tags-buffer (doxymacs-filename-to-buffer file)))
     (set-buffer tags-buffer)
     (goto-char (point-min))
     (setq doxymacs-current-completion-list nil)
@@ -661,7 +658,8 @@ completion list."
              (num-compounds (length compound-list))
              (curr-compound-num 0))
         (if (not (string= (doxymacs-xml-parse--xml-tag-name xml) "tagfile"))
-            (error (concat "Invalid tag file: " (doxymacs-filename-to-xml f)))
+            (error (concat "Invalid tag file: "
+                           (doxymacs-filename-to-xml file)))
           ;; Go through the compounds, adding them and their members to the
           ;; completion list.
           (while compound-list
@@ -696,7 +694,7 @@ completion list."
                         "%%"))
               (setq curr-compound-num (1+ curr-compound-num))
               (setq compound-list (cdr compound-list)))))))
-    (if (doxymacs-filename-to-completion-list f)
+    (if (doxymacs-filename-to-completion-list file)
         ;; Replace
         (doxymacs-set-completion-list dir doxymacs-current-completion-list)
       ;; Add

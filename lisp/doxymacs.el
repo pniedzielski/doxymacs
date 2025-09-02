@@ -468,7 +468,7 @@ url-1a is the associated URL.")
   ;; All of the following text shows up in the "mode help" (C-h m)
   "Minor mode for using/creating Doxygen documentation.
 To submit a problem report, request a feature or get support, please
-visit doxymacs' homepage at http://doxymacs.sourceforge.net/.
+visit doxymacs' homepage at https://pniedzielski.github.io/doxymacs/.
 
 To see what version of doxymacs you are running, enter
 `\\[doxymacs-version]'.

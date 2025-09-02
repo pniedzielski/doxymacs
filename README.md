@@ -6,7 +6,7 @@ doxymacs
 doxymacs is an e-lisp package for making doxygen usage easier under GNU
 Emacs.
 
-doxymacs homepage: http://doxymacs.sourceforge.net/
+doxymacs homepage: https://pniedzielski.github.io/doxymacs/
 
 Doxymacs has been tested on and works with:
  - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.3, 21.4.1, 23.1.1

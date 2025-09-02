@@ -16,7 +16,6 @@ AC_PREFIX_DEFAULT(${HOME})
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_INSTALL
-AM_PATH_LISPDIR
 
 dnl Checks for libraries.
 PKG_CHECK_MODULES(XML, [libxml-2.0 >= 2.6.13])
@@ -27,9 +26,6 @@ AC_C_CONST
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
 
-AC_ARG_VAR(EMACS, [How to invoke emacs (e.g. EMACS=emacs).])
-AC_ARG_VAR(EMACSLOADPATH, [Default load-path for EMACS.])
-
-AC_CONFIG_FILES([Makefile c/Makefile lisp/Makefile])
+AC_CONFIG_FILES([Makefile c/Makefile])
 
 AC_OUTPUT

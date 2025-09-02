@@ -16,9 +16,6 @@ configure
 depcomp
 install-sh
 lisp/doxymacs.elc
-lisp/elc-stamp
-lisp/Makefile
-lisp/Makefile.in
 lisp/doxymacs-xml-parse.elc
 Makefile
 Makefile.in

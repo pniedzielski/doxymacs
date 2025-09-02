@@ -30,66 +30,18 @@
 
 ;;; Commentary:
 ;;
-;; Doxymacs does not depend on any external packages by default; you can use it
-;; with any Emacsen.  To use doxymacs:
+;; Doxymacs provides a minor mode `doxymacs-mode' for GNU Emacs that provides
+;; tighter integration with Doxygen, the multi-language documentation
+;; generator.  It provides a number of features that make working with Doxygen
+;; comments and documentation easier:
 
-;; - Put (require 'doxymacs) in your .emacs
-
-;; - Customise the variable doxymacs-doxygen-dirs.
-;;   Doxymacs customisation can be done from the Options | Customize menu,
-;;   under Emacs | Programming | Tools | Doxymacs.
-
-;; - Invoke doxymacs-mode with M-x doxymacs-mode. To have doxymacs-mode invoked
-;;   automatically when in C/C++ mode, put
-
-;;   (add-hook 'c-mode-common-hook 'doxymacs-mode)
-
-;;   in your .emacs.
-
-;; - If you want Doxygen keywords fontified use M-x doxymacs-font-lock.
-;;   To do it automatically, add the following to your .emacs:
-
-;;   (defun my-doxymacs-font-lock-hook ()
-;;     (if (or (eq major-mode 'c-mode) (eq major-mode 'c++-mode))
-;;         (doxymacs-font-lock)))
-;;   (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
-
-;;   This will add the Doxygen keywords to c-mode and c++-mode only.
-
-;; Doxymacs comes with an external parser for Doxygen tags files written in C.
-;; If your tags file is quite large (say, > 1 MB), you may find the external
-;; parser to be more performant.  The external parser depends on the following
-;; packages:
-
-;; - autotools https://www.gnu.org/software/autoconf/
-;; - pkg-config https://www.freedesktop.org/wiki/Software/pkg-config/
-;; - libxml2 http://www.libxml.org/
-
-;; Be sure these are properly configured and installed before proceeding.
-
-;; - Use the bootstrap script to generate the parser’s build system, if
-;;   `c/configure` does not already exist
-
-;;    $ cd c
-;;    $ ./bootstrap
-
-;; - Use the configure script to configure the external parser:
-
-;;    $ cd c
-;;    $ ./configure
-;;    $ make
-
-;; - Set doxymacs-use-external-xml-parser to t and be sure to set
-;;   doxymacs-external-xml-parser-executable to the path of the compiled
-;;   external parser.  With an 11 MB XML tag file, the internal process takes
-;;   20 minutes on a PIII 800 with 1 GB of RAM, whereas the external process
-;;   takes 12 seconds.
-
-;; Doxymacs has been tested on and works with:
-;; - GNU Emacs 20.7.1, 21.1.1, 21.2.1, 21.2.92.1, 21.3, 21.4.1, 23.1.1
-
-;; If you have success or failure with other version of GNU Emacs, please
-;; let the authors know.
+;;  - Lookup documentation for symbols from Emacs in the browser of your
+;;    choice.
+;;  - Easily insert Doxygen style comments into source code (C, C++, Javadoc,
+;;    and Fortran are supported).
+;;  - Fontify Doxygen keywords in comments.
+;;  - Optionally use an “external” (i.e., written in C) XML parser to speed up
+;;    building the completion list.
 
 ;;; Code:
 

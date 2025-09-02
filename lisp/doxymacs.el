@@ -762,7 +762,8 @@ our `doxymacs-completion-list'."
         nil))))
 
 (defun doxymacs-lookup (symbol &optional filename)
-  "Look up the symbol under the cursor in Doxygen generated documentation."
+  "Look up the SYMBOL under the cursor in Doxygen generated documentation.
+If FILENAME is provided, lookup the SYMBOL coming from this file name."
   (interactive
    (let* ((f (buffer-file-name))
           (completion-list (doxymacs-filename-to-completion-list f)))
@@ -788,7 +789,10 @@ our `doxymacs-completion-list'."
         (doxymacs-display-url (doxymacs-filename-to-url filename) url))))
 
 (defun doxymacs-display-completions (initial collection &optional pred)
-  "Display available completions."
+  "Display available completions of INITIAL in COLLECTION.
+
+If PRED is non-nil, it is a function in one or two arguments that is used to
+filter possible completions."
   (let ((matches (all-completions initial collection pred)))
     ;; FIXME - Is this the proper way of doing this? Seems to work, but...
     (set-buffer (format " *Minibuf-%d*"
@@ -797,7 +801,10 @@ our `doxymacs-completion-list'."
       (display-completion-list (sort matches 'string-lessp)))))
 
 (defun doxymacs-symbol-completion (initial collection &optional pred)
-  "Do completion for given symbol."
+  "Do completion for given symbol INITIAL in COLLECTION.
+
+If PRED is non-nil, it is a function in one or two arguments that is used to
+filter possible completions."
   (let ((completion (try-completion initial collection pred)))
     (cond ((eq completion t)
            ;; Only one completion found.  Validate it.
@@ -821,7 +828,7 @@ our `doxymacs-completion-list'."
                nil))))))
 
 (defun doxymacs-validate-symbol-completion (initial collection &optional pred)
-  "Check whether the symbol (initial) has multiple descriptions, and if so
+  "Check whether the symbol INITIAL has multiple descriptions, and if so
 continue completion on those descriptions.  In the end it returns the URL for
 the completion or nil if canceled by the user."
   (let ((new-collection (cdr (assoc initial collection))))

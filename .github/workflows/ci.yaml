@@ -53,8 +53,9 @@ jobs:
 
       - uses: actions/checkout@v5
 
-      - name: Generate the package
+      - name: Build the external parser
         run: |
+          cd c
           echo "::group::Bootstrapping..."
           echo "::add-matcher::.github/workflows/problem-matchers/autotools.json"
           ./bootstrap
@@ -84,7 +85,7 @@ jobs:
         run: |
           VERSION_HEADER=$(sed -rn 's/^;; Version: ([a-zA-Z0-9.+-]+).*$/\1/p' lisp/doxymacs.el)
           VERSION_CONST=$(sed -rn 's/^\(defconst doxymacs-version "([a-zA-Z0-9.+-]+)".*$/\1/p' lisp/doxymacs.el)
-          VERSION_AUTOCONF=$(sed -rn '/AC_INIT/ { N; s/^AC_INIT.*,.*\[([a-zA-Z0-9.+-]+)\],.*$/\1/p }' configure.ac)
+          VERSION_AUTOCONF=$(sed -rn '/AC_INIT/ { N; s/^AC_INIT.*,.*\[([a-zA-Z0-9.+-]+)\],.*$/\1/p }' c/configure.ac)
           echo "Version string in ELisp header: $VERSION_HEADER"
           echo "Version string in ELisp constant: $VERSION_CONST"
           echo "Version string in Autoconf: $VERSION_AUTOCONF"

@@ -1,13 +1,13 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.69])
 
-AC_INIT([Doxymacs],
+AC_INIT([Doxymacs Parser],
         [1.8.0],
         [patrick+doxymacs@pniedzielski.net],
-        [doxymacs],
+        [doxymacs_parser],
         [https://pniedzielski.github.io/doxymacs/])
 
-AC_CONFIG_SRCDIR(c/doxymacs_parser.c)
+AC_CONFIG_SRCDIR(doxymacs_parser.c)
 
 AM_INIT_AUTOMAKE([foreign])     dnl Don't worry about missing GNU files.
 
@@ -26,6 +26,6 @@ AC_C_CONST
 dnl Checks for library functions.
 AC_CHECK_FUNCS(strdup)
 
-AC_CONFIG_FILES([Makefile c/Makefile])
+AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

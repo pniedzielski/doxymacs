@@ -540,7 +540,7 @@ variable `doxymacs-doxygen-dirs'."
     exists))
 
 (defun doxymacs-load-tags (file)
-  "Loads a Doxygen generated XML tags FILE into the buffer *doxytags*."
+  "Load a Doxygen generated XML tags FILE into the buffer *doxytags*."
   (let* ((tags-buffer (doxymacs-filename-to-buffer file))
          (dir (doxymacs-filename-to-dir file))
          (xml (doxymacs-filename-to-xml file)))
@@ -734,7 +734,7 @@ our `doxymacs-completion-list'."
         (setq children (cdr children))))))
 
 (defun doxymacs-display-url (root url)
-  "Displays the given match."
+  "Display the given match."
   (apply doxymacs-browse-url-function (list (concat root "/" url))))
 
 ;; Some versions of GNU Emacs don't have symbol-near-point apparently
@@ -821,7 +821,7 @@ our `doxymacs-completion-list'."
                nil))))))
 
 (defun doxymacs-validate-symbol-completion (initial collection &optional pred)
-  "Checks whether the symbol (initial) has multiple descriptions, and if so
+  "Check whether the symbol (initial) has multiple descriptions, and if so
 continue completion on those descriptions.  In the end it returns the URL for
 the completion or nil if canceled by the user."
   (let ((new-collection (cdr (assoc initial collection))))
@@ -1203,7 +1203,7 @@ where:
 
 
 (defun doxymacs-parm-tempo-element (parms)
-  "Inserts tempo elements for the given parms in the given style."
+  "Insert tempo elements for the given parms in the given style."
   (if parms
       (let ((prompt (concat "Parameter " (car parms) ": ")))
         (cond
@@ -1232,7 +1232,7 @@ where:
     nil))
 
 (defun doxymacs-throws-tempo-element (throws)
-  "Inserts tempo elements for the throws declarations in the given style"
+  "Insert tempo elements for the throws declarations in the given style"
   (if throws
       (let ((prompt (concat "Throws " (car throws) ": ")))
         (cond
@@ -1396,22 +1396,22 @@ style."
       (doxymacs-invalid-style)))))
 
 (defun doxymacs-insert-blank-multiline-comment ()
-  "Inserts a multi-line blank Doxygen comment at the current point."
+  "Insert a multi-line blank Doxygen comment at the current point."
   (interactive "*")
   (doxymacs-call-template "blank-multiline-comment"))
 
 (defun doxymacs-insert-blank-singleline-comment ()
-  "Inserts a single-line blank Doxygen comment at current point."
+  "Insert a single-line blank Doxygen comment at current point."
   (interactive "*")
   (doxymacs-call-template "blank-singleline-comment"))
 
 (defun doxymacs-insert-file-comment ()
-  "Inserts Doxygen documentation for the current file at current point."
+  "Insert Doxygen documentation for the current file at current point."
   (interactive "*")
   (doxymacs-call-template "file-comment"))
 
 (defun doxymacs-insert-function-comment ()
-  "Inserts Doxygen documentation for the next function declaration at
+  "Insert Doxygen documentation for the next function declaration at
 current point."
   (interactive "*")
   (doxymacs-call-template "function-comment"))
@@ -1435,7 +1435,7 @@ This function is called with skip and with point at the beginning of
 the comment's starting delimiter.")
 
 (defun doxymacs-insert-member-comment ()
-  "Inserts Doxygen documentation for the member on the current line in
+  "Insert Doxygen documentation for the member on the current line in
 the column given by `comment-column' (much like \\[indent-for-comment])."
   (interactive "*")
   (let* ((empty (save-excursion (beginning-of-line)
@@ -1514,7 +1514,7 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
               (insert ender))))))))
 
 (defun doxymacs-insert-grouping-comments (start end)
-  "Inserts doxygen grouping comments around the current region."
+  "Insert doxygen grouping comments around the current region."
   (interactive "*r")
   (let* ((starter  (or doxymacs-group-comment-start
                        (cond
@@ -1559,7 +1559,7 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 ;; argument list.  Used for documenting functions.
 
 (defun doxymacs-extract-args-list (args-string)
-  "Extracts the arguments from the given list (given as a string)."
+  "Extract the arguments from the given list (given as a string)."
   (cond
    ;; arg list is empty
    ((string-match "\\`[ \t\n]*\\'" args-string)
@@ -1580,8 +1580,7 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 
 
 (defun doxymacs-save-split (args-string)
-  "Splits a declaration list as string and returns list of single
-declarations."
+  "Split a declaration list as string and returns list of single declarations."
   (let ((comma-pos (string-match "," args-string))
         (paren-pos (string-match "(" args-string)))
     (cond
@@ -1666,7 +1665,7 @@ declarations."
         nil)))
 
 (defun doxymacs-core-string (s)
-  "Returns the argument string with leading and trailing blank
+  "Return the argument string with leading and trailing blank
 and new-line characters cut off."
   (string-match "\\`[ \t\n]*\\(.*?\\)[ \t\n]*\\'" s)
   (if (match-beginning 1)
@@ -1706,7 +1705,7 @@ and new-line characters cut off."
         (doxymacs--get-throws-implementation func-end)))))
 
 (defun doxymacs-find-next-func ()
-  "Returns a list describing next function declaration, or nil if not found.
+  "Return a list describing next function declaration, or nil if not found.
 
 (cdr (assoc \='func (doxymacs-find-next-func))) is the function name (string).
 (cdr (assoc \='args (doxymacs-find-next-func))) is a list of arguments.

@@ -325,6 +325,15 @@ Note that this only works if the opening tag starts at column 0."
     lst))
 
 (defun doxymacs-xml-parse--xml-parse-read (&optional progress-callback)
+  "Parse XML data at point into a Lisp structure incrementally.
+See `doxymacs-xml-parse-insert-xml' for a description of the format of
+this structure.
+
+This function is the implementation of `doxymacs-xml-parse-read-xml'.
+It recursively calls itself to parse through the entire buffer.  If
+PROGRESS-CALLBACK is specified, it will be invoked with the percentage
+of the parsing that has been completed.  Point is left at the end of the
+XML structure read."
   (let ((beg (search-forward "<" nil t)) after)
     (if progress-callback
         (funcall progress-callback

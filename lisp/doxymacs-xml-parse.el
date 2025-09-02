@@ -327,7 +327,7 @@ Note that this only works if the opening tag starts at column 0."
 (defun doxymacs-xml-parse--xml-parse-read (&optional progress-callback)
   (let ((beg (search-forward "<" nil t)) after)
     (if progress-callback
-        (funcall progress-callback 
+        (funcall progress-callback
                  (* (/ (float (point)) (float (point-max))) 100)))
     (while (and beg (memq (setq after (char-after)) '(?! ??)))
       (doxymacs-xml-parse--xml-parse-skip-tag)

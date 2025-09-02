@@ -10,6 +10,48 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  gitlint:
+    runs-on: ubuntu-latest
+    name: GitLint
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Install gitlint
+        run: |
+          python -m pip install gitlint
+
+      - name: Run gitlint
+        run: |
+          # Lint everything from the base to the latest
+          gitlint --commits "${{ github.event.pull_request.base.sha }}..HEAD" \
+                  -c general.ignore-merge-commits=false                       \
+                  -c general.ignore-fixup-commits=false                       \
+                  -c general.ignore-fixup-amend-commits=false                 \
+                  -c general.ignore-squash-commits=false                      \
+                  -c general.contrib=contrib-disallow-cleanup-commits,contrib-title-conventional-commits,contrib-body-requires-signed-off-by \
+                  -c title-must-not-contain-word.words=wip                    \
+                  -C .gitlint
+
+  version-check:
+    runs-on: ubuntu-latest
+    name: Version Consistency Check
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Ensure that the version string is the same everywhere
+        run: |
+          VERSION_HEADER=$(sed -rn 's/^;; Version: ([a-zA-Z0-9.+-]+).*$/\1/p' lisp/doxymacs.el)
+          VERSION_CONST=$(sed -rn 's/^\(defconst doxymacs-version "([a-zA-Z0-9.+-]+)".*$/\1/p' lisp/doxymacs.el)
+          VERSION_AUTOCONF=$(sed -rn '/AC_INIT/ { N; s/^AC_INIT.*,.*\[([a-zA-Z0-9.+-]+)\],.*$/\1/p }' c/configure.ac)
+          echo "Version string in ELisp header: $VERSION_HEADER"
+          echo "Version string in ELisp constant: $VERSION_CONST"
+          echo "Version string in Autoconf: $VERSION_AUTOCONF"
+          [ "$VERSION_HEADER" == "$VERSION_CONST" ] || { echo "::error::Version string in ELisp header and in ELisp constant differ"; exit 1; }
+          [ "$VERSION_HEADER" == "$VERSION_AUTOCONF" ] || { echo "::error::Version string in ELisp header and in Autoconf differ"; exit 1; }
+
   build-and-lint:
     runs-on: ubuntu-latest
     name: Build and Lint Package
@@ -74,45 +116,3 @@ jobs:
         uses: leotaku/elisp-check@v1.4.1
         with:
           file: lisp/*.el
-
-  version-check:
-    runs-on: ubuntu-latest
-    name: Version Consistency Check
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Ensure that the version string is the same everywhere
-        run: |
-          VERSION_HEADER=$(sed -rn 's/^;; Version: ([a-zA-Z0-9.+-]+).*$/\1/p' lisp/doxymacs.el)
-          VERSION_CONST=$(sed -rn 's/^\(defconst doxymacs-version "([a-zA-Z0-9.+-]+)".*$/\1/p' lisp/doxymacs.el)
-          VERSION_AUTOCONF=$(sed -rn '/AC_INIT/ { N; s/^AC_INIT.*,.*\[([a-zA-Z0-9.+-]+)\],.*$/\1/p }' c/configure.ac)
-          echo "Version string in ELisp header: $VERSION_HEADER"
-          echo "Version string in ELisp constant: $VERSION_CONST"
-          echo "Version string in Autoconf: $VERSION_AUTOCONF"
-          [ "$VERSION_HEADER" == "$VERSION_CONST" ] || { echo "::error::Version string in ELisp header and in ELisp constant differ"; exit 1; }
-          [ "$VERSION_HEADER" == "$VERSION_AUTOCONF" ] || { echo "::error::Version string in ELisp header and in Autoconf differ"; exit 1; }
-
-  gitlint:
-    runs-on: ubuntu-latest
-    name: GitLint
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-
-      - name: Install gitlint
-        run: |
-          python -m pip install gitlint
-
-      - name: Run gitlint
-        run: |
-          # Lint everything from the base to the latest
-          gitlint --commits "${{ github.event.pull_request.base.sha }}..HEAD" \
-                  -c general.ignore-merge-commits=false                       \
-                  -c general.ignore-fixup-commits=false                       \
-                  -c general.ignore-fixup-amend-commits=false                 \
-                  -c general.ignore-squash-commits=false                      \
-                  -c general.contrib=contrib-disallow-cleanup-commits,contrib-title-conventional-commits,contrib-body-requires-signed-off-by \
-                  -c title-must-not-contain-word.words=wip                    \
-                  -C .gitlint

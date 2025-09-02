@@ -74,6 +74,23 @@ jobs:
         with:
           file: lisp/*.el
 
+  version-check:
+    runs-on: ubuntu-latest
+    name: Version Consistency Check
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Ensure that the version string is the same everywhere
+        run: |
+          VERSION_HEADER=$(sed -rn 's/^;; Version: ([a-zA-Z0-9.+-]+).*$/\1/p' lisp/doxymacs.el.in)
+          VERSION_CONST=$(sed -rn 's/^\(defconst doxymacs-version "([a-zA-Z0-9.+-]+)".*$/\1/p' lisp/doxymacs.el.in)
+          VERSION_AUTOCONF=$(sed -rn '/AC_INIT/ { N; s/^AC_INIT.*,.*\[([a-zA-Z0-9.+-]+)\],.*$/\1/p }' configure.ac)
+          echo "Version string in ELisp header: $VERSION_HEADER"
+          echo "Version string in ELisp constant: $VERSION_CONST"
+          echo "Version string in Autoconf: $VERSION_AUTOCONF"
+          [ "$VERSION_HEADER" == "$VERSION_CONST" ] || { echo "::error::Version string in ELisp header and in ELisp constant differ"; exit 1; }
+          [ "$VERSION_HEADER" == "$VERSION_AUTOCONF" ] || { echo "::error::Version string in ELisp header and in Autoconf differ"; exit 1; }
+
   gitlint:
     runs-on: ubuntu-latest
     name: GitLint

@@ -7,7 +7,7 @@
 ;;         Ryan T. Sammartino <ryan.sammartino at gmail dot com>
 ;;         Kris Verbeeck <kris.verbeeck at advalvas dot be>
 ;; Created: 24/03/2001
-;; Version: @VERSION@
+;; Version: 1.8.0
 ;; Keywords: c, convenience, tools
 ;; Package-Requires: ((emacs "24.4") (compat "28.1"))
 ;; URL: https://pniedzielski.github.io/doxymacs/
@@ -237,7 +237,7 @@
 
 (require 'doxymacs-xml-parse)
 
-(defconst doxymacs-version "@VERSION@"
+(defconst doxymacs-version "1.8.0"
   "Doxymacs version number")
 
 (defun doxymacs-version ()

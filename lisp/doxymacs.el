@@ -710,7 +710,9 @@ our `doxymacs-completion-list'."
     (set-buffer currbuff)))
 
 (defun doxymacs-add-compound-members (compound compound-name compound-url)
-  "Get the members of the given compound."
+  "Get the members of the given COMPOUND.
+COMPOUND-NAME is the C++ symbol naming the compound holding the members,
+and COMPOUND-URL is the URL of the compound holding the members."
   (let ((children (doxymacs-xml-parse--xml-tag-children compound)))
     ;; Run through the children looking for ones with the "member" tag
     (while children
@@ -735,7 +737,10 @@ our `doxymacs-completion-list'."
         (setq children (cdr children))))))
 
 (defun doxymacs-display-url (root url)
-  "Display the given match."
+  "Display the given match.
+The argument given to ROOT is the root URL of the HTML documentation generated
+by Doxygen, and the argument given to URL is a URL to the match's
+documentation relative to the root URL."
   (apply doxymacs-browse-url-function (list (concat root "/" url))))
 
 ;; Some versions of GNU Emacs don't have symbol-near-point apparently
@@ -829,9 +834,11 @@ filter possible completions."
                nil))))))
 
 (defun doxymacs-validate-symbol-completion (initial collection &optional pred)
-  "Check whether the symbol INITIAL has multiple descriptions, and if so
-continue completion on those descriptions.  In the end it returns the URL for
-the completion or nil if canceled by the user."
+  "Perform completion on all of descriptions of symbol INITIAL in COLLECTION.
+In the end, return the URL for the completion or nil if canceled by the user.
+
+If PRED is non-nil, it is a function in one or two arguments that is used to
+filter possible completions."
   (let ((new-collection (cdr (assoc initial collection))))
     (if (> (length new-collection) 1)
         ;; More than one
@@ -840,7 +847,9 @@ the completion or nil if canceled by the user."
       (cdar new-collection))))
 
 (defun doxymacs-description-completion (initial collection &optional pred)
-  "Do completion for given description."
+  "Do completion for given symbol INITIAL in COLLECTION.
+If PRED is non-nil, it is a function in one or two arguments that is used to
+filter possible completions."
   (doxymacs-display-completions initial collection pred)
   (let ((completion (completing-read "Select: " collection pred nil initial)))
     (delete-window (get-buffer-window doxymacs-completion-buffer))
@@ -1033,14 +1042,14 @@ where:
   - word to indicate the argument accepts a single word only.
   - optional to indicate the argument is optional.")
 
-(defun doxymacs-insert-command (cmd)
-  "Insert a doxymacs command with completion."
+(defun doxymacs-insert-command (command)
+  "Insert a doxymacs COMMAND with completion."
   (interactive (list (completing-read
                       "Insert doxygen command: "
                       doxymacs-commands
                       nil nil nil 'doxymacs-insert-command-history)))
-  (insert (concat (doxymacs-doxygen-command-char) cmd))
-  (cl-dolist (arg-prompt (cdr-safe (assoc cmd doxymacs-commands)))
+  (insert (concat (doxymacs-doxygen-command-char) command))
+  (cl-dolist (arg-prompt (cdr-safe (assoc command doxymacs-commands)))
     (let ((arg (doxymacs-read-arg arg-prompt)))
       (if (or (= (length arg) 0) (string= "\n" arg))
           ;; If nothing is entered no point in prompting for the rest of
@@ -1049,6 +1058,7 @@ where:
         (insert (concat " " arg))))))
 
 (defun doxymacs-read-arg (arg)
+  "Read a given ARG from the user prompt."
   (let* ((newline (and (listp arg) (memq 'newline arg)))
          (word (and (listp arg) (memq 'word arg)))
          (optional (and (listp arg) (memq 'optional arg)))
@@ -1209,37 +1219,37 @@ where:
   "Default C++!-style template for file documentation.")
 
 
-(defun doxymacs-parm-tempo-element (parms)
-  "Insert tempo elements for the given parms in the given style."
-  (if parms
-      (let ((prompt (concat "Parameter " (car parms) ": ")))
+(defun doxymacs-parm-tempo-element (params)
+  "Insert tempo elements for the given PARAMS in the given style."
+  (if params
+      (let ((prompt (concat "Parameter " (car params) ": ")))
         (cond
          ((string= doxymacs-doxygen-style "JavaDoc")
           (list 'l " * " (doxymacs-doxygen-command-char)
-                "param " (car parms) " " (list 'p prompt) '> 'n
-                (doxymacs-parm-tempo-element (cdr parms))))
+                "param " (car params) " " (list 'p prompt) '> 'n
+                (doxymacs-parm-tempo-element (cdr params))))
          ((string= doxymacs-doxygen-style "Qt")
           (list 'l " " (doxymacs-doxygen-command-char)
-                "param " (car parms) " " (list 'p prompt) '> 'n
-                (doxymacs-parm-tempo-element (cdr parms))))
+                "param " (car params) " " (list 'p prompt) '> 'n
+                (doxymacs-parm-tempo-element (cdr params))))
          ((string= doxymacs-doxygen-style "C++")
           (list 'l "/// " (doxymacs-doxygen-command-char)
-                "param " (car parms) " " (list 'p prompt) '> 'n
-                (doxymacs-parm-tempo-element (cdr parms))))
+                "param " (car params) " " (list 'p prompt) '> 'n
+                (doxymacs-parm-tempo-element (cdr params))))
          ((string= doxymacs-doxygen-style "C++!")
           (list 'l "//! " (doxymacs-doxygen-command-char)
-                "param " (car parms) " " (list 'p prompt) '> 'n
-                (doxymacs-parm-tempo-element (cdr parms))))
+                "param " (car params) " " (list 'p prompt) '> 'n
+                (doxymacs-parm-tempo-element (cdr params))))
          ((string= doxymacs-doxygen-style "Fortran")
           (list 'l "!! " (doxymacs-doxygen-command-char)
-                "param " (car parms) " " (list 'p prompt) '> 'n
-                (doxymacs-parm-tempo-element (cdr parms))))
+                "param " (car params) " " (list 'p prompt) '> 'n
+                (doxymacs-parm-tempo-element (cdr params))))
          (t
           (doxymacs-invalid-style))))
     nil))
 
 (defun doxymacs-throws-tempo-element (throws)
-  "Insert tempo elements for the throws declarations in the given style."
+  "Insert tempo elements for the THROWS declarations in the given style."
   (if throws
       (let ((prompt (concat "Throws " (car throws) ": ")))
         (cond
@@ -1380,7 +1390,7 @@ style."
 ;; This should make it easier to add new templates and cut down
 ;; on copy-and-paste programming.
 (defun doxymacs-call-template (template-name)
-  "Insert the given template."
+  "Insert the template named TEMPLATE-NAME."
   (let* ((user-template-name (concat "doxymacs-" template-name "-template"))
          (user-template (car (read-from-string user-template-name)))
          (default-template-name (concat "doxymacs-"
@@ -1521,7 +1531,10 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
               (insert ender))))))))
 
 (defun doxymacs-insert-grouping-comments (start end)
-  "Insert doxygen grouping comments around the current region."
+  "Insert doxygen grouping comments around the current region.
+
+When called non-interactively, START and END determine the specified
+region."
   (interactive "*r")
   (let* ((starter  (or doxymacs-group-comment-start
                        (cond
@@ -1566,7 +1579,7 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 ;; argument list.  Used for documenting functions.
 
 (defun doxymacs-extract-args-list (args-string)
-  "Extract the arguments from the given list (given as a string)."
+  "Extract the arguments from the given ARGS-STRING."
   (cond
    ;; arg list is empty
    ((string-match "\\`[ \t\n]*\\'" args-string)
@@ -1587,7 +1600,7 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 
 
 (defun doxymacs-save-split (args-string)
-  "Split a declaration list as string and returns list of single declarations."
+  "Split a declaration list ARGS-STRING and return a list of declarations."
   (let ((comma-pos (string-match "," args-string))
         (paren-pos (string-match "(" args-string)))
     (cond
@@ -1640,7 +1653,7 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
 ;; contain another level of parentheses.  E.g. for:
 ;; int f(int (*g)(int (*h)()))
 (defun doxymacs-extract-args-list-helper (args-list)
-  "Recursively get names of arguments."
+  "Recursively get names of arguments from ARGS-LIST."
   (if args-list
       (if (string-match
            (concat
@@ -1672,8 +1685,7 @@ the column given by `comment-column' (much like \\[indent-for-comment])."
         nil)))
 
 (defun doxymacs-core-string (s)
-  "Return the argument string with leading and trailing blank
-and new-line characters cut off."
+  "Trim string S of leading and trailing blank and new-line characters."
   (string-match "\\`[ \t\n]*\\(.*?\\)[ \t\n]*\\'" s)
   (if (match-beginning 1)
       (substring s (match-beginning 1) (match-end 1))

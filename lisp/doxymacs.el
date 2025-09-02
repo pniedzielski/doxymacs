@@ -58,7 +58,7 @@
 (require 'doxymacs-xml-parse)
 
 (defconst doxymacs-version "1.8.0"
-  "Doxymacs version number")
+  "Doxymacs version number.")
 
 (defun doxymacs-version ()
   "Report the current version of doxymacs in the minibuffer."
@@ -276,7 +276,7 @@ description-1a is one of symbol-1's description from the XML file; and
 url-1a is the associated URL.")
 
 (defvar doxymacs-current-completion-list nil
-  "The current list we are building")
+  "The current list we are building.")
 
 (defvar doxymacs-completion-buffer "*Completions*"
   "The buffer used for displaying multiple completions.")
@@ -709,7 +709,7 @@ our `doxymacs-completion-list'."
     (set-buffer currbuff)))
 
 (defun doxymacs-add-compound-members (compound compound-name compound-url)
-  "Get the members of the given compound"
+  "Get the members of the given compound."
   (let ((children (doxymacs-xml-parse--xml-tag-children compound)))
     ;; Run through the children looking for ones with the "member" tag
     (while children
@@ -1111,7 +1111,7 @@ where:
    (t "@")))
 
 (defun doxymacs-user-mail-address ()
-  "Return the user's email address"
+  "Return the user's email address."
   (or
    (and (and (fboundp 'user-mail-address) (user-mail-address))
         (list 'l " <" (user-mail-address) ">"))
@@ -1232,7 +1232,7 @@ where:
     nil))
 
 (defun doxymacs-throws-tempo-element (throws)
-  "Insert tempo elements for the throws declarations in the given style"
+  "Insert tempo elements for the throws declarations in the given style."
   (if throws
       (let ((prompt (concat "Throws " (car throws) ": ")))
         (cond

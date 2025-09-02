@@ -1424,13 +1424,12 @@ This character depends on the value of `doxymacs-doxygen-style'."
   (doxymacs-call-template "blank-singleline-comment"))
 
 (defun doxymacs-insert-file-comment ()
-  "Insert Doxygen documentation for the current file at current point."
+  "Insert Doxygen comment for the current file at current point."
   (interactive "*")
   (doxymacs-call-template "file-comment"))
 
 (defun doxymacs-insert-function-comment ()
-  "Insert Doxygen documentation for the next function declaration at
-current point."
+  "Insert Doxygen comment for the next function declaration at current point."
   (interactive "*")
   (doxymacs-call-template "function-comment"))
 
@@ -1453,8 +1452,9 @@ This function is called with skip and with point at the beginning of
 the comment's starting delimiter.")
 
 (defun doxymacs-insert-member-comment ()
-  "Insert Doxygen documentation for the member on the current line in
-the column given by `comment-column' (much like \\[indent-for-comment])."
+  "Insert Doxygen comment for the member on the current line.
+The comment is inserted at the column given by `comment-column' (much
+like \\[indent-for-comment])."
   (interactive "*")
   (let* ((empty (save-excursion (beginning-of-line)
                                 (looking-at "[ \t]*$")))

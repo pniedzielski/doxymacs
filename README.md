@@ -42,7 +42,8 @@ initialization file:
 ```elisp
 (use-package doxymacs
   :vc (:url "https://github.com/pniedzielski/doxymacs.git"
-            :rev :newest)
+            :rev :newest
+            :lisp-dir "lisp/")
   :hook (c-mode-common-hook . doxymacs-mode)
   :bind (:map c-mode-base-map
               ;; Lookup documentation for the symbol at point.

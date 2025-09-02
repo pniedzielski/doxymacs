@@ -500,11 +500,11 @@ variable `doxymacs-doxygen-dirs'."
           (setq l (cdr l)))))))
 
 (defun doxymacs-set-tags-buffer (dir buffer)
-  "Set the BUFFER associated with DIR in `doxymacs-tags-buffers'."
+  "Set DIR's BUFFER in `doxymacs-tags-buffers'."
   (doxymacs-set-dir-element dir doxymacs-tags-buffers buffer))
 
 (defun doxymacs-set-completion-list (dir completion-list)
-  "Set the COMPLETION-LIST associated with DIR in `doxymacs-completion-lists'."
+  "Set DIR's COMPLETION-LIST in `doxymacs-completion-lists'."
   (doxymacs-set-dir-element dir doxymacs-completion-lists completion-list))
 
 (defun doxymacs-url-exists-p (url)

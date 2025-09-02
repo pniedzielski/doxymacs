@@ -206,8 +206,8 @@ For help with tempo templates, see `tempo-define-template'."
 
 (defcustom doxymacs-void-types
   "void"
-  "String with void-kind variable types.  Extend this string if there
-are typedefs of void.  Example: \"void tVOID\"."
+  "String with void-kind variable types.
+Extend this string if there are typedefs of void.  Example: \"void tVOID\"."
   :type 'string
   :group 'doxymacs)
 
@@ -253,8 +253,8 @@ by `doxymacs-doxygen-style' will be used."
 ;; End of customisable variables
 
 (defvar doxymacs-tags-buffers nil
-  "The buffers with our Doxygen tags; a list of the form
-\='((DIR . BUFFER) (...)) where:
+  "The buffers with our Doxygen tags.
+A list of the form \='((DIR . BUFFER) (...)) where:
 
 DIR is one of the directories from `doxymacs-doxygen-dirs'; and
 BUFFER is the buffer holding the Doxygen tags for that DIR.")
@@ -1020,9 +1020,8 @@ the completion or nil if canceled by the user."
     ("#")
     ("%")
     ("\""))
-  "Available doxygen commands.  Format is
-
-\='((\"command\" args) ...)
+  "Available doxygen commands.
+Format is \='((\"command\" args) ...)
 
 where:
 

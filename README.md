@@ -48,19 +48,28 @@ GNU General Public License for more details.
 
 ## Install
 
-Doxymacs depends on the following packages:
+Doxymacs does not depend on any external packages by default; you can use it
+with any Emacsen.  However, doxymacs comes with an external parser for Doxygen
+tags files written in C.  If your tags file is quite large (say, > 1 MB), you
+may find the external parser to be more performant.  The external parser
+depends on the following packages:
 
+- autotools https://www.gnu.org/software/autoconf/
 - pkg-config https://www.freedesktop.org/wiki/Software/pkg-config/
 - libxml2 http://www.libxml.org/
 
 Be sure these are properly configured and installed before proceeding.
 
-- Use the configure script to configure doxymacs:
+- Use the bootstrap script to generate the parser’s build system, if
+  `c/configure` does not already exist
 
+   $ cd c
+   $ ./bootstrap
+
+- Use the configure script to configure the external parser:
+
+   $ cd c
    $ ./configure
    $ make
-   $ make install
 
-  Use ./configure --help for help on customising your configuration.
-
-for details see [INSTALL](INSTALL)
+For details see [INSTALL](INSTALL).

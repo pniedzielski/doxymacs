@@ -183,7 +183,7 @@ this structure.  Point is left at the end of the XML structure read."
 
 ;;;###autoload
 (defun doxymacs-xml-parse-insert-xml (data &optional add-newlines
-                                      public system depth ret-depth)
+                                      public system depth)
   "Insert DATA, a recursive Lisp structure, at point as XML.
 DATA has the form:
 

@@ -257,6 +257,9 @@ Note that this only works if the opening tag starts at column 0."
 
 
 (defun doxymacs-xml-parse--xml-parse-profile ()
+  "Turn on profiling of `doxymacs-xml-parse-read-xml'.
+Note that this enables ELP instrumentation of several built-in functions
+as well."
   (interactive)
   (let ((elp-function-list
          '(buffer-substring-no-properties
@@ -279,6 +282,7 @@ Note that this only works if the opening tag starts at column 0."
     (elp-instrument-list)))
 
 (defsubst doxymacs-xml-parse--xml-parse-skip-tag ()
+  "Skip to the end of the current tag."
   (cond
    ((eq (char-after) ??)
     (search-forward "?>"))
@@ -299,6 +303,7 @@ Note that this only works if the opening tag starts at column 0."
           (search-forward ">"))))))
 
 (defsubst doxymacs-xml-parse--xml-parse-add-non-ws (text lst)
+  "Add the string TEXT to LST, ignoring pure whitespace."
   (let ((i 0) (l (length text)) non-ws)
     (while (< i l)
       (unless (memq (aref text i) '(?\n ?\t ? ))

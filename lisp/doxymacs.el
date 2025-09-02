@@ -1380,8 +1380,7 @@ where:
   "Default C++!-style template for function documentation.")
 
 (defun doxymacs-invalid-style ()
-  "Warn the user that he has set `doxymacs-doxygen-style' to an invalid
-style."
+  "Warn that `doxymacs-doxygen-style' is an invalid style."
   (error (concat
           "Invalid `doxymacs-doxygen-style': "
           doxymacs-doxygen-style

@@ -284,14 +284,7 @@ url-1a is the associated URL.")
 
 
 ;; Minor mode implementation
-
-(defvar doxymacs-mode nil
-  "nil disables doxymacs, non-nil enables.")
-
-(make-variable-buffer-local 'doxymacs-mode)
-
-(defun doxymacs-mode (&optional arg)
-  ;; All of the following text shows up in the "mode help" (C-h m)
+(define-minor-mode doxymacs-mode
   "Minor mode for using/creating Doxygen documentation.
 To submit a problem report, request a feature or get support, please
 visit doxymacs' homepage at https://pniedzielski.github.io/doxymacs/.
@@ -301,13 +294,7 @@ To see what version of doxymacs you are running, enter
 
 In order for `doxymacs-lookup' to work you will need to customise the
 variable `doxymacs-doxygen-dirs'."
-  (interactive "P")
-  (setq doxymacs-mode
-        (if (null arg)
-            ;; Toggle mode
-            (not doxymacs-mode)
-          ;; Enable/Disable according to arg
-          (> (prefix-numeric-value arg) 0)))
+  :lighter " doxy"
   (when doxymacs-mode
     (when (boundp 'filladapt-token-table)
       ;; add tokens to filladapt to match doxygen markup
@@ -325,11 +312,6 @@ variable `doxymacs-doxygen-dirs'."
           (setq filladapt-token-table
                 (append filladapt-token-table
                         (list (list bullet-regexp 'bullet)))))))))
-
-;;;###autoload
-(or (assoc 'doxymacs-mode minor-mode-alist)
-    (setq minor-mode-alist
-          (cons '(doxymacs-mode " doxy") minor-mode-alist)))
 
 ;; This stuff has to do with fontification
 ;; Thanks to Alec Panovici for the idea.

@@ -82,8 +82,8 @@ jobs:
 
       - name: Ensure that the version string is the same everywhere
         run: |
-          VERSION_HEADER=$(sed -rn 's/^;; Version: ([a-zA-Z0-9.+-]+).*$/\1/p' lisp/doxymacs.el.in)
-          VERSION_CONST=$(sed -rn 's/^\(defconst doxymacs-version "([a-zA-Z0-9.+-]+)".*$/\1/p' lisp/doxymacs.el.in)
+          VERSION_HEADER=$(sed -rn 's/^;; Version: ([a-zA-Z0-9.+-]+).*$/\1/p' lisp/doxymacs.el)
+          VERSION_CONST=$(sed -rn 's/^\(defconst doxymacs-version "([a-zA-Z0-9.+-]+)".*$/\1/p' lisp/doxymacs.el)
           VERSION_AUTOCONF=$(sed -rn '/AC_INIT/ { N; s/^AC_INIT.*,.*\[([a-zA-Z0-9.+-]+)\],.*$/\1/p }' configure.ac)
           echo "Version string in ELisp header: $VERSION_HEADER"
           echo "Version string in ELisp constant: $VERSION_CONST"

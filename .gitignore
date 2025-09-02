@@ -15,7 +15,6 @@ config.status
 configure
 depcomp
 install-sh
-lisp/doxymacs.el
 lisp/doxymacs.elc
 lisp/elc-stamp
 lisp/Makefile

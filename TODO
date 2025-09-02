@@ -1,9 +1,0 @@
-lisp/doxymacs.el.in:
- - fix all FIXMEs (of course)
- - automatic testing (DejaGnu).
- - other stuff?
-
-README:
-INSTALL:
- - better end-user documentation
-

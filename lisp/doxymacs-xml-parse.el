@@ -166,7 +166,7 @@ Point is left at the end of the XML structure read."
        (cdar tag)))
 
 (defsubst doxymacs-xml-parse--xml-tag-attr (tag attr)
-  "Return a specific ATTR of an xml-parse'd XML TAG."
+  "Return a specific attribute of an xml-parse'd XML TAG, named ATTR."
   (cdr (assoc attr (doxymacs-xml-parse--xml-tag-attrlist tag))))
 
 (defsubst doxymacs-xml-parse--xml-tag-children (tag)
@@ -174,7 +174,7 @@ Point is left at the end of the XML structure read."
   (cdr tag))
 
 (defun doxymacs-xml-parse--xml-tag-child (tag name)
-  "Return the first child matching NAME, of an xml-parse'd XML TAG."
+  "Return the first child of an xml-parse'd XML TAG, matching NAME."
   (catch 'found
     (let ((children (doxymacs-xml-parse--xml-tag-children tag)))
       (while children

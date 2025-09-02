@@ -42,6 +42,8 @@
 ;;  - Fontify Doxygen keywords in comments.
 ;;  - Optionally use an “external” (i.e., written in C) XML parser to speed up
 ;;    building the completion list.
+
+;; For more information, see the info page `doxymacs'.
 
 ;;; Code:
 

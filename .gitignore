@@ -18,5 +18,6 @@ c/install-sh
 c/Makefile
 c/Makefile.in
 c/missing
+doc/doxymacs.info
 lisp/doxymacs.elc
 lisp/doxymacs-xml-parse.elc

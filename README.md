@@ -142,6 +142,12 @@ Be sure these are properly configured and installed before proceeding.
     `doxymacs-external-xml-parser-executable` to the path of the
     compiled external parser.
 
+Documentation
+-------------
+
+For further documentation on doxymacs, please see its Info manual using
+`C-h i mdoxymacs` in Emacs.
+
 Contributing
 ------------
 

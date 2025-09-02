@@ -1,0 +1,61 @@
+\input texinfo  @c -*- texinfo -*-
+
+@setfilename doxymacs.info
+@settitle Doxymacs: Doxygen + Emacs
+
+@c Before release, run C-u C-c C-u C-a (texinfo-all-menus-update with
+@c a prefix arg).  This updates the node pointers, which texinfmt.el
+@c needs.
+
+@copying
+
+Copyright @copyright{} 2025, Patrick M. Niedzielski.  All rights
+reserved.
+
+@end copying
+
+@dircategory Emacs
+@direntry
+* Doxymacs: (doxymacs).           Doxygen + Emacs
+@end direntry
+
+@documentencoding UTF-8
+
+@iftex
+@finalout
+@end iftex
+
+@titlepage
+@title Doxymacs
+@subtitle Emacs Support For Doxygen
+@author Patrick M. Niedzielski
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+@ifnottex
+
+@node Top, Introduction to doxymacs, (dir), (dir)
+@top Overview
+
+Doxymacs is a minor mode for GNU Emacs that provides tighter integration
+with Doxygen, the multi-language documentation generator.
+
+@end ifnottex
+
+@menu
+* Introduction to doxymacs::
+@end menu
+
+@node Introduction to doxymacs,  , Top, Top
+@chapter Introduction to doxymacs
+
+@bye
+
+@c Local Variables:
+@c mode: Texinfo
+@c TeX-master: t
+@c End:

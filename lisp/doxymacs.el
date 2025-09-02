@@ -194,9 +194,9 @@ an assoc list with the function's name, argument list (BUG: may be
 incorrect for parameters that require parentheses), and return
 value:
 
-(cdr (assoc \='func (doxymacs-find-next-func))) is the function name (string).
-(cdr (assoc \='args (doxymacs-find-next-func))) is a list of arguments.
-(cdr (assoc \='return (doxymacs-find-next-func))) is the return type (string).
+\(cdr (assoc \='func (doxymacs-find-next-func))) is the function name (string).
+\(cdr (assoc \='args (doxymacs-find-next-func))) is a list of arguments.
+\(cdr (assoc \='return (doxymacs-find-next-func))) is the return type (string).
 
 The argument list is a list of strings.
 
@@ -264,9 +264,9 @@ BUFFER is the buffer holding the Doxygen tags for that DIR.")
   "The lists with doxytags completions.
 The structure is as follows:
 
-( (dir1 . (symbol-1 . ((description-1a . url-1a) (description-1b . url-1b)))
-(symbol-2 . ((description-2a . url-2a))))
-... )
+\( (dir1 . (symbol-1 . ((description-1a . url-1a) (description-1b . url-1b)))
+           (symbol-2 . ((description-2a . url-2a))))
+   ... )
 
 where
 
@@ -1707,9 +1707,9 @@ and new-line characters cut off."
 (defun doxymacs-find-next-func ()
   "Return a list describing next function declaration, or nil if not found.
 
-(cdr (assoc \='func (doxymacs-find-next-func))) is the function name (string).
-(cdr (assoc \='args (doxymacs-find-next-func))) is a list of arguments.
-(cdr (assoc \='return (doxymacs-find-next-func))) is the return type (string).
+\(cdr (assoc \='func (doxymacs-find-next-func))) is the function name (string).
+\(cdr (assoc \='args (doxymacs-find-next-func))) is a list of arguments.
+\(cdr (assoc \='return (doxymacs-find-next-func))) is the return type (string).
 
 The argument list is a list of strings."
   (interactive)

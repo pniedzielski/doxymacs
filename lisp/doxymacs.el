@@ -3,9 +3,10 @@
 ;; Copyright (C) 2015-2025 Patrick M. Niedzielski.
 ;; Copyright (C) 2001-2010 Ryan T. Sammartino.
 ;;
-;; Author: Patrick M. Niedzielski <patrick at pniedzielski dot net>
-;;         Ryan T. Sammartino <ryan.sammartino at gmail dot com>
-;;         Kris Verbeeck <kris.verbeeck at advalvas dot be>
+;; Author: Patrick M. Niedzielski <patrick@pniedzielski.net>
+;;         Ryan T. Sammartino <ryan.sammartino@gmail.com>
+;;         Kris Verbeeck <kris.verbeeck@advalvas.be>
+;; Maintainer: Patrick M. Niedzielski <patrick@pniedzielski.net>
 ;; Created: 24/03/2001
 ;; Version: 1.8.0
 ;; Keywords: c, convenience, tools
@@ -29,7 +30,7 @@
 ;; Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 ;;; Commentary:
-;;
+
 ;; Doxymacs provides a minor mode `doxymacs-mode' for GNU Emacs that provides
 ;; tighter integration with Doxygen, the multi-language documentation
 ;; generator.  It provides a number of features that make working with Doxygen

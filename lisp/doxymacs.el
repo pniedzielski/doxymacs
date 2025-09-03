@@ -297,8 +297,8 @@ url-1a is the associated URL.")
   "The buffer used for displaying multiple completions.")
 
 
-
 ;; Minor mode implementation
+;;;###autoload
 (define-minor-mode doxymacs-mode
   "Minor mode for using/creating Doxygen documentation.
 To submit a problem report, request a feature or get support, please

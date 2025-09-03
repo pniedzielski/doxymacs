@@ -1,0 +1,51 @@
+; -*- mode: emacs-lisp; lexical-binding: t -*-
+
+(eldev-require-version "1.11.1")
+
+;; Uncomment some calls below as needed for your project.
+;(eldev-use-package-archive 'gnu-elpa)
+;(eldev-use-package-archive 'nongnu-elpa)
+;(eldev-use-package-archive 'melpa)
+
+(setq eldev-files-to-package `(:or ,eldev-files-to-package
+                                   "c/build.sh"
+                                   "c/bootstrap"
+                                   "c/configure.ac"
+                                   "c/Makefile.am"
+                                   "c/doxymacs_parser.c"))
+
+(setf eldev-project-main-file "doxymacs.el")
+(setf eldev-project-source-dirs '("lisp" "c"))
+
+(eldev-defbuilder doxymacs-builder-autoconf (source target)
+  :short-name     "AUTOCONF"
+  :message        source-and-target
+  :type           many-to-one
+  :source-files   ("c/configure.ac" "c/Makefile.am")
+  :targets        ("c/configure" "c/Makefile.in")
+  :collect        (":default" ":parser")
+  (eldev-call-process "sh" '("-c" "cd c && ./bootstrap")
+    :forward-output t
+    :die-on-error t))
+
+(eldev-defbuilder doxymacs-builder-configure (source target)
+  :short-name     "CONFIGURE"
+  :message        source-and-target
+  :type           many-to-one
+  :source-files   "*.in"
+  :targets        ("Makefile.in" -> "Makefile")
+  :collect        (":default" ":parser")
+  (eldev-call-process "sh" '("-c" "cd c && ./configure")
+    :forward-output t
+    :die-on-error t))
+
+(eldev-defbuilder doxymacs-builder-make (source target)
+  :short-name     "MAKE"
+  :message        target
+  :type           many-to-one
+  :source-files   "c/Makefile"
+  :targets        ("Makefile" -> "doxymacs_parser")
+  :collect        (":default" ":parser")
+  (eldev-call-process "sh" '("-c" "cd c && make")
+    :forward-output t
+    :die-on-error t))

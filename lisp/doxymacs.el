@@ -1,4 +1,4 @@
-;;; doxymacs.el --- Emacs integration with Doxygen   -*- mode: emacs-lisp; lexical-binding: nil -*-
+;;; doxymacs.el --- Emacs integration with Doxygen   -*- mode: emacs-lisp; lexical-binding: t -*-
 ;;
 ;; Copyright (C) 2015-2025 Patrick M. Niedzielski.
 ;; Copyright (C) 2001-2010 Ryan T. Sammartino.

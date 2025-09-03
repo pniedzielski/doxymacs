@@ -42,6 +42,11 @@
 ;;  - Fontify Doxygen keywords in comments.
 ;;  - Optionally use an “external” (i.e., written in C) XML parser to speed up
 ;;    building the completion list.
+
+;; You can just enable `doxymacs-mode' and start using doxymacs.  If you find
+;; that the built-in tags parsing is not fast enough, use
+;; `doxymacs-install-external-parser' to build and install the external XML
+;; tags parser.
 
 ;;; Code:
 
@@ -141,9 +146,18 @@ Set to non-nil to use the external XML parser."
   :group 'doxymacs)
 
 (defcustom doxymacs-external-xml-parser-executable
-  "doxymacs_parser"
-  "*Where the external XML parser executable is."
-  :type 'string
+  (if load-file-name
+      (expand-file-name "doxymacs_parser" (file-name-directory load-file-name))
+    (expand-file-name "doxymacs_parser"))
+  "*Where the external XML parser executable is.
+
+By default, this is the path to where you have installed doxymacs to, if
+that can be determined, or the current directory otherwise.  You may
+want to customize this option explicitly if you have installed the
+external XML parser executable elsewhere, or if you want to use
+`doxymacs-install-external-parser' to install the XML parser executable
+to a different location."
+  :type 'file
   :group 'doxymacs)
 
 (defcustom doxymacs-browse-url-function
@@ -313,6 +327,51 @@ variable `doxymacs-doxygen-dirs'."
           (setq filladapt-token-table
                 (append filladapt-token-table
                         (list (list bullet-regexp 'bullet)))))))))
+
+;;;###autoload
+(defun doxymacs-install-external-parser ()
+  "Build and install the Doxygen external parser.
+
+If `doxymacs-external-xml-parser-executable' does not exist, attempt to
+rebuild it from source.
+
+The external parser depends on the following packages:
+
+  - autotools: https://www.gnu.org/software/autoconf/
+  - pkg-config: https://www.freedesktop.org/wiki/Software/pkg-config/
+  - libxml2: http://www.libxml.org/
+
+Be sure these are properly configured and installed on your system
+before running this function.
+
+Once this function successfully compiles the external parser, you should
+customize `doxymacs-use-external-xml-parser' to enable it."
+  (interactive)
+  (if (file-exists-p doxymacs-external-xml-parser-executable)
+      (message (format "%s already exists, skipping build"
+                       doxymacs-external-xml-parser-executable))
+    (let* ((doxymacs-directory
+           (or (and load-file-name
+                    (file-name-directory load-file-name))
+               default-directory))
+           (source-directory
+            (if (file-exists-p (expand-file-name "c" doxymacs-directory))
+                ;; Installing from a package.
+                (expand-file-name "c" doxymacs-directory)
+              ;; Installing from source
+              (expand-file-name "c" (file-name-parent-directory
+                                     doxymacs-directory))))
+          (target-directory
+           (or (and (stringp doxymacs-external-xml-parser-executable)
+                    (file-name-directory
+                     doxymacs-external-xml-parser-executable))
+               doxymacs-directory))
+          (default-directory source-directory))
+      (compilation-start
+       (format "%s %s"
+               (shell-quote-argument (expand-file-name "build.sh"
+                                                       source-directory))
+               (shell-quote-argument target-directory))))))
 
 ;; This stuff has to do with fontification
 ;; Thanks to Alec Panovici for the idea.

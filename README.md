@@ -127,21 +127,30 @@ packages:
 
 Be sure these are properly configured and installed before proceeding.
 
+  - Set `doxymacs-use-external-xml-parser` to `t` and be sure to set
+    `doxymacs-external-xml-parser-executable` to where you would like the
+    external XML parser to be installed.
+
+  - Run `M-x doxymacs-install-external-parser`.
+
+If you want, you may also compile the parser manually, by performing the
+following steps:
+
   - Use the bootstrap script to generate the parser’s build system, if
     `c/configure` does not already exist
 
-        $ cd c
-        $ ./bootstrap
+       $ cd c
+       $ ./bootstrap
 
-  - Use the configure script to configure the external parser:
+ - Use the configure script to configure the external parser:
 
-        $ cd c  # If not already in c/
-        $ ./configure
-        $ make
+       $ cd c  # If not already in c/
+       $ ./configure
+       $ make
 
   - Set `doxymacs-use-external-xml-parser` to `t` and be sure to set
-    `doxymacs-external-xml-parser-executable` to the path of the
-    compiled external parser.
+    `doxymacs-external-xml-parser-executable` to the location of the external
+    XML parser.
 
 Contributing
 ------------

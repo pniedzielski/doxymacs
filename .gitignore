@@ -20,6 +20,7 @@ c/Makefile.in
 c/missing
 lisp/doxymacs.elc
 lisp/doxymacs-xml-parse.elc
+doxymacs_parser
 
 /Eldev-local
 /.eldev

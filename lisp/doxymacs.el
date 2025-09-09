@@ -594,10 +594,11 @@ customize `doxymacs-use-external-xml-parser' to enable it."
                            (concat "lynx -head -source " url)))
             (setq exists t)))
        ;; Give up.
-       (t (error "Could not find url-file-exists, url-file-exists-p, wget or lynx"))))
+       (t (error "Could not find url-file-exists, url-file-exists-p, wget or \
+lynx"))))
      ((equal type "file")
       (setq exists (file-exists-p (url-filename urlobj))))
-     (t (error (concat "Scheme " type " not supported for URL " url))))
+     (t (error "Scheme %s not supported for URL %s" type url)))
     exists))
 
 (defun doxymacs--load-tags (file)
@@ -633,13 +634,11 @@ customize `doxymacs-use-external-xml-parser' to enable it."
                       (progn
                         (kill-buffer new-buffer)
                         (set-buffer currbuff)
-                        (error (concat
-                                "Tag file " xml " not found"))))))
+                        (error "Tag file %s not found" xml)))))
                 (set-buffer currbuff))))
       ;; Couldn't find this file in doxymacs-doxygen-dirs
-      (error (concat "File " (buffer-file-name)
-                     " does not match any directories in"
-                     " doxymacs-doxygen-dirs")))))
+      (error "File %s does not match any directories in doxymacs-doxygen-dirs"
+             (buffer-file-name)))))
 
 (defun doxymacs--add-to-completion-list (symbol description url)
   "Add a SYMBOL to our completion list, along with its DESCRIPTION and URL."
@@ -719,8 +718,7 @@ our `doxymacs--completion-list'."
              (num-compounds (length compound-list))
              (curr-compound-num 0))
         (if (not (string= (doxymacs-xml-parse--xml-tag-name xml) "tagfile"))
-            (error (concat "Invalid tag file: "
-                           (doxymacs--filename-to-xml file)))
+            (error "Invalid tag file: %s" (doxymacs--filename-to-xml file))
           ;; Go through the compounds, adding them and their members to the
           ;; completion list.
           (while compound-list
@@ -1443,10 +1441,8 @@ This character depends on the value of `doxymacs-doxygen-style'."
 
 (defun doxymacs--invalid-style ()
   "Warn that `doxymacs-doxygen-style' is an invalid style."
-  (error (concat
-          "Invalid `doxymacs-doxygen-style': "
-          doxymacs-doxygen-style
-          ": must be one of \"JavaDoc\", \"Qt\", \"C++\", \"C++!\", or \"Fortran\"")))
+  (error "Invalid `doxymacs-doxygen-style': %s: must be one of \"JavaDoc\", \
+\"Qt\", \"C++\", \"C++!\", or \"Fortran\"" doxymacs-doxygen-style))
 
 ;; This should make it easier to add new templates and cut down
 ;; on copy-and-paste programming.

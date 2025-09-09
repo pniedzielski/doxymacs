@@ -2,7 +2,7 @@ Doxymacs is Doxygen + Emacs
 ===========================
 
 ![GitHub License](https://img.shields.io/github/license/pniedzielski/doxymacs)
-![GitHub branch status](https://img.shields.io/github/checks-status/pniedzielski/doxymacs/master)
+![GitHub branch status](https://img.shields.io/github/checks-status/pniedzielski/doxymacs/main)
 ![GitHub top language](https://img.shields.io/github/languages/top/pniedzielski/doxymacs)
 [![Packaging status](https://repology.org/badge/tiny-repos/emacs:doxymacs.svg)](https://repology.org/project/emacs:doxymacs/versions)
 

@@ -349,8 +349,8 @@ Once this function successfully compiles the external parser, you should
 customize `doxymacs-use-external-xml-parser' to enable it."
   (interactive)
   (if (file-exists-p doxymacs-external-xml-parser-executable)
-      (message (format "%s already exists, skipping build"
-                       doxymacs-external-xml-parser-executable))
+      (message "%s already exists, skipping build"
+               doxymacs-external-xml-parser-executable)
     (let* ((doxymacs-directory
            (or (and load-file-name
                     (file-name-directory load-file-name))
@@ -606,8 +606,8 @@ customize `doxymacs-use-external-xml-parser' to enable it."
          (dir (doxymacs--filename-to-dir file))
          (xml (doxymacs--filename-to-xml file)))
     (if (and xml dir)
-        (if (or (eq tags-buffer nil)
-                (eq (buffer-live-p tags-buffer) nil))
+        (if (or (null tags-buffer)
+                (not (buffer-live-p tags-buffer)))
             (let ((new-buffer (generate-new-buffer "*doxytags")))
               (if tags-buffer
                   ;; tags-buffer is non-nil, which means someone
@@ -833,11 +833,11 @@ If FILENAME is provided, lookup the SYMBOL coming from this file name."
   (interactive
    (let* ((f (buffer-file-name))
           (completion-list (doxymacs--filename-to-completion-list f)))
-     (if (eq f nil)
+     (if (null f)
          (error "Current buffer has no file name associated with it")
        (progn
          (save-excursion
-           (if (eq completion-list nil)
+           (if (null completion-list)
                ;;Build our completion list if not already done
                (if doxymacs-use-external-xml-parser
                    (doxymacs--fill-completion-list-with-external-parser f)
@@ -1108,14 +1108,14 @@ where:
                       "Insert doxygen command: "
                       doxymacs--commands
                       nil nil nil 'doxymacs--insert-command-history)))
-  (insert (concat (doxymacs--doxygen-command-char) command))
+  (insert (doxymacs--doxygen-command-char) command)
   (cl-dolist (arg-prompt (cdr-safe (assoc command doxymacs--commands)))
     (let ((arg (doxymacs--read-arg arg-prompt)))
       (if (or (= (length arg) 0) (string= "\n" arg))
           ;; If nothing is entered no point in prompting for the rest of
           ;; the args.
           (cl-return)
-        (insert (concat " " arg))))))
+        (insert " " arg)))))
 
 (defun doxymacs--read-arg (arg)
   "Read a given ARG from the user prompt."
@@ -1690,7 +1690,7 @@ region."
                 (forward-char 1)
                 (cond
                  ;; end of buffer: exit
-                 ((= (point) (point-max)) (setq exit t))
+                 ((eobp)                  (setq exit t))
                  ;; decrease depth counter
                  ((looking-at ")")        (setq depth (1- depth)))
                  ;; increase depth counter
